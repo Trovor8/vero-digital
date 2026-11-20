@@ -1,1 +1,4 @@
 .DS_Store
+img/house/
+img/padel/*
+!img/padel/f.jpg

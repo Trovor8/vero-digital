@@ -3,608 +3,207 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vero Digital — Websites that sell</title>
-<meta name="description" content="Vero Digital designs and builds fast, multilingual websites for restaurants, real estate, architects, events and local businesses. See the work, then see your own site.">
+<title>Vero Solutions — AI-powered websites, advertising & automation</title>
+<meta name="description" content="Vero Solutions is an AI-powered digital agency working in the United Kingdom, Portugal and Denmark: AI receptionists and voice agents, cinematic AI websites, online stores, Meta / Google / TikTok advertising, reviews, loyalty and brand content.">
 <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
-<meta property="og:title" content="Vero Digital — Websites that sell">
-<meta property="og:description" content="Fast, beautiful, multilingual websites. See your new site before you decide.">
-<meta property="og:image" content="img/founders.jpg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --ink:#0C0C0D; --ink2:#151517; --ink3:#1E1E21; --paper:#F3F0E8; --paper2:#E7E3D8;
-  --mute:#8C8A84; --mute2:#5E5C57; --line:rgba(243,240,232,.12); --line2:rgba(12,12,13,.12);
-  --acc:#FF5A1F; --acc2:#FF7A45;
-  --d:"Bricolage Grotesque",system-ui,sans-serif; --b:"Inter",system-ui,-apple-system,sans-serif;
-  --pad:clamp(20px,4.5vw,64px); --max:1400px; --e:cubic-bezier(.2,.7,.1,1);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{background:var(--ink);color:var(--paper);font:400 16px/1.6 var(--b);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-img{display:block;max-width:100%}
-a{color:inherit;text-decoration:none}
-button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-::selection{background:var(--acc);color:#fff}
-.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
-.tag{display:inline-flex;align-items:center;gap:10px;font:500 12px/1 var(--b);letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
-.tag::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--acc)}
-h1,h2,h3{font-family:var(--d);font-weight:700;letter-spacing:-.035em;line-height:.95}
-h2{font-size:clamp(42px,6.4vw,104px)}
-.acc{color:var(--acc)}
-.btn{display:inline-flex;align-items:center;gap:12px;height:56px;padding:0 26px;border-radius:999px;font:600 15px/1 var(--b);transition:transform .3s var(--e),background .3s,color .3s;will-change:transform}
-.btn.p{background:var(--acc);color:#fff}
-.btn.p:hover{background:var(--paper);color:var(--ink)}
-.btn.g{border:1px solid var(--line);color:var(--paper)}
-.btn.g:hover{background:var(--paper);color:var(--ink)}
-.btn svg{width:18px;height:18px;transition:transform .3s var(--e)}
-.btn:hover svg{transform:translateX(4px)}
-html:not([lang=pt]) [data-pt]{display:none!important}
-html[lang=pt] [data-en]{display:none!important}
-.rv{opacity:0;transform:translateY(30px);transition:opacity .9s var(--e),transform .9s var(--e)}
-.rv.in{opacity:1;transform:none}
-.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}
-
-/* nav */
-.nav{position:fixed;top:14px;left:0;right:0;z-index:50;pointer-events:none}
-.nav .bar{pointer-events:auto;max-width:var(--max);margin:0 auto;width:calc(100% - 2*var(--pad) + 28px);display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 10px 0 22px;border-radius:999px;background:rgba(20,20,22,.6);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border:1px solid var(--line);transition:background .3s}
-.nav .logo{height:30px;width:auto}
-.nav .links{display:flex;gap:30px;font:500 14px/1 var(--b);color:#cfccc4}
-.nav .links a:hover{color:#fff}
-.nav .r{display:flex;align-items:center;gap:8px}
-.lang{display:flex;padding:3px;border:1px solid var(--line);border-radius:999px}
-.lang button{padding:8px 11px;border-radius:999px;font:600 11px/1 var(--b);letter-spacing:.08em;color:var(--mute)}
-.lang button.on{background:var(--paper);color:var(--ink)}
-.nav .btn{height:44px;padding:0 18px;font-size:14px}
-.burger{display:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);align-items:center;justify-content:center}
-.burger i,.burger i::before{display:block;width:16px;height:1.5px;background:currentColor;position:relative}
-.burger i::before{content:"";position:absolute;top:5px}
-.burger i{top:-2.5px}
-.mnav{position:fixed;inset:0;z-index:60;background:var(--ink);display:flex;flex-direction:column;justify-content:center;gap:6px;padding:0 28px;opacity:0;pointer-events:none;transition:opacity .35s}
-.mnav.open{opacity:1;pointer-events:auto}
-.mnav a{font:700 44px/1.15 var(--d);letter-spacing:-.03em}
-.mnav .x{position:absolute;top:24px;right:24px;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);font-size:24px}
-
-/* hero */
-.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding:140px 0 0;overflow:hidden}
-.hero::before{content:"";position:absolute;inset:-20% -10% auto auto;width:70vw;height:70vw;border-radius:50%;background:radial-gradient(closest-side,rgba(255,90,31,.22),rgba(255,90,31,0));filter:blur(20px);pointer-events:none}
-.grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse at 70% 20%,#000 0%,transparent 65%);-webkit-mask-image:radial-gradient(ellipse at 70% 20%,#000 0%,transparent 65%);opacity:.55;pointer-events:none}
-.hero h1{font-size:clamp(54px,10.4vw,176px);position:relative}
-.hero h1 .ln{display:block;overflow:hidden}
-.hero h1 .ln>span{display:inline-block;transform:translateY(105%);transition:transform 1.1s var(--e)}
-.hero.go h1 .ln>span{transform:none}
-.hero h1 .ln:nth-child(2)>span{transition-delay:.08s}.hero h1 .ln:nth-child(3)>span{transition-delay:.16s}
-.hero h1 em{font-style:normal;color:var(--acc)}
-.cursor{display:inline-block;width:.08em;height:.78em;background:var(--acc);margin-left:.06em;vertical-align:-.04em;animation:blink 1s steps(1) infinite}
-@keyframes blink{50%{opacity:0}}
-.hero .row{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:end;margin-top:44px;position:relative}
-.hero p.lead{font-size:clamp(17px,1.4vw,20px);color:#cfccc4;max-width:560px}
-.hero .ctas{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-.hero .meta{display:flex;gap:28px;margin-top:22px;font-size:13.5px;color:var(--mute);flex-wrap:wrap}
-.hero .meta b{color:var(--paper);font-weight:600}
-.marquee{margin-top:70px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:22px 0;position:relative}
-.marquee .track{display:flex;gap:56px;width:max-content;animation:mq 38s linear infinite}
-.marquee:hover .track{animation-play-state:paused}
-.marquee span{font:600 clamp(22px,2.4vw,34px)/1 var(--d);letter-spacing:-.02em;color:#6f6d68;white-space:nowrap;display:flex;align-items:center;gap:56px}
-.marquee span::after{content:"";width:10px;height:10px;border-radius:3px;background:var(--acc)}
-@keyframes mq{to{transform:translateX(-50%)}}
-
-.hero>.wrap{width:100%;position:relative}
-.deck{position:absolute;right:calc(var(--pad) - 10px);top:clamp(130px,16vh,190px);width:min(46vw,640px);aspect-ratio:16/12;pointer-events:none}
-.deck .card{position:absolute;width:78%;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--ink3);box-shadow:0 40px 90px rgba(0,0,0,.6);transition:transform 1.4s var(--e),opacity 1s}
-.deck .card .top{height:28px;display:flex;align-items:center;gap:6px;padding:0 12px;border-bottom:1px solid var(--line)}
-.deck .card .top i{width:9px;height:9px;border-radius:50%;background:#3a3a3e}
-.deck .card img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top}
-.deck .c1{right:0;top:0;transform:rotate(5deg) translate(30px,40px);opacity:0}
-.deck .c2{right:14%;top:18%;transform:rotate(-4deg) translate(-20px,40px);opacity:0}
-.deck .c3{right:4%;top:38%;transform:rotate(1.5deg) translateY(50px);opacity:0}
-.hero.go .deck .c1{transform:rotate(5deg);opacity:1;transition-delay:.3s}
-.hero.go .deck .c2{transform:rotate(-4deg);opacity:1;transition-delay:.45s}
-.hero.go .deck .c3{transform:rotate(1.5deg);opacity:1;transition-delay:.6s}
-.hero h1,.hero .row>div:first-child{max-width:min(100%,760px)}
-@media (max-width:1000px){.deck{display:none}}
-
-/* founders */
-.founders{padding:clamp(100px,12vw,180px) 0 clamp(80px,9vw,130px);background:var(--paper);color:var(--ink)}
-.founders .tag{color:var(--mute2)}
-.founders .head{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:end}
-.founders .head p{color:var(--mute2);font-size:18px;max-width:46ch}
-.photo{position:relative;margin-top:clamp(40px,5vw,70px);border-radius:28px;overflow:hidden;background:#2a2a2b}
-.photo img{width:100%;aspect-ratio:3/2;object-fit:cover}
-.photo .pin{position:absolute;display:flex;align-items:center;gap:10px;padding:10px 14px 10px 10px;border-radius:999px;background:rgba(243,240,232,.94);color:var(--ink);font:600 13.5px/1.1 var(--b);box-shadow:0 10px 30px rgba(0,0,0,.25);transform:translate(-50%,-50%);white-space:nowrap}
-.photo .pin i{width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;font:700 12px/26px var(--b);text-align:center;font-style:normal}
-.photo .pin small{display:block;font-weight:500;color:var(--mute2);font-size:12px;margin-top:2px}
-.people{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
-.person{border:1px solid var(--line2);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:6px}
-.person h3{font-size:30px;letter-spacing:-.03em}
-.person .role{font-size:14px;color:var(--mute2)}
-.person .h{margin-top:18px;display:flex;justify-content:space-between;align-items:baseline;padding-top:16px;border-top:1px solid var(--line2);font-size:13.5px;color:var(--mute2)}
-.person .h b{font:700 26px/1 var(--d);color:var(--ink);letter-spacing:-.02em}
-.person p{font-size:15px;color:#3a3936;margin-top:8px}
-
-/* work */
-.work{padding:clamp(100px,12vw,180px) 0}
-.work .head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap}
-.work .head p{max-width:440px;color:#bdbab2;font-size:17px}
-.projects{margin-top:clamp(50px,6vw,90px);display:flex;flex-direction:column;gap:clamp(70px,8vw,120px)}
-.pj{display:grid;grid-template-columns:1.55fr 1fr;gap:clamp(30px,4vw,64px);align-items:center}
-.pj:nth-child(even){grid-template-columns:1fr 1.55fr}
-.pj:nth-child(even) .stage{order:2}
-.stage{position:relative;padding:0 40px 40px 0}
-.browser{border-radius:16px;overflow:hidden;background:var(--ink3);border:1px solid var(--line);box-shadow:0 40px 80px rgba(0,0,0,.45);transition:transform .8s var(--e)}
-.browser .top{height:38px;display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid var(--line)}
-.browser .top i{width:11px;height:11px;border-radius:50%;background:#3a3a3e}
-.browser .top i:nth-child(1){background:#ff5f57}.browser .top i:nth-child(2){background:#febc2e}.browser .top i:nth-child(3){background:#28c840}
-.browser .top .url{margin-left:14px;flex:1;max-width:340px;height:24px;border-radius:7px;background:rgba(255,255,255,.06);font:500 11.5px/24px var(--b);color:var(--mute);padding:0 12px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.browser img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top}
-.phone{position:absolute;right:0;bottom:0;width:24%;min-width:110px;border-radius:26px;padding:7px;background:#000;border:1px solid #333;box-shadow:0 30px 60px rgba(0,0,0,.55);transition:transform .8s var(--e)}
-.phone img{border-radius:20px;width:100%;aspect-ratio:390/844;object-fit:cover;object-position:top}
-.pj:hover .browser{transform:translateY(-6px)}
-.pj:hover .phone{transform:translateY(-14px) rotate(-2deg)}
-.pj .info .n{font:600 14px/1 var(--d);color:var(--acc)}
-.pj .info h3{font-size:clamp(36px,4vw,60px);margin:14px 0 6px}
-.pj .info .sub{color:var(--mute);font-size:15px}
-.pj .info p.d{margin-top:22px;color:#cfccc4;font-size:16.5px;max-width:44ch}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
-.chips span{padding:8px 13px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:#cfccc4}
-.pj .info .go{margin-top:30px;display:inline-flex;align-items:center;gap:10px;font-weight:600;border-bottom:1px solid var(--acc);padding-bottom:4px}
-.pj .info .go:hover{color:var(--acc)}
-.pj .info .kind{display:inline-block;margin-left:10px;padding:5px 10px;border-radius:6px;background:rgba(255,90,31,.12);color:var(--acc2);font:600 11px/1 var(--b);letter-spacing:.08em;text-transform:uppercase;vertical-align:middle}
-
-/* before/after */
-.ba{padding:0 0 clamp(100px,12vw,170px)}
-.ba .head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:44px}
-.ba .head p{color:#bdbab2;font-size:17px;max-width:46ch}
-.ba-tabs{display:flex;gap:8px;margin-bottom:20px}
-.ba-tabs button{padding:10px 16px;border-radius:999px;border:1px solid var(--line);font-size:14px;color:#cfccc4}
-.ba-tabs button.on{background:var(--paper);color:var(--ink);border-color:var(--paper)}
-.cmp{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:16/10;user-select:none;touch-action:pan-y;cursor:ew-resize;border:1px solid var(--line)}
-.cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
-.cmp .after{clip-path:inset(0 0 0 var(--x,50%))}
-.cmp .handle{position:absolute;top:0;bottom:0;left:var(--x,50%);width:2px;background:var(--acc);transform:translateX(-1px)}
-.cmp .handle::after{content:"⟷";position:absolute;top:50%;left:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
-.cmp .lb{position:absolute;top:16px;padding:8px 12px;border-radius:8px;background:rgba(12,12,13,.8);font:600 12px/1 var(--b);letter-spacing:.1em;text-transform:uppercase}
-.cmp .lb.l{left:16px}.cmp .lb.r{right:16px;background:var(--acc)}
-
-/* services */
-.svc{padding:clamp(100px,12vw,170px) 0;background:var(--ink2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.svc .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:24px;overflow:hidden;margin-top:clamp(50px,6vw,80px)}
-.svc .c{background:var(--ink2);padding:34px 30px 38px;transition:background .4s}
-.svc .c:hover{background:var(--ink3)}
-.svc .ic{width:48px;height:48px;border-radius:14px;background:rgba(255,90,31,.12);display:flex;align-items:center;justify-content:center;color:var(--acc)}
-.svc .ic svg{width:24px;height:24px}
-.svc h3{font-size:26px;letter-spacing:-.025em;margin:26px 0 10px;line-height:1.05}
-.svc p{color:#aeaba3;font-size:15px}
-.svc .proof{display:block;margin-top:16px;font-size:13px;color:var(--mute)}
-.svc .proof b{color:var(--acc2);font-weight:600}
-
-/* stats */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:22px}
-.stats div{border:1px solid var(--line);border-radius:22px;padding:28px}
-.stats b{display:block;font:800 clamp(48px,5vw,76px)/1 var(--d);letter-spacing:-.04em}
-.stats span{display:block;margin-top:10px;color:#aeaba3;font-size:14.5px}
-
-/* process */
-.process{padding:clamp(100px,12vw,170px) 0}
-.steps{margin-top:clamp(50px,6vw,80px);display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
-.step{position:relative;border-radius:24px;padding:30px;background:linear-gradient(180deg,var(--ink3),var(--ink2));border:1px solid var(--line);min-height:300px;display:flex;flex-direction:column}
-.step::before{counter-increment:s;content:"0" counter(s);font:700 15px/1 var(--d);color:var(--acc)}
-.step h3{font-size:30px;margin:auto 0 12px;letter-spacing:-.03em}
-.step p{color:#aeaba3;font-size:15px}
-
-/* faq */
-.faq{padding:0 0 clamp(100px,12vw,170px)}
-.faq .grid{display:grid;grid-template-columns:1fr 1.5fr;gap:clamp(30px,6vw,100px)}
-details{border-bottom:1px solid var(--line);padding:24px 0}
-details:first-of-type{border-top:1px solid var(--line)}
-summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;font:600 clamp(19px,1.6vw,23px)/1.3 var(--d);letter-spacing:-.015em}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";font-weight:400;color:var(--acc);font-size:28px;line-height:1;transition:transform .3s}
-details[open] summary::after{transform:rotate(45deg)}
-details p{margin-top:14px;color:#bdbab2;max-width:62ch}
-
-/* contact */
-.cta{padding:clamp(100px,12vw,170px) 0;background:var(--acc);color:#fff;position:relative;overflow:hidden}
-.cta h2{font-size:clamp(52px,9vw,150px);max-width:12ch}
-.cta .grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,80px);margin-top:50px;align-items:start}
-.cta .lead{font-size:19px;max-width:40ch;color:rgba(255,255,255,.92)}
-.cta ul{list-style:none;margin-top:28px;display:grid;gap:12px}
-.cta li{display:flex;gap:12px;align-items:center;font-weight:500}
-.cta li::before{content:"";width:22px;height:22px;flex:none;border-radius:50%;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF5A1F' stroke-width='3'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/14px no-repeat}
-form{background:var(--ink);color:var(--paper);border-radius:26px;padding:clamp(24px,3vw,40px);display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.f{display:flex;flex-direction:column;gap:8px}
-.f.full{grid-column:1/-1}
-.f label{font:600 12px/1 var(--b);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
-.f input,.f select,.f textarea{background:var(--ink3);border:1px solid var(--line);border-radius:12px;color:var(--paper);font:400 16px/1.4 var(--b);padding:14px 16px;outline:none;transition:border-color .25s;-webkit-appearance:none;appearance:none}
-.f textarea{min-height:110px;resize:vertical}
-.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--acc)}
-.types{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px}
-.types label{cursor:pointer}
-.types input{position:absolute;opacity:0;pointer-events:none}
-.types span{display:inline-block;padding:10px 14px;border-radius:999px;border:1px solid var(--line);font-size:14px;color:#cfccc4;transition:all .2s}
-.types input:checked+span{background:var(--acc);border-color:var(--acc);color:#fff}
-form .btn{grid-column:1/-1;justify-content:center;width:100%}
-.fmsg{grid-column:1/-1;font-size:14px;color:var(--acc2);min-height:1em;text-align:center}
-
-footer{padding:60px 0 40px;color:var(--mute);font-size:14px}
-footer .top{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
-footer .logo{height:34px}
-footer .links{display:flex;gap:24px;flex-wrap:wrap}
-footer .links a:hover{color:var(--paper)}
-footer .big{font:800 clamp(80px,19vw,300px)/.8 var(--d);letter-spacing:-.06em;color:var(--ink3);margin-top:60px;white-space:nowrap;user-select:none}
-footer .bot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:30px}
-
-@media (max-width:1000px){
-  .nav .links,.nav .r .btn{display:none}
-  .burger{display:flex}
-  .hero .row,.founders .head,.ba .head,.faq .grid,.cta .grid{grid-template-columns:1fr}
-  .hero .ctas{justify-content:flex-start}
-  .pj,.pj:nth-child(even){grid-template-columns:1fr}
-  .pj:nth-child(even) .stage{order:0}
-  .svc .grid{grid-template-columns:1fr 1fr}
-  .steps{grid-template-columns:1fr 1fr}
-  .stats{grid-template-columns:1fr 1fr}
-  .people{grid-template-columns:1fr}
-}
-@media (max-width:640px){
-  .svc .grid,.steps{grid-template-columns:1fr}
-  .step{min-height:220px}
-  form{grid-template-columns:1fr}
-  .stage{padding:0 22px 30px 0}
-  .photo{border-radius:18px}
-  .photo img{aspect-ratio:4/3.4;object-position:center 30%}
-  .photo .pin{font-size:11.5px;padding:7px 10px 7px 7px;gap:7px}
-  .photo .pin i{width:20px;height:20px;line-height:20px;font-size:10px}
-  .photo .pin small{display:none}
-  .cmp{aspect-ratio:4/3.6}
-  .hero{padding-top:120px}
-  .nav .bar{height:58px;padding-left:18px}
-  .nav .logo{height:26px}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.hero h1 .ln>span{transform:none}}
-</style>
+<meta property="og:title" content="Vero Solutions — AI-powered websites, advertising & automation">
+<meta property="og:description" content="Vero Solutions is an AI-powered digital agency working in the United Kingdom, Portugal and Denmark: AI receptionists and voice agents, cinematic AI websites, online stores, Meta / Google / TikTok advertising, reviews, loyalty and brand content.">
+<meta property="og:image" content="img/padel/f.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+<script>try{var l=localStorage.getItem('vd-lang');if(l)document.documentElement.lang=l}catch(e){}</script>
 </head>
 <body>
-
 <header class="nav">
   <div class="bar">
-    <a href="#top" aria-label="Vero Digital"><img class="logo" src="img/vero-digital-logo-horizontal-branco.svg" alt="Vero Digital"></a>
+    <a href="index.html" aria-label="Vero Solutions"><img class="logo" src="img/vero-solutions-logo-horizontal-branco.svg" alt="Vero Solutions"></a>
     <nav class="links">
-      <a href="#work"><span data-en>Work</span><span data-pt>Trabalhos</span></a>
-      <a href="#services"><span data-en>Services</span><span data-pt>Serviços</span></a>
-      <a href="#process"><span data-en>Process</span><span data-pt>Processo</span></a>
-      <a href="#founders"><span data-en>Founders</span><span data-pt>Fundadores</span></a>
-      <a href="#faq">FAQ</a>
+      <a href="services.html"><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></a>
+      <a href="ai.html"><span data-en>AI</span><span data-pt>AI</span><span data-da>AI</span><i class=new>NEW</i></a>
+      <a href="work.html"><span data-en>Work</span><span data-pt>Trabalhos</span><span data-da>Projekter</span></a>
+      <a href="industries.html"><span data-en>Industries</span><span data-pt>Setores</span><span data-da>Brancher</span></a>
+      <a href="process.html"><span data-en>Process</span><span data-pt>Processo</span><span data-da>Proces</span></a>
+      <a href="faq.html"><span data-en>FAQ</span><span data-pt>FAQ</span><span data-da>FAQ</span></a>
     </nav>
     <div class="r">
-      <div class="lang"><button data-set="en">EN</button><button data-set="pt">PT</button></div>
-      <a class="btn p" href="#contact"><span data-en>Get your site</span><span data-pt>Quero um site</span></a>
+      <div class="lang"><button data-set="en">EN</button><button data-set="pt">PT</button><button data-set="da">DA</button></div>
+      <a class="btn p" href="contact.html"><span data-en>Book a call</span><span data-pt>Marcar chamada</span><span data-da>Book et opkald</span></a>
       <button class="burger" id="burger" aria-label="Menu"><i></i></button>
     </div>
   </div>
 </header>
 <div class="mnav" id="mnav">
   <button class="x" id="mx" aria-label="Close">×</button>
-  <a href="#work"><span data-en>Work</span><span data-pt>Trabalhos</span></a>
-  <a href="#services"><span data-en>Services</span><span data-pt>Serviços</span></a>
-  <a href="#process"><span data-en>Process</span><span data-pt>Processo</span></a>
-  <a href="#founders"><span data-en>Founders</span><span data-pt>Fundadores</span></a>
-  <a href="#contact" style="color:var(--acc)"><span data-en>Get your site</span><span data-pt>Quero um site</span></a>
+  <a href="index.html"><span data-en>Home</span><span data-pt>Início</span><span data-da>Forside</span></a>
+  <a href="services.html"><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></a>
+  <a href="ai.html"><span data-en>AI</span><span data-pt>AI</span><span data-da>AI</span></a>
+  <a href="work.html"><span data-en>Work</span><span data-pt>Trabalhos</span><span data-da>Projekter</span></a>
+  <a href="industries.html"><span data-en>Industries</span><span data-pt>Setores</span><span data-da>Brancher</span></a>
+  <a href="process.html"><span data-en>Process</span><span data-pt>Processo</span><span data-da>Proces</span></a>
+  <a href="faq.html"><span data-en>FAQ</span><span data-pt>FAQ</span><span data-da>FAQ</span></a>
+  <a href="contact.html" style="color:var(--acc)"><span data-en>Book a call</span><span data-pt>Marcar chamada</span><span data-da>Book et opkald</span></a>
+  <div class="lang" style="margin-top:22px;align-self:flex-start"><button data-set="en">EN</button><button data-set="pt">PT</button><button data-set="da">DA</button></div>
 </div>
-
 <main id="top">
-<section class="hero" id="hero">
-  <div class="grid-bg"></div>
-  <div class="deck" aria-hidden="true">
-    <div class="card c1"><div class="top"><i></i><i></i><i></i></div><img src="img/work/mercator.jpg" alt=""></div>
-    <div class="card c2"><div class="top"><i></i><i></i><i></i></div><img src="img/work/obarradas.jpg" alt=""></div>
-    <div class="card c3"><div class="top"><i></i><i></i><i></i></div><img src="img/work/bespoke.jpg" alt=""></div>
-  </div>
+
+<section class="hx" id="hero">
+  <div class="glow"></div>
+  <div class="globe-wrap"><canvas id="globe" aria-label="Globe highlighting the United Kingdom, Portugal and Denmark"></canvas><div class="globe-hint"><span data-en>Drag to rotate · click the planet to send a signal</span><span data-pt>Arraste para rodar · clique no planeta para enviar um sinal</span><span data-da>Træk for at rotere · klik på planeten for at sende et signal</span></div></div>
   <div class="wrap">
-    <span class="tag rv"><span data-en>Web design &amp; development studio</span><span data-pt>Estúdio de web design e desenvolvimento</span></span>
-    <h1 style="margin-top:26px">
-      <span data-en><span class="ln"><span>Websites</span></span><span class="ln"><span>that <em>sell</em></span></span><span class="ln"><span>for you.<i class="cursor"></i></span></span></span>
-      <span data-pt><span class="ln"><span>Sites que</span></span><span class="ln"><span><em>vendem</em> por</span></span><span class="ln"><span>si.<i class="cursor"></i></span></span></span>
+    <span class="tag ld"><span data-en>AI-powered digital agency</span><span data-pt>Agência digital com AI</span><span data-da>AI-drevet digitalbureau</span></span>
+    <h1 class="ld d1">
+      <span data-en>We build the <span class="rot" data-rot><span class="on">AI systems</span><span>websites</span><span>ads</span><span>brands</span></span><br>that grow your business.</span>
+      <span data-pt>Criamos <span class="rot" data-rot><span class="on">os sistemas AI</span><span>os sites</span><span>os anúncios</span><span>as marcas</span></span><br>que fazem crescer o seu negócio.</span>
+      <span data-da>Vi bygger de <span class="rot" data-rot><span class="on">AI-systemer</span><span>hjemmesider</span><span>annoncer</span><span>brands</span></span><br>der får din virksomhed til at vokse.</span>
     </h1>
-    <div class="row">
-      <div>
-        <p class="lead rv d1"><span data-en>We design and build fast, beautiful, multilingual websites for restaurants, real estate, architects, events and local businesses — and we show you your new site before you decide.</span><span data-pt>Desenhamos e construímos sites rápidos, bonitos e multilingues para restaurantes, imobiliárias, arquitetos, eventos e negócios locais — e mostramos-lhe o seu site novo antes de decidir.</span></p>
-        <div class="meta rv d2"><span><b>7</b> <span data-en>sites in the portfolio</span><span data-pt>sites no portfólio</span></span><span><b>6</b> <span data-en>languages on one site</span><span data-pt>línguas num só site</span></span><span><b>100%</b> <span data-en>custom, no templates</span><span data-pt>à medida, sem templates</span></span></div>
-      </div>
-      <div class="ctas rv d3">
-        <a class="btn g" href="#work"><span data-en>See our work</span><span data-pt>Ver trabalhos</span></a>
-        <a class="btn p" href="#contact"><span data-en>Get your site</span><span data-pt>Quero um site</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
-      </div>
+    <p class="lead ld d2"><span data-en>One partner for your whole digital presence: AI that answers and books 24/7, a website that sells, and advertising that brings people in.</span><span data-pt>Um só parceiro para toda a presença digital: AI que responde e marca 24/7, um site que vende e publicidade que traz clientes.</span><span data-da>Én partner til hele din digitale tilstedeværelse: AI, der svarer og booker 24/7, en hjemmeside, der sælger, og annoncering, der skaffer kunder.</span></p>
+    <div class="ctas ld d3">
+      <a class="btn p" href="contact.html"><span data-en>Get a free growth plan</span><span data-pt>Pedir plano gratuito</span><span data-da>Få en gratis vækstplan</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+      <a class="btn g" href="ai.html"><span data-en>See what our AI does</span><span data-pt>Ver o que a nossa AI faz</span><span data-da>Se, hvad vores AI kan</span></a>
     </div>
+    <div class="flags ld d4"><span class="dot"></span><span data-en>Working with businesses in</span><span data-pt>A trabalhar com empresas no</span><span data-da>Vi arbejder med virksomheder i</span> <b><span data-en>United Kingdom</span><span data-pt>Reino Unido</span><span data-da>Storbritannien</span></b><b>Portugal</b><b><span data-en>Denmark</span><span data-pt>Dinamarca</span><span data-da>Danmark</span></b></div>
   </div>
-  <div class="marquee" aria-hidden="true"><div class="track" id="mq"></div></div>
 </section>
+<div class="marquee" aria-hidden="true" style="margin-top:0"><div class="track"><span>AI receptionist</span><span>Websites</span><span>Meta Ads</span><span>AI phone answering</span><span>Google Ads</span><span>Cinematic AI sites</span><span>TikTok Ads</span><span>AI images & video</span><span>Bookings & CRM</span><span>Google reviews</span><span>Loyalty</span><span>Email & SMS</span><span>Branding</span><span>Online stores</span><span>SEO</span><span>AI receptionist</span><span>Websites</span><span>Meta Ads</span><span>AI phone answering</span><span>Google Ads</span><span>Cinematic AI sites</span><span>TikTok Ads</span><span>AI images & video</span><span>Bookings & CRM</span><span>Google reviews</span><span>Loyalty</span><span>Email & SMS</span><span>Branding</span><span>Online stores</span><span>SEO</span></div></div>
 
-<!-- FOUNDERS -->
-<section class="founders" id="founders">
+<section class="sec2 paper">
   <div class="wrap">
-    <div class="head">
-      <div>
-        <span class="tag rv"><span data-en>The founders</span><span data-pt>Os fundadores</span></span>
-        <h2 class="rv d1" style="margin-top:22px"><span data-en>Three owners.<br>Zero <span class="acc">templates.</span></span><span data-pt>Três donos.<br>Zero <span class="acc">templates.</span></span></h2>
-      </div>
-      <p class="rv d2"><span data-en>Vero Digital is owned and run by its three founders. You talk to the people who actually build your site — two of them in black tie, one of them dressed for the job he loves most.</span><span data-pt>A Vero Digital é detida e gerida pelos seus três fundadores. Fala diretamente com quem constrói o seu site — dois deles de smoking, um deles vestido para o trabalho que mais adora.</span></p>
-    </div>
-    <figure class="photo rv">
-      <img src="img/founders.jpg" alt="The three founders of Vero Digital: Gonçalo, Tyler and Nick" loading="lazy">
-      <span class="pin" style="left:21%;top:13%"><i>G</i><span>Gonçalo</span></span>
-      <span class="pin" style="left:50%;top:90%"><i>T</i><span>Tyler</span></span>
-      <span class="pin" style="left:81%;top:13%"><i>N</i><span>Nick</span></span>
-    </figure>
-    <div class="people">
-      <article class="person rv">
-        <h3>Gonçalo</h3><span class="role"><span data-en>Co-founder · Design &amp; build</span><span data-pt>Cofundador · Design e desenvolvimento</span></span>
-        <p><span data-en>Designs and codes every site, from the first sketch to launch day.</span><span data-pt>Desenha e programa cada site, do primeiro esboço ao dia do lançamento.</span></p>
-      </article>
-      <article class="person rv d1">
-        <h3>Tyler</h3><span class="role"><span data-en>Co-founder · Chief Morale Officer</span><span data-pt>Cofundador · Diretor de Boa Disposição</span></span>
-        <p><span data-en>Keeps clients smiling and deadlines honest. Do not ask about the ears.</span><span data-pt>Mantém os clientes a sorrir e os prazos cumpridos. Não pergunte pelas orelhas.</span></p>
-      </article>
-      <article class="person rv d2">
-        <h3>Nick</h3><span class="role"><span data-en>Co-founder · Clients &amp; partnerships</span><span data-pt>Cofundador · Clientes e parcerias</span></span>
-        <p><span data-en>Your first call. Turns “we need a website” into a clear plan and a fair quote.</span><span data-pt>A sua primeira chamada. Transforma “precisamos de um site” num plano claro e num orçamento justo.</span></p>
-      </article>
-    </div>
+    <span class="tag rv"><span data-en>What we do</span><span data-pt>O que fazemos</span><span data-da>Det gør vi</span></span>
+    <div class="hd"><h2 class="rv d1"><span data-en>Three things.<br>Done <span class=acc>properly.</span></span><span data-pt>Três coisas.<br>Bem <span class=acc>feitas.</span></span><span data-da>Tre ting.<br>Gjort <span class=acc>ordentligt.</span></span></h2>
+    <p class="rv d2"><span data-en>Most businesses lose customers in three places: they can’t be found, their website doesn’t convince, and nobody answers in time. We fix all three.</span><span data-pt>A maioria das empresas perde clientes em três sítios: não são encontradas, o site não convence e ninguém responde a tempo. Resolvemos os três.</span><span data-da>De fleste virksomheder mister kunder tre steder: de bliver ikke fundet, hjemmesiden overbeviser ikke, og ingen svarer i tide. Vi løser alle tre.</span></p></div>
+    <div class="core3"><a class="c3 rv d0" href="services.html#ads"><span class="n">01</span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a2 2 0 002 2h2l5 4V5L7 9H5a2 2 0 00-2 2z"/><path d="M16 8a5 5 0 010 8M19 5a9 9 0 010 14"/></svg></div><h3><span data-en>Get found</span><span data-pt>Ser encontrado</span><span data-da>Bliv fundet</span></h3><p class="prob"><span data-en>Problem: nobody knows you exist.</span><span data-pt>Problema: ninguém sabe que existe.</span><span data-da>Problem: ingen ved, at du findes.</span></p><p><span data-en>Meta, Google and TikTok ads, SEO and AI-generated creatives that bring the right people to you.</span><span data-pt>Anúncios Meta, Google e TikTok, SEO e criativos gerados por AI que trazem as pessoas certas.</span><span data-da>Meta-, Google- og TikTok-annoncer, SEO og AI-genererede kreativer, der bringer de rigtige mennesker til dig.</span></p><ul><li><span data-en>Meta · Google · TikTok Ads</span><span data-pt>Meta · Google · TikTok Ads</span><span data-da>Meta · Google · TikTok Ads</span></li><li><span data-en>SEO & Google Business</span><span data-pt>SEO e Google Business</span><span data-da>SEO & Google Business</span></li><li><span data-en>AI images & video</span><span data-pt>Imagens e vídeo com AI</span><span data-da>AI-billeder & video</span></li></ul><span class="go"><span data-en>Learn more</span><span data-pt>Saber mais</span><span data-da>Læs mere</span> →</span></a><a class="c3 rv d1" href="services.html#web"><span class="n">02</span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18M8 21h8"/></svg></div><h3><span data-en>Convince</span><span data-pt>Convencer</span><span data-da>Overbevis</span></h3><p class="prob"><span data-en>Problem: visitors leave without booking.</span><span data-pt>Problema: as visitas saem sem reservar.</span><span data-da>Problem: besøgende går uden at booke.</span></p><p><span data-en>Fast, beautiful websites and cinematic AI experiences that make your business look as good as it is.</span><span data-pt>Sites rápidos e bonitos e experiências cinematográficas com AI que mostram o negócio tão bom como é.</span><span data-da>Hurtige, smukke hjemmesider og filmiske AI-oplevelser, der får din virksomhed til at se lige så god ud, som den er.</span></p><ul><li><span data-en>Custom websites & stores</span><span data-pt>Sites e lojas à medida</span><span data-da>Skræddersyede hjemmesider & webshops</span></li><li><span data-en>Cinematic AI websites</span><span data-pt>Sites cinematográficos com AI</span><span data-da>Filmiske AI-hjemmesider</span></li><li><span data-en>EN · PT · DA</span><span data-pt>EN · PT · DA</span><span data-da>EN · PT · DA</span></li></ul><span class="go"><span data-en>Learn more</span><span data-pt>Saber mais</span><span data-da>Læs mere</span> →</span></a><a class="c3 rv d2" href="ai.html"><span class="n">03</span><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="12" rx="3"/><path d="M12 3v4M9 12h.01M15 12h.01M9 16h6"/></svg></div><h3><span data-en>Never miss a customer</span><span data-pt>Nunca perder um cliente</span><span data-da>Gå aldrig glip af en kunde</span></h3><p class="prob"><span data-en>Problem: messages and calls go unanswered.</span><span data-pt>Problema: mensagens e chamadas ficam sem resposta.</span><span data-da>Problem: beskeder og opkald bliver ikke besvaret.</span></p><p><span data-en>An AI receptionist that answers in seconds, books and follows up — plus reviews and loyalty that bring customers back.</span><span data-pt>Uma rececionista AI que responde em segundos, marca e faz follow-up — mais avaliações e fidelização que trazem clientes de volta.</span><span data-da>En AI-receptionist, der svarer på sekunder, booker og følger op — plus anmeldelser og loyalitet, der bringer kunderne tilbage.</span></p><ul><li><span data-en>AI receptionist 24/7</span><span data-pt>Rececionista AI 24/7</span><span data-da>AI-receptionist 24/7</span></li><li><span data-en>Bookings & CRM</span><span data-pt>Reservas e CRM</span><span data-da>Booking & CRM</span></li><li><span data-en>Reviews & loyalty</span><span data-pt>Avaliações e fidelização</span><span data-da>Anmeldelser & loyalitet</span></li></ul><span class="go"><span data-en>Learn more</span><span data-pt>Saber mais</span><span data-da>Læs mere</span> →</span></a></div>
+    <p class="plus rv"><span data-en>Plus reviews, loyalty, email &amp; SMS, branding, photo and video —</span><span data-pt>Mais avaliações, fidelização, email e SMS, branding, foto e vídeo —</span><span data-da>Plus anmeldelser, loyalitet, e-mail &amp; SMS, branding, foto og video —</span> <a href="services.html"><span data-en>see all services</span><span data-pt>ver todos os serviços</span><span data-da>se alle ydelser</span> →</a></p>
   </div>
 </section>
 
-<!-- WORK -->
-<section class="work" id="work">
+<section class="sec2 aisec">
+  <div class="wrap aigrid">
+    <div>
+      <span class="tag rv"><span data-en>AI that works while you sleep</span><span data-pt>AI que trabalha enquanto dorme</span><span data-da>AI, der arbejder, mens du sover</span></span>
+      <h2 class="rv d1" style="margin-top:22px"><span data-en>Never miss a <span class=acc>customer</span> again.</span><span data-pt>Nunca mais perca um <span class=acc>cliente.</span></span><span data-da>Mist aldrig en <span class=acc>kunde</span> igen.</span></h2>
+      <p class="rv d2 big"><span data-en>Your AI receptionist answers every message in seconds — in English, Portuguese or Danish — books the table, the appointment or the visit, and tells your team.</span><span data-pt>A sua rececionista AI responde a cada mensagem em segundos — em inglês, português ou dinamarquês — marca a mesa, a consulta ou a visita, e avisa a equipa.</span><span data-da>Din AI-receptionist svarer på hver besked på få sekunder — på engelsk, portugisisk eller dansk — booker bordet, aftalen eller besøget og giver dit team besked.</span></p>
+      <ul class="ailist rv d2"><li><div class="ic sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8M8 13h5"/></svg></div><div><b><span data-en>AI receptionist</span><span data-pt>Rececionista AI</span><span data-da>AI-receptionist</span></b><span><span data-en>Answers WhatsApp, Instagram and website chat 24/7 with your prices, hours and services — qualifies, books and hands over to your team.</span><span data-pt>Responde no WhatsApp, Instagram e chat do site 24/7 com os seus preços, horários e serviços — qualifica, marca e passa à equipa.</span><span data-da>Svarer på WhatsApp, Instagram og chatten på din hjemmeside 24/7 med dine priser, åbningstider og ydelser — kvalificerer, booker og overdrager til dit team.</span></span></div></li><li><div class="ic sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></div><div><b><span data-en>AI phone answering</span><span data-pt>Atendimento telefónico com AI</span><span data-da>AI-telefonsvarer</span></b><span><span data-en>A natural-sounding voice agent that picks up when you can’t, takes bookings and sends you a summary.</span><span data-pt>Um agente de voz natural que atende quando não pode, faz reservas e envia-lhe um resumo.</span><span data-da>En naturligt klingende stemmeagent, der tager telefonen, når du ikke kan, tager imod bookinger og sender dig et resumé.</span></span></div></li><li><div class="ic sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4"/></svg></div><div><b><span data-en>Cinematic AI websites</span><span data-pt>Sites cinematográficos com AI</span><span data-da>Filmiske AI-hjemmesider</span></b><span><span data-en>Scroll-driven story sites built with AI-generated imagery and video: a house that builds itself as you scroll, rooms you restyle with a click.</span><span data-pt>Sites com scroll cinematográfico feitos com imagens e vídeo gerados por AI: uma casa que se constrói enquanto faz scroll, divisões que muda com um clique.</span><span data-da>Scroll-drevne hjemmesider bygget med AI-genererede billeder og video: et hus, der bygger sig selv, mens du scroller, og rum, du kan restyle med et klik.</span></span></div></li><li><div class="ic sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/></svg></div><div><b><span data-en>AI images & video</span><span data-pt>Imagens e vídeo com AI</span><span data-da>AI-billeder & video</span></b><span><span data-en>Product shots, lifestyle scenes, ad creatives and short videos generated with AI — studio quality, at a fraction of the cost.</span><span data-pt>Fotos de produto, cenas lifestyle, criativos de anúncios e vídeos curtos gerados com AI — qualidade de estúdio, por uma fração do custo.</span><span data-da>Produktbilleder, lifestylescener, annoncekreativer og korte videoer genereret med AI — i studiekvalitet til en brøkdel af prisen.</span></span></div></li></ul>
+      <a class="btn p rv" href="ai.html"><span data-en>Explore our AI services</span><span data-pt>Explorar os serviços AI</span><span data-da>Udforsk vores AI-ydelser</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+    </div>
+    <div class="phone2 rv" id="chat">
+  <div class="ph-top"><span class="av">V.</span><div><b><span data-en>AI receptionist</span><span data-pt>Rececionista AI</span><span data-da>AI-receptionist</span></b><small><i></i><span data-en>online · replies instantly</span><span data-pt>online · responde de imediato</span><span data-da>online · svarer med det samme</span></small></div></div>
+  <div class="ph-body"><div class="msg u"><span data-en>Hi! Do you have a table for 4 this Friday at 8pm?</span><span data-pt>Olá! Têm mesa para 4 esta sexta às 20h?</span><span data-da>Hej! Har I et bord til 4 på fredag kl. 20?</span></div><div class="msg a"><span data-en>Hi Sofia! Yes — Friday at 20:00 for 4, I have a terrace table free. Shall I book it?</span><span data-pt>Olá Sofia! Sim — sexta às 20:00 para 4, tenho uma mesa livre na esplanada. Quer que reserve?</span><span data-da>Hej Sofia! Ja — fredag kl. 20:00 til 4, jeg har et ledigt bord på terrassen. Skal jeg booke det?</span></div><div class="msg u"><span data-en>Yes please. It’s my husband’s birthday.</span><span data-pt>Sim, por favor. É o aniversário do meu marido.</span><span data-da>Ja tak. Det er min mands fødselsdag.</span></div><div class="msg a"><span data-en>Booked! I’ve told the team about the birthday. You’ll get a confirmation now and a reminder on Friday morning.</span><span data-pt>Reservado! Já avisei a equipa do aniversário. Vai receber a confirmação agora e um lembrete na sexta de manhã.</span><span data-da>Booket! Jeg har fortalt teamet om fødselsdagen. Du får en bekræftelse nu og en påmindelse fredag morgen.</span></div><div class="msg s"><span data-en>New booking · Fri 20:00 · 4 people · Terrace · Birthday</span><span data-pt>Nova reserva · Sex 20:00 · 4 pessoas · Esplanada · Aniversário</span><span data-da>Ny booking · Fre 20:00 · 4 personer · Terrasse · Fødselsdag</span></div><div class="typing"><i></i><i></i><i></i></div></div>
+  <div class="ph-cap"><span data-en>Example conversation</span><span data-pt>Exemplo de conversa</span><span data-da>Eksempel på samtale</span></div>
+</div>
+  </div>
+</section>
+
+<section class="crm" id="crm"></section>
+
+<section class="sec2">
   <div class="wrap">
-    <div class="head">
-      <div>
-        <span class="tag rv"><span data-en>Selected work</span><span data-pt>Trabalhos selecionados</span></span>
-        <h2 class="rv d1" style="margin-top:22px"><span data-en>Proof, not <span class="acc">promises.</span></span><span data-pt>Provas, não <span class="acc">promessas.</span></span></h2>
-      </div>
-      <p class="rv d2"><span data-en>Real websites we have designed and built. Open them, click around, try them on your phone.</span><span data-pt>Sites reais que desenhámos e construímos. Abra-os, explore, experimente no telemóvel.</span></p>
+    <div class="head2"><div><span class="tag rv"><span data-en>Selected work</span><span data-pt>Trabalhos selecionados</span><span data-da>Udvalgte projekter</span></span>
+      <h2 class="rv d1" style="margin-top:22px"><span data-en>Proof, not <span class=acc>promises.</span></span><span data-pt>Provas, não <span class=acc>promessas.</span></span><span data-da>Beviser, ikke <span class=acc>løfter.</span></span></h2></div>
+      <a class="btn g rv" href="work.html"><span data-en>See all projects</span><span data-pt>Ver todos os projetos</span><span data-da>Se alle projekter</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a></div>
+    <div class="projects"><article class="pj rv">
+    <div class="stage">
+      <div class="browser"><div class="top"><i></i><i></i><i></i><span class="url">mercator.pt</span></div><img src="img/work/mercator.jpg" alt="Mercator website" loading="lazy"></div>
+      <div class="phone"><img src="img/work/mercator-m.jpg" alt="" loading="lazy"></div>
     </div>
-    <div class="projects" id="projects"></div>
+    <div class="info">
+      <span class="n">02 / 07</span>
+      <h3>Mercator</h3>
+      <span class="sub"><span data-en>Real estate · Portugal</span><span data-pt>Imobiliária · Portugal</span><span data-da>Ejendomsmægler · Portugal</span></span><span class="kind"><span data-en>Redesign</span><span data-pt>Redesign</span><span data-da>Redesign</span></span>
+      <p class="d"><span data-en>A real-estate site in six languages with the agency's real listings, search by region and reference, and a WhatsApp line to the team.</span><span data-pt>Site imobiliário em seis línguas com os imóveis reais da agência, pesquisa por região e referência, e linha direta por WhatsApp.</span><span data-da>En ejendomsmæglerside på seks sprog med mæglerens rigtige boliger, søgning efter region og reference og en direkte WhatsApp-linje til teamet.</span></p>
+      <div class="chips"><span><span data-en>6 languages</span><span data-pt>6 línguas</span><span data-da>6 sprog</span></span><span><span data-en>Live listings</span><span data-pt>Imóveis reais</span><span data-da>Rigtige boliger</span></span><span><span data-en>Search</span><span data-pt>Pesquisa</span><span data-da>Søgning</span></span><span><span data-en>WhatsApp</span><span data-pt>WhatsApp</span><span data-da>WhatsApp</span></span></div>
+      <a class="go" href="https://trovor8.github.io/mercator-preview/" target="_blank" rel="noopener"><span data-en>Visit the site</span><span data-pt>Visitar o site</span><span data-da>Besøg hjemmesiden</span> ↗</a>
+    </div>
+  </article><article class="pj rv">
+    <div class="stage">
+      <div class="browser"><div class="top"><i></i><i></i><i></i><span class="url">velochique</span></div><img src="img/work/velochique.jpg" alt="Velochique website" loading="lazy"></div>
+      <div class="phone"><img src="img/work/velochique-m.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="info">
+      <span class="n">04 / 07</span>
+      <h3>Velochique</h3>
+      <span class="sub"><span data-en>Bike rental, café & workshop · Portimão</span><span data-pt>Aluguer de bikes, café e oficina · Portimão</span><span data-da>Cykeludlejning, café & værksted · Portimão</span></span><span class="kind"><span data-en>New website</span><span data-pt>Site novo</span><span data-da>Ny hjemmeside</span></span>
+      <p class="d"><span data-en>A playful, interactive site for a bike-rental café: a 3D bike showroom, prices, the real menu and booking.</span><span data-pt>Um site divertido e interativo para um café com aluguer de bicicletas: showroom 3D, preços, a ementa real e reservas.</span><span data-da>En legende, interaktiv hjemmeside til en café med cykeludlejning: et 3D-showroom med cykler, priser, det rigtige menukort og booking.</span></p>
+      <div class="chips"><span><span data-en>3D showroom</span><span data-pt>Showroom 3D</span><span data-da>3D-showroom</span></span><span><span data-en>EN · PT</span><span data-pt>EN · PT</span><span data-da>EN · PT</span></span><span><span data-en>Booking</span><span data-pt>Reservas</span><span data-da>Booking</span></span><span><span data-en>Menu</span><span data-pt>Ementa</span><span data-da>Menu</span></span></div>
+      <a class="go" href="https://trovor8.github.io/velochique/" target="_blank" rel="noopener"><span data-en>Visit the site</span><span data-pt>Visitar o site</span><span data-da>Besøg hjemmesiden</span> ↗</a>
+    </div>
+  </article><article class="pj rv">
+    <div class="stage">
+      <div class="browser"><div class="top"><i></i><i></i><i></i><span class="url">luxeeventsportugal.com</span></div><img src="img/work/luxe-events.jpg" alt="Luxe Events Portugal website" loading="lazy"></div>
+      <div class="phone"><img src="img/work/luxe-events-m.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="info">
+      <span class="n">05 / 07</span>
+      <h3>Luxe Events Portugal</h3>
+      <span class="sub"><span data-en>Weddings & events · Algarve & Lisbon</span><span data-pt>Casamentos e eventos · Algarve e Lisboa</span><span data-da>Bryllupper & events · Algarve & Lissabon</span></span><span class="kind"><span data-en>Redesign</span><span data-pt>Redesign</span><span data-da>Redesign</span></span>
+      <p class="d"><span data-en>From a generic template to an editorial luxury site for a wedding and event styling company, with enquiries via email and WhatsApp.</span><span data-pt>De um template genérico a um site editorial de luxo para uma empresa de casamentos e eventos, com pedidos por email e WhatsApp.</span><span data-da>Fra en standardskabelon til en redaktionel luksusside for et firma inden for bryllups- og eventstyling, med henvendelser via e-mail og WhatsApp.</span></p>
+      <div class="chips"><span><span data-en>EN · PT</span><span data-pt>EN · PT</span><span data-da>EN · PT</span></span><span><span data-en>Editorial design</span><span data-pt>Design editorial</span><span data-da>Redaktionelt design</span></span><span><span data-en>Enquiries</span><span data-pt>Pedidos</span><span data-da>Henvendelser</span></span></div>
+      <a class="go" href="https://trovor8.github.io/luxe-events/" target="_blank" rel="noopener"><span data-en>Visit the site</span><span data-pt>Visitar o site</span><span data-da>Besøg hjemmesiden</span> ↗</a>
+    </div>
+  </article></div>
   </div>
 </section>
 
-<!-- BEFORE / AFTER -->
-<section class="ba">
+<section class="sec2 dark2">
   <div class="wrap">
-    <div class="head">
-      <div>
-        <span class="tag rv"><span data-en>Before &amp; after</span><span data-pt>Antes e depois</span></span>
-        <h2 class="rv d1" style="margin-top:22px"><span data-en>Drag to see<br>the <span class="acc">difference.</span></span><span data-pt>Arraste para ver<br>a <span class="acc">diferença.</span></span></h2>
-      </div>
-      <p class="rv d2"><span data-en>Same business, same photos, same content. A redesign that makes the company look as good as its work.</span><span data-pt>A mesma empresa, as mesmas fotos, o mesmo conteúdo. Um redesign que faz a empresa parecer tão boa como o seu trabalho.</span></p>
-    </div>
-    <div class="ba-tabs rv" id="baTabs"></div>
-    <div class="cmp rv" id="cmp">
-      <img class="before" id="baB" src="img/work/old-mercator.jpg" alt="Before">
-      <img class="after" id="baA" src="img/work/mercator.jpg" alt="After">
-      <div class="handle"></div>
-      <span class="lb l"><span data-en>Before</span><span data-pt>Antes</span></span>
-      <span class="lb r"><span data-en>After · Vero</span><span data-pt>Depois · Vero</span></span>
-    </div>
+    <span class="tag rv"><span data-en>How it works</span><span data-pt>Como funciona</span><span data-da>Sådan fungerer det</span></span>
+    <div class="hd"><h2 class="rv d1"><span data-en>Simple for you.<br><span class=acc>Serious</span> behind the scenes.</span><span data-pt>Simples para si.<br><span class=acc>Sério</span> nos bastidores.</span><span data-da>Enkelt for dig.<br><span class=acc>Seriøst</span> bag kulisserne.</span></h2>
+    <p class="rv d2"><span data-en>One call, one clear plan, one team. You see results — we handle the tech.</span><span data-pt>Uma chamada, um plano claro, uma equipa. Vê resultados — nós tratamos da tecnologia.</span><span data-da>Ét opkald, én klar plan, ét team. Du ser resultater — vi klarer teknikken.</span></p></div>
+    <div class="how3"><div class="rv d0"><b>01</b><h4><span data-en>Free 20-minute call</span><span data-pt>Chamada grátis de 20 minutos</span><span data-da>Gratis opkald på 20 minutter</span></h4><p><span data-en>Tell us about your business. We find where you’re losing customers.</span><span data-pt>Fale-nos do negócio. Descobrimos onde está a perder clientes.</span><span data-da>Fortæl os om din virksomhed. Vi finder ud af, hvor du mister kunder.</span></p></div><div class="rv d1"><b>02</b><h4><span data-en>Fixed plan & price</span><span data-pt>Plano e preço fechados</span><span data-da>Fast plan & pris</span></h4><p><span data-en>A clear proposal: what we build, what it costs, when it’s live.</span><span data-pt>Uma proposta clara: o que fazemos, quanto custa, quando fica pronto.</span><span data-da>Et klart forslag: hvad vi bygger, hvad det koster, hvornår det er live.</span></p></div><div class="rv d2"><b>03</b><h4><span data-en>Live in weeks</span><span data-pt>Online em semanas</span><span data-da>Live på få uger</span></h4><p><span data-en>We build, launch and keep improving every month.</span><span data-pt>Construímos, lançamos e continuamos a melhorar todos os meses.</span><span data-da>Vi bygger, lancerer og forbedrer løbende hver måned.</span></p></div></div>
   </div>
 </section>
 
-<!-- SERVICES -->
-<section class="svc" id="services">
+<section class="sec2 paper">
   <div class="wrap">
-    <span class="tag rv"><span data-en>What you get</span><span data-pt>O que recebe</span></span>
-    <h2 class="rv d1" style="margin-top:22px;max-width:14ch"><span data-en>Everything a website <span class="acc">should</span> do.</span><span data-pt>Tudo o que um site <span class="acc">deve</span> fazer.</span></h2>
-    <div class="grid">
-      <div class="c rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18M8 21h8"/></svg></div>
-        <h3><span data-en>Custom design &amp; build</span><span data-pt>Design e código à medida</span></h3>
-        <p><span data-en>Designed around your business, your photos and your clients. No themes, no page builders.</span><span data-pt>Pensado para o seu negócio, as suas fotos e os seus clientes. Sem temas, sem construtores de páginas.</span></p>
-        <span class="proof"><span data-en>See</span><span data-pt>Ver</span> <b>Bespoke Architects</b></span></div>
-      <div class="c rv d1"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div>
-        <h3><span data-en>Multilingual</span><span data-pt>Multilingue</span></h3>
-        <p><span data-en>Speak to tourists, expats and buyers in their own language — from two languages to six.</span><span data-pt>Fale com turistas, estrangeiros e compradores na língua deles — de duas a seis línguas.</span></p>
-        <span class="proof"><span data-en>See</span><span data-pt>Ver</span> <b>Mercator · 6 <span data-en>languages</span><span data-pt>línguas</span></b></span></div>
-      <div class="c rv d2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg></div>
-        <h3><span data-en>Mobile-first</span><span data-pt>Pensado para telemóvel</span></h3>
-        <p><span data-en>Most of your visitors are on a phone. Every site is designed and tested on mobile first.</span><span data-pt>A maioria dos seus visitantes está no telemóvel. Cada site é desenhado e testado primeiro no telemóvel.</span></p>
-        <span class="proof"><span data-en>See</span><span data-pt>Ver</span> <b>Manoloy</b></span></div>
-      <div class="c rv"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
-        <h3><span data-en>Bookings &amp; enquiries</span><span data-pt>Reservas e pedidos</span></h3>
-        <p><span data-en>Table bookings, rentals, quote requests, WhatsApp and email — so visitors become customers.</span><span data-pt>Reservas de mesa, alugueres, pedidos de orçamento, WhatsApp e email — para que visitantes se tornem clientes.</span></p>
-        <span class="proof"><span data-en>See</span><span data-pt>Ver</span> <b>O Barradas · Velochique</b></span></div>
-      <div class="c rv d1"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/></svg></div>
-        <h3><span data-en>Tools &amp; calculators</span><span data-pt>Ferramentas e calculadoras</span></h3>
-        <p><span data-en>Interactive features that give people a reason to stay — and to come back.</span><span data-pt>Funcionalidades interativas que dão às pessoas uma razão para ficar — e voltar.</span></p>
-        <span class="proof"><span data-en>See</span><span data-pt>Ver</span> <b>JD Strength Coach</b></span></div>
-      <div class="c rv d2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div>
-        <h3><span data-en>Fast &amp; findable</span><span data-pt>Rápido e encontrável</span></h3>
-        <p><span data-en>Lightweight code, sharp photos, clean structure and the basics of SEO done properly.</span><span data-pt>Código leve, fotos nítidas, estrutura limpa e o essencial de SEO bem feito.</span></p>
-        <span class="proof"><span data-en>Every site</span><span data-pt>Todos os sites</span></span></div>
-    </div>
-    <div class="stats">
-      <div class="rv"><b id="stSites">7</b><span data-en>Websites in our portfolio</span><span data-pt>Sites no nosso portfólio</span></div>
-      <div class="rv d1"><b>6</b><span data-en>Languages on a single site</span><span data-pt>Línguas num só site</span></div>
-      <div class="rv d2"><b>5</b><span data-en>Industries: food, real estate, architecture, events, fitness</span><span data-pt>Setores: restauração, imobiliário, arquitetura, eventos, fitness</span></div>
-      <div class="rv d3"><b>3</b><span data-en>Owners — and you talk to all of them</span><span data-pt>Donos — e fala com todos eles</span></div>
-    </div>
+    <span class="tag rv"><span data-en>Where we work</span><span data-pt>Onde trabalhamos</span><span data-da>Hvor vi arbejder</span></span>
+    <div class="hd"><h2 class="rv d1"><span data-en>Three countries.<br>One <span class=acc>team.</span></span><span data-pt>Três países.<br>Uma <span class=acc>equipa.</span></span><span data-da>Tre lande.<br>Ét <span class=acc>team.</span></span></h2>
+    <p class="rv d2"><span data-en>We work with businesses in the United Kingdom, Portugal and Denmark — in their own language, with one team behind every project.</span><span data-pt>Trabalhamos com empresas no Reino Unido, em Portugal e na Dinamarca — na língua delas, com uma só equipa por trás de cada projeto.</span><span data-da>Vi arbejder med virksomheder i Storbritannien, Portugal og Danmark — på deres eget sprog og med ét team bag hvert projekt.</span></p></div>
+    <div class="ctry"><div class="rv d0"><span class="code">UK</span><h3><span data-en>United Kingdom</span><span data-pt>Reino Unido</span><span data-da>Storbritannien</span></h3><p><span data-en>London and across the UK</span><span data-pt>Londres e todo o Reino Unido</span><span data-da>London og hele Storbritannien</span></p><small><span data-en>English</span><span data-pt>Inglês</span><span data-da>Engelsk</span></small></div><div class="rv d1"><span class="code">PT</span><h3><span data-en>Portugal</span><span data-pt>Portugal</span><span data-da>Portugal</span></h3><p><span data-en>Lisbon, Porto and the Algarve</span><span data-pt>Lisboa, Porto e Algarve</span><span data-da>Lissabon, Porto og Algarve</span></p><small><span data-en>Portuguese & English</span><span data-pt>Português e inglês</span><span data-da>Portugisisk & engelsk</span></small></div><div class="rv d2"><span class="code">DK</span><h3><span data-en>Denmark</span><span data-pt>Dinamarca</span><span data-da>Danmark</span></h3><p><span data-en>Copenhagen and across Denmark</span><span data-pt>Copenhaga e toda a Dinamarca</span><span data-da>København og hele Danmark</span></p><small><span data-en>Danish & English</span><span data-pt>Dinamarquês e inglês</span><span data-da>Dansk & engelsk</span></small></div></div>
   </div>
 </section>
 
-<!-- PROCESS -->
-<section class="process" id="process">
-  <div class="wrap">
-    <span class="tag rv"><span data-en>How it works</span><span data-pt>Como funciona</span></span>
-    <h2 class="rv d1" style="margin-top:22px"><span data-en>From call to <span class="acc">live.</span></span><span data-pt>Da chamada ao <span class="acc">site online.</span></span></h2>
-    <div class="steps">
-      <div class="step rv"><h3><span data-en>A short call</span><span data-pt>Uma chamada curta</span></h3><p><span data-en>Tell us about your business, your clients and what your current site is missing.</span><span data-pt>Fale-nos do seu negócio, dos seus clientes e do que falta ao seu site atual.</span></p></div>
-      <div class="step rv d1"><h3><span data-en>See your site</span><span data-pt>Veja o seu site</span></h3><p><span data-en>We design a first version with your real content and photos, so you can judge the real thing.</span><span data-pt>Desenhamos uma primeira versão com o seu conteúdo e as suas fotos reais, para avaliar o resultado verdadeiro.</span></p></div>
-      <div class="step rv d2"><h3><span data-en>Refine</span><span data-pt>Afinar</span></h3><p><span data-en>Your feedback, our changes — text, photos, colours, sections — until it feels right.</span><span data-pt>O seu feedback, as nossas alterações — textos, fotos, cores, secções — até estar certo.</span></p></div>
-      <div class="step rv d3"><h3><span data-en>Go live</span><span data-pt>Lançamento</span></h3><p><span data-en>Domain, launch and handover. We stay around for updates when your business changes.</span><span data-pt>Domínio, lançamento e entrega. Continuamos por perto para atualizações quando o seu negócio muda.</span></p></div>
-    </div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="faq" id="faq">
-  <div class="wrap grid">
-    <div><span class="tag rv">FAQ</span><h2 class="rv d1" style="margin-top:22px;font-size:clamp(40px,5vw,76px)"><span data-en>Good<br>questions.</span><span data-pt>Boas<br>perguntas.</span></h2></div>
-    <div class="rv">
-      <details open><summary><span data-en>How much does a website cost?</span><span data-pt>Quanto custa um site?</span></summary><p><span data-en>It depends on the number of pages, languages and features (bookings, calculators, property listings…). After a short call we send you a fixed, clear quote — no surprises.</span><span data-pt>Depende do número de páginas, línguas e funcionalidades (reservas, calculadoras, listagens de imóveis…). Depois de uma chamada curta enviamos um orçamento fechado e claro — sem surpresas.</span></p></details>
-      <details><summary><span data-en>Can I see something before I commit?</span><span data-pt>Posso ver algo antes de me comprometer?</span></summary><p><span data-en>Yes. We like to show you a first version built with your real content, so you are deciding on a real website, not a mood board.</span><span data-pt>Sim. Gostamos de lhe mostrar uma primeira versão feita com o seu conteúdo real, para decidir sobre um site verdadeiro e não sobre um mood board.</span></p></details>
-      <details><summary><span data-en>Do you do sites in several languages?</span><span data-pt>Fazem sites em várias línguas?</span></summary><p><span data-en>All the time. Most of our sites are bilingual, and our largest one runs in six languages.</span><span data-pt>Sempre. A maioria dos nossos sites é bilingue, e o maior funciona em seis línguas.</span></p></details>
-      <details><summary><span data-en>I already have a website. Can you redesign it?</span><span data-pt>Já tenho um site. Podem refazê-lo?</span></summary><p><span data-en>Yes — scroll up to the before &amp; after. We keep what works (your content, photos, domain) and rebuild everything else.</span><span data-pt>Sim — veja o antes e depois acima. Mantemos o que funciona (conteúdo, fotos, domínio) e reconstruímos o resto.</span></p></details>
-      <details><summary><span data-en>Is Tyler really that short?</span><span data-pt>O Tyler é mesmo assim tão baixo?</span></summary><p><span data-en>We do not discuss Tyler's height. We do discuss your website.</span><span data-pt>Não comentamos a altura do Tyler. Comentamos o seu site.</span></p></details>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="cta" id="contact">
-  <div class="wrap">
-    <h2 class="rv"><span data-en>Let's build yours.</span><span data-pt>Vamos fazer o seu.</span></h2>
-    <div class="grid">
-      <div class="rv">
-        <p class="lead"><span data-en>Tell us a little about your business. We reply with ideas, a plan and a clear quote.</span><span data-pt>Conte-nos um pouco sobre o seu negócio. Respondemos com ideias, um plano e um orçamento claro.</span></p>
-        <ul>
-          <li><span data-en>Custom design — no templates</span><span data-pt>Design à medida — sem templates</span></li>
-          <li><span data-en>Built for phones first</span><span data-pt>Feito primeiro para telemóvel</span></li>
-          <li><span data-en>As many languages as you need</span><span data-pt>Quantas línguas precisar</span></li>
-          <li><span data-en>Talk directly to the owners</span><span data-pt>Fale diretamente com os donos</span></li>
-        </ul>
-      </div>
-      <form id="form" class="rv d1" novalidate>
-        <div class="types">
-          <label><input type="radio" name="t" value="New website" checked><span data-en>New website</span><span data-pt>Site novo</span></label>
-          <label><input type="radio" name="t" value="Redesign"><span>Redesign</span></label>
-          <label><input type="radio" name="t" value="Online shop"><span data-en>Online shop</span><span data-pt>Loja online</span></label>
-          <label><input type="radio" name="t" value="Other"><span data-en>Other</span><span data-pt>Outro</span></label>
-        </div>
-        <div class="f"><label for="fn"><span data-en>Name</span><span data-pt>Nome</span></label><input id="fn" autocomplete="name"></div>
-        <div class="f"><label for="fb"><span data-en>Business</span><span data-pt>Empresa</span></label><input id="fb" autocomplete="organization"></div>
-        <div class="f"><label for="fe">Email</label><input id="fe" type="email" autocomplete="email"></div>
-        <div class="f"><label for="fw"><span data-en>Current website (optional)</span><span data-pt>Site atual (opcional)</span></label><input id="fw" placeholder="www."></div>
-        <div class="f full"><label for="fm"><span data-en>What do you need?</span><span data-pt>Do que precisa?</span></label><textarea id="fm"></textarea></div>
-        <p class="fmsg" id="fmsg"></p>
-        <button class="btn p" type="submit"><span data-en>Send request</span><span data-pt>Enviar pedido</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
-      </form>
-    </div>
-  </div>
-</section>
 </main>
 
-<footer>
+<section class="ft-cta">
   <div class="wrap">
-    <div class="top">
-      <img class="logo" src="img/vero-digital-logo-horizontal-branco.svg" alt="Vero Digital">
-      <div class="links">
-        <a href="#work"><span data-en>Work</span><span data-pt>Trabalhos</span></a>
-        <a href="#services"><span data-en>Services</span><span data-pt>Serviços</span></a>
-        <a href="#founders"><span data-en>Founders</span><span data-pt>Fundadores</span></a>
-        <a href="#contact"><span data-en>Contact</span><span data-pt>Contacto</span></a>
+    <div class="ft-card rv">
+      <div class="ft-card-l">
+        <span class="tag"><span data-en>Ready when you are</span><span data-pt>Prontos quando quiser</span><span data-da>Klar, når du er</span></span>
+        <h2><span data-en>Let’s fix what’s costing you <span class=acc>customers.</span></span><span data-pt>Vamos resolver o que lhe custa <span class=acc>clientes.</span></span><span data-da>Lad os løse det, der koster dig <span class=acc>kunder.</span></span></h2>
+        <ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-en>Free 20-minute call</span><span data-pt>Chamada grátis de 20 minutos</span><span data-da>Gratis opkald på 20 minutter</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-en>Fixed price, no surprises</span><span data-pt>Preço fechado, sem surpresas</span><span data-da>Fast pris, ingen overraskelser</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-en>Reply within 24 hours</span><span data-pt>Resposta em 24 horas</span><span data-da>Svar inden for 24 timer</span></li></ul>
+      </div>
+      <div class="ft-card-r">
+        <a class="btn p xl" href="contact.html"><span data-en>Book a free call</span><span data-pt>Marcar chamada grátis</span><span data-da>Book et gratis opkald</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+        <a class="ft-mail js-mail" href="mailto:hello@verosolutions.com">hello@verosolutions.com</a>
       </div>
     </div>
-    <div class="big" aria-hidden="true">vero digital</div>
-    <div class="bot"><span>© <span id="yr">2026</span> Vero Digital</span><span data-en>Designed &amp; built in-house. Obviously.</span><span data-pt>Desenhado e construído por nós. Obviamente.</span></div>
+  </div>
+</section>
+<footer class="ft">
+  <div class="wrap">
+    <div class="ft-grid">
+      <div class="ft-brand">
+        <a href="index.html" aria-label="Vero Solutions"><img class="logo" src="img/vero-solutions-logo-horizontal-branco.svg" alt="Vero Solutions"></a>
+        <p><span data-en>Websites, advertising and AI that bring in customers — and keep them.</span><span data-pt>Sites, publicidade e AI que trazem clientes — e os mantêm.</span><span data-da>Hjemmesider, annoncering og AI, der skaffer kunder — og fastholder dem.</span></p>
+        <span class="ft-live"><i></i><span data-en>Booking new projects</span><span data-pt>A aceitar novos projetos</span><span data-da>Tager imod nye projekter</span></span>
+      </div>
+      <div class="ft-col"><h5><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></h5><a href="services.html#ads"><span data-en>Advertising</span><span data-pt>Publicidade</span><span data-da>Annoncering</span></a><a href="services.html#web"><span data-en>Websites & stores</span><span data-pt>Sites e lojas</span><span data-da>Hjemmesider & webshops</span></a><a href="ai.html"><span data-en>AI receptionist</span><span data-pt>Rececionista AI</span><span data-da>AI-receptionist</span></a><a href="services.html"><span data-en>Reviews & loyalty</span><span data-pt>Avaliações e fidelização</span><span data-da>Anmeldelser & loyalitet</span></a><a href="services.html"><span data-en>Brand, photo & video</span><span data-pt>Marca, foto e vídeo</span><span data-da>Brand, foto & video</span></a></div>
+      <div class="ft-col"><h5><span data-en>Company</span><span data-pt>Empresa</span><span data-da>Virksomhed</span></h5><a href="work.html"><span data-en>Work</span><span data-pt>Trabalhos</span><span data-da>Arbejde</span></a><a href="industries.html"><span data-en>Industries</span><span data-pt>Setores</span><span data-da>Brancher</span></a><a href="process.html"><span data-en>Process</span><span data-pt>Processo</span><span data-da>Proces</span></a><a href="faq.html"><span data-en>FAQ</span><span data-pt>FAQ</span><span data-da>FAQ</span></a><a href="contact.html"><span data-en>Contact</span><span data-pt>Contacto</span><span data-da>Kontakt</span></a></div>
+      <div class="ft-col"><h5><span data-en>Where we work</span><span data-pt>Onde trabalhamos</span><span data-da>Hvor vi arbejder</span></h5>
+        <span class="ft-c"><b>UK</b><span data-en>United Kingdom</span><span data-pt>Reino Unido</span><span data-da>Storbritannien</span></span>
+        <span class="ft-c"><b>PT</b>Portugal</span>
+        <span class="ft-c"><b>DK</b><span data-en>Denmark</span><span data-pt>Dinamarca</span><span data-da>Danmark</span></span>
+        <span class="ft-lang">EN · PT · DA</span>
+      </div>
+    </div>
+    <div class="ft-big" aria-hidden="true">vero solutions<i>.</i></div>
+    <div class="ft-bot">
+      <span>© <span id="yr">2026</span> Vero Solutions. <span data-en>All rights reserved.</span><span data-pt>Todos os direitos reservados.</span><span data-da>Alle rettigheder forbeholdes.</span></span>
+      <a href="#top" class="ft-top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false"><span data-en>Back to top</span><span data-pt>Voltar ao topo</span><span data-da>Til toppen</span> ↑</a>
+    </div>
   </div>
 </footer>
 
-<script>
-(function(){
-/* ===== CONFIG: replace with the real contact email ===== */
-const CONTACT_EMAIL='hello@verodigital.com';
-
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-let lang=(()=>{try{return localStorage.getItem('vd-lang')}catch(e){return null}})()||((navigator.language||'').toLowerCase().startsWith('pt')?'pt':'en');
-const L=(en,pt)=>lang==='pt'?pt:en;
-
-const WORK=[
- {id:'bespoke',name:'Bespoke Architects',url:'',host:'bespokealgarve.com',kind:['Redesign','Redesign'],
-  sub:['Architecture studio · Carvoeiro, Algarve','Gabinete de arquitetura · Carvoeiro, Algarve'],
-  d:['A complete redesign for an architecture practice: 37 projects with filters and full galleries, bilingual EN/PT, team, testimonials and project enquiries.','Redesign completo para um gabinete de arquitetura: 37 projetos com filtros e galerias completas, bilingue EN/PT, equipa, testemunhos e pedidos de projeto.'],
-  chips:[['EN · PT','EN · PT'],['37 projects','37 projetos'],['Galleries','Galerias'],['Enquiry form','Formulário']]},
- {id:'mercator',name:'Mercator',url:'https://trovor8.github.io/mercator-preview/',host:'mercator.pt',kind:['Redesign','Redesign'],
-  sub:['Real estate · Portugal','Imobiliária · Portugal'],
-  d:['A real-estate site in six languages with the agency\'s real listings, search by region and reference, and a WhatsApp line to the team.','Site imobiliário em seis línguas com os imóveis reais da agência, pesquisa por região e referência, e linha direta por WhatsApp.'],
-  chips:[['6 languages','6 línguas'],['Live listings','Imóveis reais'],['Search','Pesquisa'],['WhatsApp','WhatsApp']]},
- {id:'obarradas',name:'O Barradas',url:'https://trovor8.github.io/obarradas/',host:'obarradas',kind:['Redesign','Redesign'],
-  sub:['Restaurant · Silves, Algarve','Restaurante · Silves, Algarve'],
-  d:['An atmospheric restaurant site: the story, the menu, the space and reservations — in Portuguese and English.','Um site de restaurante com atmosfera: a história, a ementa, o espaço e as reservas — em português e inglês.'],
-  chips:[['PT · EN','PT · EN'],['Menu','Ementa'],['Reservations','Reservas'],['Reviews','Avaliações']]},
- {id:'velochique',name:'Velochique',url:'https://trovor8.github.io/velochique/',host:'velochique',kind:['New website','Site novo'],
-  sub:['Bike rental, café & workshop · Portimão','Aluguer de bikes, café e oficina · Portimão'],
-  d:['A playful, interactive site for a bike-rental café: a 3D bike showroom, prices, the real menu and booking.','Um site divertido e interativo para um café com aluguer de bicicletas: showroom 3D, preços, a ementa real e reservas.'],
-  chips:[['3D showroom','Showroom 3D'],['EN · PT','EN · PT'],['Booking','Reservas'],['Menu','Ementa']]},
- {id:'luxe-events',name:'Luxe Events Portugal',url:'https://trovor8.github.io/luxe-events/',host:'luxeeventsportugal.com',kind:['Redesign','Redesign'],
-  sub:['Weddings & events · Algarve & Lisbon','Casamentos e eventos · Algarve e Lisboa'],
-  d:['From a generic template to an editorial luxury site for a wedding and event styling company, with enquiries via email and WhatsApp.','De um template genérico a um site editorial de luxo para uma empresa de casamentos e eventos, com pedidos por email e WhatsApp.'],
-  chips:[['EN · PT','EN · PT'],['Editorial design','Design editorial'],['Enquiries','Pedidos']]},
- {id:'jd-coach',name:'JD Strength Coach',url:'https://jdstrengthcoach.nl/',host:'jdstrengthcoach.nl',kind:['New website','Site novo'],
-  sub:['Online coaching · Netherlands','Coaching online · Países Baixos'],
-  d:['A coaching site with free fitness tools — including a heart-rate-zone calculator — coaching plans and consultation booking.','Um site de coaching com ferramentas de fitness gratuitas — incluindo uma calculadora de zonas cardíacas — planos e marcação de consultas.'],
-  chips:[['Calculators','Calculadoras'],['EN · NL','EN · NL'],['Booking','Marcações']]},
- {id:'manoloy',name:'Manoloy',url:'',host:'manoloy.pt',kind:['New website','Site novo'],
-  sub:['Renovation & construction · Algarve','Remodelações e construção · Algarve'],
-  d:['A lead-generation site for a renovation company: services, past jobs, guarantees and a free-quote flow that starts from the client\'s problem.','Um site para gerar contactos para uma empresa de remodelações: serviços, obras feitas, garantias e um pedido de orçamento grátis que parte do problema do cliente.'],
-  chips:[['Free quotes','Orçamentos grátis'],['Services','Serviços'],['Mobile-first','Mobile-first']]}
-];
-const BA=[['mercator','Mercator'],['luxe','Luxe Events'],['bespoke','Bespoke Architects']];
-const BAMAP={bespoke:['old-bespoke','bespoke'],mercator:['old-mercator','mercator'],luxe:['old-luxe','luxe-events']};
-
-function renderWork(){
-  const i=lang==='pt'?1:0;
-  $('#projects').innerHTML=WORK.map((w,k)=>`
-  <article class="pj rv">
-    <div class="stage">
-      <div class="browser"><div class="top"><i></i><i></i><i></i><span class="url">${w.host}</span></div><img src="img/work/${w.id}.jpg" alt="${w.name} website" loading="lazy"></div>
-      <div class="phone"><img src="img/work/${w.id}-m.jpg" alt="" loading="lazy"></div>
-    </div>
-    <div class="info">
-      <span class="n">${String(k+1).padStart(2,'0')} / ${String(WORK.length).padStart(2,'0')}</span>
-      <h3>${w.name}</h3>
-      <span class="sub">${w.sub[i]}</span><span class="kind">${w.kind[i]}</span>
-      <p class="d">${w.d[i]}</p>
-      <div class="chips">${w.chips.map(c=>`<span>${c[i]}</span>`).join('')}</div>
-      ${w.url?`<a class="go" href="${w.url}" target="_blank" rel="noopener">${L('Visit the site','Visitar o site')} ↗</a>`:`<span class="go" style="border-color:var(--line);color:var(--mute)">${L('Preview available on request','Pré-visualização a pedido')}</span>`}
-    </div>
-  </article>`).join('');
-  observe();
-}
-function renderMarquee(){const names=WORK.map(w=>w.name).concat(['Multilingual','Mobile-first','Custom design']);const html=names.concat(names).map(n=>`<span>${n}</span>`).join('');$('#mq').innerHTML=html}
-function renderBA(){
-  $('#baTabs').innerHTML=BA.map(([k,n],j)=>`<button data-k="${k}" class="${j===curBA?'on':''}">${n}</button>`).join('');
-  $$('#baTabs button').forEach((b,j)=>b.onclick=()=>{curBA=j;const m=BAMAP[b.dataset.k];$('#baB').src='img/work/'+m[0]+'.jpg';$('#baA').src='img/work/'+m[1]+'.jpg';renderBA()});
-}
-let curBA=0;
-
-/* compare drag */
-const cmp=$('#cmp');let drag=false;
-const setX=e=>{const r=cmp.getBoundingClientRect();const x=((e.touches?e.touches[0].clientX:e.clientX)-r.left)/r.width;cmp.style.setProperty('--x',Math.max(0,Math.min(1,x))*100+'%')};
-cmp.addEventListener('pointerdown',e=>{drag=true;setX(e)});addEventListener('pointerup',()=>drag=false);
-cmp.addEventListener('pointermove',e=>{if(drag||e.pointerType==='mouse')setX(e)});
-cmp.addEventListener('touchmove',e=>setX(e),{passive:true});
-
-function setLang(l){lang=l;document.documentElement.lang=l;try{localStorage.setItem('vd-lang',l)}catch(e){}
-  $$('.lang button').forEach(b=>b.classList.toggle('on',b.dataset.set===l));renderWork();}
-$$('.lang button').forEach(b=>b.onclick=()=>setLang(b.dataset.set));
-
-$('#burger').onclick=()=>$('#mnav').classList.add('open');$('#mx').onclick=()=>$('#mnav').classList.remove('open');
-$$('#mnav a').forEach(a=>a.onclick=()=>$('#mnav').classList.remove('open'));
-
-/* form */
-$('#form').onsubmit=e=>{e.preventDefault();const m=$('#fmsg');const n=$('#fn').value.trim(),em=$('#fe').value.trim(),msg=$('#fm').value.trim();
-  if(!n||!/^\S+@\S+\.\S+$/.test(em)){m.textContent=L('Please add your name and a valid email.','Indique o seu nome e um email válido.');return}
-  const t=document.querySelector('input[name=t]:checked').value;
-  const body=`Name: ${n}\nBusiness: ${$('#fb').value.trim()||'-'}\nEmail: ${em}\nCurrent site: ${$('#fw').value.trim()||'-'}\nType: ${t}\n\n${msg}`;
-  location.href='mailto:'+CONTACT_EMAIL+'?subject='+encodeURIComponent('Website request — '+t+' — '+n)+'&body='+encodeURIComponent(body);
-  m.textContent=L('Your email app should open with the request ready to send.','A sua app de email deve abrir com o pedido pronto a enviar.')};
-
-/* reveal */
-let io;function observe(){io=io||new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{rootMargin:'0px 0px -8% 0px'});$$('.rv:not(.in)').forEach(el=>io.observe(el))}
-
-$('#yr').textContent=new Date().getFullYear();
-$('#stSites').textContent=WORK.length;
-renderMarquee();renderBA();setLang(lang);
-requestAnimationFrame(()=>setTimeout(()=>$('#hero').classList.add('go'),80));
-})();
-</script>
+<script>try{var _c=document.createElement("canvas");window.VERO_GL=!!(_c.getContext("webgl2")||_c.getContext("webgl"))}catch(e){window.VERO_GL=false}</script><script src="js/d3-array.min.js"></script><script src="js/d3-geo.min.js"></script><script src="js/topojson-client.min.js"></script><script src="js/world-110m.js"></script><script src="js/dots.js"></script><script src="js/globe.js"></script><script src="js/vendor/three.min.js"></script><script src="js/globe3d.js"></script><script src="js/services-data.js"></script><script src="js/sidemenu.js"></script><script src="js/crm-demo.js"></script><script src="js/site.js"></script>
 </body>
 </html>
