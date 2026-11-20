@@ -7,7 +7,7 @@
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
   const t3 = o => `<span data-en>${o.en}</span><span data-pt>${o.pt}</span><span data-da>${o.da}</span>`;
   const UI = {
-    title: { en: 'Our services', pt: 'Os nossos serviços', da: 'Vores ydelser' },
+    title: { en: 'Some of our services', pt: 'Alguns dos nossos serviços', da: 'Nogle af vores ydelser' },
     search: { en: 'Search a service…', pt: 'Procurar um serviço…', da: 'Søg efter en ydelse…' },
     empty: { en: 'Nothing found. Tell us the problem and we’ll pick the service.', pt: 'Nada encontrado. Diga-nos o problema e escolhemos o serviço por si.', da: 'Intet fundet. Fortæl os problemet, så vælger vi ydelsen.' },
     all: { en: 'See all 39 services', pt: 'Ver os 39 serviços', da: 'Se alle 39 ydelser' },
