@@ -1244,3 +1244,6 @@ html.sm-lock,html.sm-lock body{overflow:hidden}
 .globe-wrap .globe-hint{bottom:30px}
 .mf-ui.narrow{left:50%;bottom:44px}
 @media (max-width:640px){.mf-ui button{padding:8px 12px 9px;font-size:12px}}
+#globe-gl.scr-hover{cursor:none}
+@media (min-width:1001px){html[lang=pt] .hx h1,html[lang=da] .hx h1{font-size:clamp(44px,5.3vw,92px)}}
+@media (min-width:1001px){.mf-ui{left:74.5%}.globe-wrap .globe-hint{left:74.5%}}
