@@ -1018,3 +1018,114 @@ html.sm-lock,html.sm-lock body{overflow:hidden}
 .sol-label.ad::before{display:none}
 .sol-label.ad b{position:absolute;left:9px;top:-5px;font:500 9px/1 var(--b);letter-spacing:.16em;text-transform:uppercase;color:#7f7a71}
 @media (max-width:1000px){.sol-label b{font-size:13px}.sol-label>i{width:30px}.sol-label>div{left:27px;top:-18px}.sol-label.flip>div{right:27px}}
+
+/* ---------- CRM demo · "Make it yours" customiser */
+.crm-hint{display:none}
+.crm-app{transition:transform .9s var(--e),background .5s,border-color .5s,box-shadow .5s}
+.crm-czbtn{position:relative;display:flex;align-items:center;gap:6px;padding:5px 11px 5px 9px;border-radius:999px;background:color-mix(in srgb,var(--acc) 16%,transparent);border:1px solid color-mix(in srgb,var(--acc) 45%,transparent);color:#ffe2d6;font:600 11.5px/1 var(--b);transition:background .3s,transform .3s var(--e)}
+.crm-czbtn:hover{background:color-mix(in srgb,var(--acc) 28%,transparent);transform:translateY(-1px)}
+.crm-czbtn svg{width:14px;height:14px;color:var(--acc)}
+.crm-czbtn>i{position:absolute;right:-2px;top:-2px;width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 0 var(--acc);animation:czping 1.8s infinite}
+.crm-czbtn.used>i{display:none}
+.crm-czbtn.nudge{animation:cznudge 1s var(--e) 2}
+@keyframes czping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--acc) 70%,transparent)}100%{box-shadow:0 0 0 9px transparent}}
+@keyframes cznudge{30%{transform:scale(1.12)}60%{transform:scale(.97)}}
+/* accent-aware overrides */
+.crm-app .crm-side span.on{background:color-mix(in srgb,var(--acc) 16%,transparent)}
+.crm-app .cm-sub button.on{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--acc) 45%,transparent)}
+.crm-app .cm-chip.acc{background:color-mix(in srgb,var(--acc) 16%,transparent);color:color-mix(in srgb,var(--acc) 55%,#fff)}
+.crm-app .cm-ap.sel{background:color-mix(in srgb,var(--acc) 16%,transparent)}
+.crm-app .cm-tb.seated{box-shadow:0 0 18px -4px color-mix(in srgb,var(--acc) 70%,transparent)}
+.crm-app .cm-qa span{background:color-mix(in srgb,var(--acc) 10%,transparent);border-color:color-mix(in srgb,var(--acc) 28%,transparent)}
+.crm-app .cm-bars i{background:linear-gradient(180deg,var(--acc),color-mix(in srgb,var(--acc) 25%,transparent))}
+.crm-app .cm-heat i,.crm-app .cm-stack i:first-child{background:var(--acc)}
+/* corners */
+.crm-app .cm-p,.crm-app .crm-kpi,.crm-app .crm-pipe,.crm-app .crm-chat,.crm-app .crm-autos{border-radius:calc(14px * var(--rad,1))}
+.crm-app .crm-card,.crm-app .cm-cls,.crm-app .cm-job,.crm-app .cm-ap,.crm-app .cm-prop,.crm-app .cm-floor,.crm-app .cm-sub{border-radius:calc(10px * var(--rad,1))}
+.crm-app .cm-sub button,.crm-app .crm-side span,.crm-app .crm-av{border-radius:calc(8px * var(--rad,1))}
+.crm-app .cm-chip,.crm-app .crm-on{border-radius:calc(99px * min(var(--rad,1),1) + 0px)}
+.crm-app{border-radius:calc(20px * var(--rad,1))}
+/* modules */
+.crm-app.no-kpis .crm-kpis{display:none}
+.crm-app.no-side .crm-body{grid-template-columns:0 1fr}.crm-app.no-side .crm-side{visibility:hidden;width:0;padding:0;border:0}
+/* light theme (inverted body, re-inverted media) */
+.crm-app.th-light{background:#eeece7;border-color:rgba(12,12,13,.12);box-shadow:0 60px 140px -40px rgba(0,0,0,.8),0 0 120px -30px color-mix(in srgb,var(--acc) 40%,transparent)}
+.crm-app.th-light .crm-body{filter:invert(.94) hue-rotate(180deg)}
+.crm-app.th-light .cm-img,.crm-app.th-light .cm-ava,.crm-app.th-light .crm-av,.crm-app.th-light .crm-msg.out{filter:invert(1) hue-rotate(180deg)}
+.crm-app.th-light .crm-bar{background:#e4e2dc;border-color:rgba(12,12,13,.08)}
+.crm-app.th-light .crm-url{background:rgba(12,12,13,.06);color:#77736b}.crm-app.th-light .crm-url b{color:#141416}
+.crm-app.th-light .crm-czbtn{color:#3a2a22}
+/* glass theme */
+.crm-app.th-glass{background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.02));backdrop-filter:blur(26px) saturate(1.5);-webkit-backdrop-filter:blur(26px) saturate(1.5);border-color:rgba(255,255,255,.2)}
+.crm-app.th-glass .cm-p,.crm-app.th-glass .crm-kpi,.crm-app.th-glass .crm-pipe,.crm-app.th-glass .crm-chat,.crm-app.th-glass .crm-autos{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.12)}
+.crm-app.th-glass .crm-bar{background:rgba(255,255,255,.04)}
+.crm-grid::before{content:"";position:absolute;right:6%;top:-6%;width:56%;height:110%;background:radial-gradient(circle at 30% 35%,color-mix(in srgb,var(--czc,#ff5a1f) 75%,transparent),transparent 45%),radial-gradient(circle at 75% 70%,rgba(110,90,255,.55),transparent 45%);filter:blur(40px);opacity:0;transition:opacity .8s;pointer-events:none}
+.crm.cz-glass .crm-grid::before{opacity:.75}
+.crm-cap{position:relative;z-index:1}
+/* blueprint (exploded 3D) */
+.crm-app.blueprint{overflow:visible;transform:perspective(2000px) rotateX(26deg) rotateZ(-7deg) scale(.86);transform-style:preserve-3d;background:rgba(14,18,28,.55);background-image:linear-gradient(rgba(120,160,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(120,160,255,.07) 1px,transparent 1px);background-size:22px 22px;border:1px dashed color-mix(in srgb,var(--acc) 60%,transparent);box-shadow:0 120px 120px -60px rgba(0,0,0,.9)}
+.crm-app.blueprint .crm-body,.crm-app.blueprint .crm-main,.crm-app.blueprint .cm-view,.crm-app.blueprint .cm-grid,.crm-app.blueprint .cm-rtcol,.crm-app.blueprint .crm-split,.crm-app.blueprint .crm-rt{transform-style:preserve-3d}
+.crm-app.blueprint .cm-view{animation:none}
+.crm-app .crm-head,.crm-app .crm-kpis,.crm-app .cm-sub,.crm-app .cm-p,.crm-app .crm-side,.crm-app .crm-pipe,.crm-app .crm-chat,.crm-app .crm-autos{transition:transform .9s var(--e),box-shadow .9s,outline-color .5s}
+.crm-app.blueprint .crm-side{transform:translateZ(20px)}
+.crm-app.blueprint .crm-head{transform:translateZ(36px)}
+.crm-app.blueprint .crm-kpis{transform:translateZ(80px)}
+.crm-app.blueprint .cm-sub{transform:translateZ(56px)}
+.crm-app.blueprint .cm-grid>.cm-p:first-child,.crm-app.blueprint .crm-pipe{transform:translateZ(120px)}
+.crm-app.blueprint .cm-grid>.cm-p:nth-child(2),.crm-app.blueprint .cm-rtcol>.cm-p:first-child,.crm-app.blueprint .crm-chat{transform:translateZ(170px)}
+.crm-app.blueprint .cm-rtcol>.cm-p:nth-child(2),.crm-app.blueprint .crm-autos{transform:translateZ(215px)}
+.crm-app.blueprint [data-w]{position:relative;outline:1px dashed color-mix(in srgb,var(--acc) 70%,transparent);outline-offset:3px;box-shadow:0 30px 50px -20px rgba(0,0,0,.85)}
+.crm-app.blueprint [data-w]::after{content:attr(data-w);position:absolute;left:0;top:-21px;padding:3px 7px;border-radius:5px;background:var(--acc);color:#fff;font:600 9.5px/1 var(--b);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;pointer-events:none}
+.crm-app.blueprint .crm-toast,.crm-app.blueprint .crm-cz{display:none}
+/* drawer */
+.crm-cz{position:absolute;top:40px;right:0;bottom:0;width:min(290px,86%);display:flex;flex-direction:column;background:rgba(15,15,18,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-left:1px solid rgba(243,240,232,.12);box-shadow:-30px 0 60px -20px rgba(0,0,0,.7);transform:translateX(104%);transition:transform .55s var(--e);z-index:6;color:#e9e6de}
+.crm-app.cz-open .crm-cz{transform:none}
+.cz-h{display:flex;align-items:center;gap:8px;padding:14px 14px 12px;border-bottom:1px solid var(--line)}
+.cz-h b{font:700 15px/1 var(--d);letter-spacing:-.01em}
+.cz-live{display:flex;align-items:center;gap:5px;font:600 9.5px/1 var(--b);letter-spacing:.1em;text-transform:uppercase;color:#7be08c}
+.cz-live i{width:6px;height:6px;border-radius:50%;background:#28c840;animation:crmping 2s infinite}
+.cz-x{margin-left:auto;width:26px;height:26px;border-radius:8px;font-size:18px;line-height:1;color:var(--mute);background:rgba(255,255,255,.05)}
+.cz-x:hover{color:#fff}
+.cz-scroll{flex:1;overflow-y:auto;padding:12px 14px;scrollbar-width:thin}
+.cz-f{margin-bottom:14px}
+.cz-f>small{display:block;font:600 9.5px/1 var(--b);letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:7px}
+.cz-name{width:100%;padding:9px 11px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid rgba(243,240,232,.12);color:#fff;font:500 13px/1.2 var(--b);outline:none}
+.cz-name:focus{border-color:var(--acc)}
+.cz-name::placeholder{color:#6f6c66}
+.cz-sw{display:flex;gap:7px;align-items:center}
+.cz-sw button,.cz-pick{width:24px;height:24px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);transition:transform .25s var(--e)}
+.cz-sw button:hover{transform:scale(1.12)}
+.cz-sw button.on{box-shadow:0 0 0 2px #141416,0 0 0 4px var(--c)}
+.cz-pick{position:relative;display:grid;place-items:center;background:conic-gradient(#f43f5e,#d4a72c,#12b886,#2f6bff,#8b5cf6,#f43f5e);cursor:pointer;overflow:hidden}
+.cz-pick span{font:700 13px/1 var(--b);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.cz-pick input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.cz-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.cz-seg button{padding:7px 4px;border-radius:7px;font:600 11px/1 var(--b);color:var(--mute);transition:all .25s}
+.cz-seg button.on{background:#2c2c31;color:#fff;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--acc) 50%,transparent)}
+.cz-tog{display:flex;align-items:center;justify-content:space-between;padding:7px 0;font:500 12px/1.2 var(--b);color:#d9d5cb;border-top:1px solid var(--line);cursor:pointer}
+.cz-tog:first-of-type{border-top:0}
+.cz-tog input{position:absolute;opacity:0;pointer-events:none}
+.cz-tog i{position:relative;width:30px;height:17px;border-radius:99px;background:#3a3a40;transition:background .25s;flex:none}
+.cz-tog i::after{content:"";position:absolute;left:2px;top:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:transform .25s var(--e)}
+.cz-tog input:checked+i{background:var(--acc)}
+.cz-tog input:checked+i::after{transform:translateX(13px)}
+.cz-more p{font:400 11.5px/1.45 var(--b);color:#bdb8ad;margin-bottom:8px}
+.cz-int{display:flex;flex-wrap:wrap;gap:4px}
+.cz-int span{padding:4px 7px;border-radius:6px;background:rgba(255,255,255,.06);font:500 10px/1 var(--b);color:#d9d5cb}
+.cz-int span:last-child{background:color-mix(in srgb,var(--acc) 18%,transparent);color:#ffd8c8}
+.cz-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-top:1px solid var(--line)}
+.cz-reset{font:500 12px/1 var(--b);color:var(--mute);text-decoration:underline;text-underline-offset:3px}
+.cz-foot .btn{padding:9px 14px;font-size:12.5px;background:var(--acc)}
+/* showcase caption */
+.crm-czcap{position:absolute;left:50%;top:52px;transform:translate(-50%,-6px);display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(12,12,14,.88);border:1px solid color-mix(in srgb,var(--acc) 50%,transparent);font:600 12px/1 var(--b);color:#fff;opacity:0;pointer-events:none;z-index:7;transition:opacity .4s,transform .4s var(--e);white-space:nowrap}
+.crm-czcap.on{opacity:1;transform:translate(-50%,0)}
+.crm-czcap i{width:7px;height:7px;border-radius:50%;background:var(--acc)}
+/* strip */
+.crm-czstrip{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 18px;position:relative;z-index:1;font:500 12.5px/1.2 var(--b);color:#bdb8ad}
+.crm-czstrip>b{font:700 12px/1 var(--b);letter-spacing:.14em;text-transform:uppercase;color:var(--acc)}
+.crm-czstrip>span{display:flex;align-items:center;gap:6px}
+.crm-czstrip>span::before{content:"";width:5px;height:5px;border-radius:50%;background:color-mix(in srgb,var(--acc) 70%,#fff)}
+.crm-czstrip>button{color:#fff;font:600 12.5px/1.2 var(--b);text-decoration:underline;text-decoration-color:var(--acc);text-underline-offset:4px}
+@media (max-width:1000px){.crm-czstrip{justify-content:flex-start;gap:6px 12px;font-size:12px}.crm-czstrip>span:nth-of-type(n+4){display:none}.crm-app.blueprint{transform:perspective(1400px) rotateX(20deg) rotateZ(-4deg) scale(.82)}}
+@media (max-width:640px){.crm-czbtn{padding:5px 8px;font-size:0;gap:0}.crm-czbtn svg{width:15px;height:15px}.crm-url{display:none}.crm-czcap{font-size:11px;top:48px}}
+.crm-app.th-glass .crm-cz{background:#121215}
