@@ -110,10 +110,19 @@
   // images (real client sites)
   const IMGS = {};
   function img(name) {
-    if (!IMG_OK) return null;
-    if (!IMGS[name]) { const im = new Image(); im.decoding = 'async'; im.onload = () => { dirtyL = dirtyP = true; }; im.src = 'img/work/' + name + '.jpg'; IMGS[name] = im; }
-    const im = IMGS[name]; return im.complete && im.naturalWidth ? im : null;
+    const key = name.includes('/') ? name : 'work/' + name;
+    if (!IMGS[key]) {
+      let src = null;
+      if (IMG_OK) src = 'img/' + key + '.jpg';
+      else if (window.VERO_IMG_DATA) src = window.VERO_IMG_DATA[key];
+      else { loadEmbedded(); return null; }
+      if (!src) return null;
+      const im = new Image(); im.decoding = 'async'; im.onload = () => { dirtyL = dirtyP = true; }; im.src = src; IMGS[key] = im;
+    }
+    const im = IMGS[key]; return im.complete && im.naturalWidth ? im : null;
   }
+  let embedLoading = false;
+  function loadEmbedded() { if (embedLoading) return; embedLoading = true; const sc = document.createElement('script'); sc.src = 'js/work-data.js'; sc.onload = () => { dirtyL = dirtyP = true; }; document.head.appendChild(sc); }
   function cover(x, im, X, Y, W, H) { const s = Math.max(W / im.naturalWidth, H / im.naturalHeight), w = im.naturalWidth * s, h = im.naturalHeight * s; x.drawImage(im, X + (W - w) / 2, Y, w, h); }
 
   // ================================================================== state
@@ -169,68 +178,262 @@
     x.fillStyle = '#c9cdd6'; x.font = `500 21px ${I}`; x.textAlign = 'center'; x.fillText((st.before && ty.old ? '⟲  ' : '🔒  ') + ty.url, W / 2, 39); x.textAlign = 'left';
     const im = img((st.before && ty.old ? 'old-' : '') + ty.site);
     if (im) cover(x, im, 0, 64, W, H - 64);
-    else if (!IMG_OK) { x.save(); x.translate(0, 64); x.scale(W / 1600, (H - 64) / 1000); drawSite(x, S, t); x.restore(); }
-    else { x.fillStyle = '#0d0f14'; x.fillRect(0, 64, W, H - 64); }
+    else { x.fillStyle = '#0d0f14'; x.fillRect(0, 64, W, H - 64); x.fillStyle = '#5a6376'; x.font = `500 26px ${I}`; x.textAlign = 'center'; x.fillText(L(['Loading…', 'A carregar…', 'Indlæser…']), W / 2, H / 2); x.textAlign = 'left'; }
     if (st.before && ty.old) { rp(x, 28, 92, 210, 50, 25); x.fillStyle = 'rgba(0,0,0,.72)'; x.fill(); x.fillStyle = '#fff'; x.font = `600 22px ${I}`; x.fillText(L(['Before Vero', 'Antes da Vero', 'Før Vero']), 50, 125); }
   }
-  // ---- laptop: niche CRM (data from the CRM demo)
-  const COLX = [150, 520, 890, 1260];
+  // ================================================================== laptop: a different, interactive CRM per business
   const CTx = q => (window.VERO_CRM_TR ? window.VERO_CRM_TR(q) : q);
+  const CRM_ACC = { rest: '#ff7a45', estate: '#d4af5a', wed: '#e58fb0', trades: '#ffb020', gym: '#a3e635', shop: '#2dd4bf' };
+  const MS = {}; // per-niche module state
+  const ms = k => MS[k] || (MS[k] = {
+    tables: [1, 2, 0, 1, 3, 0, 2, 1, 2, 0, 2, 1], sel: 0, booked: {}, done: [1, 1, 0, 0, 0], rsvp: 96, remind: 0,
+    quote: 0, job: 1, cls: [92, 70, 100, 64, 88, 54, 48, 100, 60, 96, 72, 100, 100, 84, 100, 100, 66, 0], nudged: {}, orders: 4, reord: {}, simT: -9
+  });
+  const tag = (x, X, Y, txt, fg, bg) => { x.font = `600 21px ${I}`; const w = x.measureText(txt).width + 30; rp(x, X, Y, w, 40, 20); x.fillStyle = bg; x.fill(); x.fillStyle = fg; x.fillText(txt, X + 15, Y + 27); return w; };
+  const pnl = (x, X, Y, W, H, title, right, acc) => { rp(x, X, Y, W, H, 22); x.fillStyle = '#0f1420'; x.fill(); x.strokeStyle = '#1b2436'; x.lineWidth = 2; x.stroke(); x.fillStyle = '#eef2fa'; x.font = `600 26px ${I}`; x.fillText(title, X + 28, Y + 48); if (right) { x.font = `600 20px ${I}`; const w = x.measureText(right).width + 28; rp(x, X + W - w - 24, Y + 22, w, 38, 19); x.fillStyle = acc + '26'; x.fill(); x.fillStyle = acc; x.fillText(right, X + W - w - 10, Y + 47); } };
+  const btn = (x, S, id, X, Y, W, H, label, acc, done) => { const h = hotHit(S, id, X, Y, W, H); rp(x, X, Y, W, H, H / 2); x.fillStyle = done ? 'rgba(40,200,64,.16)' : (h ? acc : acc + 'dd'); x.fill(); x.fillStyle = done ? '#7be08c' : '#0b0f19'; x.font = `700 22px ${I}`; x.textAlign = 'center'; x.fillText(label, X + W / 2, Y + H / 2 + 8); x.textAlign = 'left'; };
   function drawCRM(x, S, t) {
-    const W = S.w, H = S.h, C = crmState(TYPES[st.type].crm), N = C.N; if (!N) { x.fillStyle = '#0b0f19'; x.fillRect(0, 0, W, H); return; }
-    const E = a => L(a), CT = window.VERO_CRM_TR || (q => q);
+    const W = S.w, H = S.h, ty = TYPES[st.type], k = ty.crm, N = ((window.VERO_CRM_N || []).find(n => n.k === k)), A = CRM_ACC[k] || '#4d7cff', M = ms(k);
     x.fillStyle = '#0b0f19'; x.fillRect(0, 0, W, H);
     x.fillStyle = '#070a12'; x.fillRect(0, 0, 104, H);
-    [0, 1, 2, 3, 4].forEach(i => { rp(x, 30, 44 + i * 82, 44, 44, 12); x.fillStyle = i === 0 ? '#4d7cff' : '#182032'; x.fill(); });
-    x.fillStyle = '#eef2fa'; x.font = `700 42px ${D}`; x.fillText(E(N.biz), 150, 92); const bww = x.measureText(E(N.biz)).width;
-    x.fillStyle = '#707a8d'; x.font = `500 24px ${I}`; x.fillText('·  CRM', 150 + bww + 18, 90);
+    [0, 1, 2, 3, 4].forEach(i => { rp(x, 30, 44 + i * 82, 44, 44, 12); x.fillStyle = i === 0 ? A : '#182032'; x.fill(); });
+    if (!N) return;
+    x.fillStyle = '#eef2fa'; x.font = `700 42px ${D}`; x.fillText(L(N.biz), 150, 92); const bw = x.measureText(L(N.biz)).width;
+    x.fillStyle = '#707a8d'; x.font = `500 24px ${I}`; x.fillText('·  CRM', 150 + bw + 18, 90);
     rp(x, W - 220, 52, 170, 52, 26); x.fillStyle = 'rgba(40,200,64,.14)'; x.fill(); x.fillStyle = '#7be08c'; x.font = `600 22px ${I}`; x.fillText(L(['● AI on', '● AI ativa', '● AI aktiv']), W - 182, 86);
     const kp = ease(st.kpiT);
-    N.kpi.forEach((k, i) => {
-      const px = 150 + i * 370, v = k[1], val = v % 1 ? (v * kp).toFixed(1) : Math.round(v * kp).toLocaleString('en-US');
-      rp(x, px, 140, 350, 170, 20); x.fillStyle = '#111725'; x.fill(); x.strokeStyle = '#1b2436'; x.lineWidth = 2; x.stroke();
-      x.fillStyle = '#868fa1'; x.font = `500 24px ${I}`; x.fillText(E(k[0]), px + 26, 186);
-      x.fillStyle = '#eef2fa'; x.font = `800 70px ${D}`; x.fillText(val, px + 26, 270);
-      const vw = x.measureText(val).width; x.fillStyle = /^[−-]/.test(k[2]) && !/no-show|risk/i.test(E(k[0])) ? '#ff8a7a' : '#7be08c'; x.font = `600 24px ${I}`; x.fillText(k[2], px + 36 + vw, 268);
+    N.kpi.forEach((q, i) => {
+      const px = 150 + i * 465, v = q[1], val = v % 1 ? (v * kp).toFixed(1) : Math.round(v * kp).toLocaleString('en-US');
+      rp(x, px, 132, 445, 150, 20); x.fillStyle = '#111725'; x.fill(); x.strokeStyle = '#1b2436'; x.lineWidth = 2; x.stroke();
+      x.fillStyle = A; x.fillRect(px + 22, 270, 120 * kp, 4);
+      x.fillStyle = '#868fa1'; x.font = `500 24px ${I}`; x.fillText(L(q[0]), px + 26, 176);
+      x.fillStyle = '#eef2fa'; x.font = `800 66px ${D}`; x.fillText(val, px + 26, 254);
+      const vw = x.measureText(val).width; x.fillStyle = '#7be08c'; x.font = `600 24px ${I}`; x.fillText(q[2], px + 36 + vw, 252);
     });
-    N.st.forEach((s, ci) => { x.fillStyle = '#bfc7d4'; x.font = `600 24px ${I}`; x.fillText(E(s), COLX[ci], 372); x.fillStyle = '#565f72'; x.fillText(String(C.cols[ci].length), COLX[ci] + 320, 372); });
-    const mv = C.moving, mp = mv ? ease((now() - mv.t0) / .55) : 1;
-    C.cols.forEach((col, ci) => col.forEach((card, j) => {
-      if (mv && mv.card === card && mp < 1) return;
-      const px = COLX[ci], py = 396 + j * 132, h = hotHit(S, 'card:' + ci + ':' + j, px, py, 340, 116);
-      rp(x, px, py, 340, 116, 16); x.fillStyle = h ? '#172030' : '#111725'; x.fill(); x.strokeStyle = ci === 3 ? 'rgba(40,200,64,.55)' : (h ? '#4d7cff' : '#1b2436'); x.lineWidth = 2.5; x.stroke();
-      x.fillStyle = '#eef2fa'; x.font = `600 30px ${I}`; x.fillText(CT(card[0]), px + 24, py + 50); x.fillStyle = '#868fa1'; x.font = `400 24px ${I}`; x.fillText(CT(card[1]), px + 24, py + 88);
-      if (h && ci < 3) { x.fillStyle = '#4d7cff'; x.font = `600 21px ${I}`; x.fillText(L(['Move →', 'Mover →', 'Flyt →']), px + 248, py + 48); }
-    }));
-    if (mv && mp < 1) { const px = mv.fx + (mv.tx - mv.fx) * mp, py = mv.fy + (mv.ty - mv.fy) * mp - Math.sin(mp * Math.PI) * 50; x.save(); x.shadowColor = 'rgba(77,124,255,.55)'; x.shadowBlur = 36; rp(x, px, py, 340, 116, 16); x.fillStyle = '#4d7cff'; x.fill(); x.restore(); x.fillStyle = '#fff'; x.font = `600 30px ${I}`; x.fillText(CT(mv.card[0]), px + 24, py + 50); x.font = `400 24px ${I}`; x.fillText(CT(mv.card[1]), px + 24, py + 88); }
-    // AI panel
-    rp(x, 1630, 340, 368, 560, 20); x.fillStyle = '#111725'; x.fill(); x.strokeStyle = '#1b2436'; x.stroke();
-    x.fillStyle = '#868fa1'; x.font = `600 20px ${I}`; x.fillText(L(['AI ASSISTANT', 'ASSISTENTE AI', 'AI-ASSISTENT']), 1658, 384);
-    const wrapTxt = (txt, maxW) => { x.font = `400 23px ${I}`; const ws = txt.split(' '), out = []; let line = ''; ws.forEach(w => { const tl = line ? line + ' ' + w : w; if (x.measureText(tl).width > maxW) { out.push(line); line = w; } else line = tl; }); if (line) out.push(line); return out; };
-    let by = 410; [[E(N.chat[0]), false], [E(N.chat[1]), true]].forEach(([txt, me]) => { const ls = wrapTxt(txt, 270), h = ls.length * 32 + 26, bx = me ? 1658 + 30 : 1658; rp(x, bx, by, 300, h, 18); x.fillStyle = me ? '#4d7cff' : '#182032'; x.fill(); x.fillStyle = '#fff'; ls.forEach((l, i) => x.fillText(l, bx + 16, by + 38 + i * 32)); by += h + 16; });
-    x.fillStyle = '#868fa1'; x.font = `600 20px ${I}`; x.fillText(L(['AUTOMATIONS', 'AUTOMAÇÕES', 'AUTOMATISERINGER']), 1658, Math.max(by + 30, 720));
-    N.auto.forEach((a, i) => { const y = Math.max(by + 30, 720) + 40 + i * 50; x.fillStyle = '#4d7cff'; x.fillText('⚡', 1658, y); x.fillStyle = '#cfd6e2'; x.font = `500 20px ${I}`; const s2 = E(a); x.fillText(s2.length > 28 ? s2.slice(0, 27) + '…' : s2, 1690, y); x.font = `600 20px ${I}`; });
-    // toast
+    const Y0 = 312, YH = H - Y0 - 36;
+    ({ rest: crmRest, estate: crmEstate, wed: crmWed, trades: crmTrades, gym: crmGym, shop: crmShop }[k] || crmRest)(x, S, t, M, A, Y0, YH);
     const ta = now() - st.toastAt;
-    if (ta < 3.4) { const k = ta < .4 ? ease(ta / .4) : ta > 3 ? 1 - ease((ta - 3) / .4) : 1; x.globalAlpha = k; const tx = st.toastTxt ? L(st.toastTxt) : (L(['New lead · ', 'Novo contacto · ', 'Nyt lead · ']) + CT((N.cards[0] || ['', ''])[0])); x.font = `600 26px ${I}`; const tw = x.measureText(tx).width + 90; rp(x, 1580 - tw, 1180 + (1 - k) * 30, tw, 92, 20); x.fillStyle = '#eef2fa'; x.fill(); x.fillStyle = '#4d7cff'; x.beginPath(); x.arc(1580 - tw + 40, 1226 + (1 - k) * 30, 10, 0, 7); x.fill(); x.fillStyle = '#0b0f19'; x.fillText(tx, 1580 - tw + 64, 1235 + (1 - k) * 30); x.globalAlpha = 1; }
+    if (ta < 3.4) { const kk = ta < .4 ? ease(ta / .4) : ta > 3 ? 1 - ease((ta - 3) / .4) : 1; x.globalAlpha = kk; const tx = st.toastTxt ? L(st.toastTxt) : L(['New lead · ', 'Novo contacto · ', 'Nyt lead · ']) + CTx(N.cards[0][0]); x.font = `600 26px ${I}`; const tw = x.measureText(tx).width + 90; rp(x, W - 50 - tw, H - 130 + (1 - kk) * 30, tw, 88, 20); x.fillStyle = '#eef2fa'; x.fill(); x.fillStyle = A; x.beginPath(); x.arc(W - 50 - tw + 40, H - 86 + (1 - kk) * 30, 10, 0, 7); x.fill(); x.fillStyle = '#0b0f19'; x.fillText(tx, W - 50 - tw + 64, H - 77 + (1 - kk) * 30); x.globalAlpha = 1; }
   }
-  // ---- phone: niche app
+  // restaurant — live floor plan (tap a table to change its state)
+  const TB = [[0.06, .14, 'r'], [0.2, .14, 'r'], [0.34, .14, 'r'], [0.06, .52, 's'], [0.2, .52, 's'], [0.34, .52, 's'], [0.53, .1, 'l'], [0.53, .4, 'l'], [0.53, .7, 'l'], [0.8, .1, 'r'], [0.8, .4, 'r'], [0.8, .7, 'r']];
+  const TST = [['Free', 'Livre', 'Ledig', '#2f3a50'], ['Booked', 'Reservada', 'Booket', '#22d3ee'], ['Seated', 'Sentados', 'Ankommet', '#4d7cff'], ['Bill', 'Conta', 'Regning', '#ffb800']];
+  function crmRest(x, S, t, M, A, Y0, YH) {
+    const fx = 150, fw = 1120;
+    pnl(x, fx, Y0, fw, YH, L(['Tonight · main room', 'Esta noite · sala principal', 'I aften · hovedsal']), L(['Tap a table', 'Toque numa mesa', 'Tryk på et bord']), A);
+    const gx = fx + 30, gy = Y0 + 84, gw = fw - 60, gh = YH - 170;
+    rp(x, gx, gy, gw, gh, 16); x.strokeStyle = '#1b2436'; x.setLineDash([10, 10]); x.stroke(); x.setLineDash([]);
+    TB.forEach((tb, i) => {
+      const s = M.tables[i], c = TST[s][3], X = gx + tb[0] * gw, Y = gy + tb[1] * gh, w = tb[2] === 'l' ? 230 : tb[2] === 's' ? 120 : 120, h = tb[2] === 'l' ? 120 : tb[2] === 's' ? 160 : 120;
+      const hv = hotHit(S, 'tb:' + i, X, Y, w, h);
+      if (tb[2] === 'r') { x.beginPath(); x.arc(X + 60, Y + 60, 60, 0, 7); } else rp(x, X, Y, w, h, 20);
+      x.fillStyle = c + (hv ? '55' : '33'); x.fill(); x.lineWidth = 3; x.strokeStyle = c; x.stroke();
+      x.fillStyle = '#eef2fa'; x.font = `700 34px ${D}`; x.textAlign = 'center'; x.fillText(String(i + 1), X + w / 2, Y + h / 2 + 2); x.font = `500 18px ${I}`; x.fillStyle = '#c5ccd9'; x.fillText(L(TST[s]), X + w / 2, Y + h / 2 + 30); x.textAlign = 'left';
+    });
+    let lx = gx; TST.forEach(s => { x.fillStyle = s[3]; rp(x, lx, gy + gh + 30, 18, 18, 5); x.fill(); x.fillStyle = '#868fa1'; x.font = `500 20px ${I}`; x.fillText(L(s), lx + 28, gy + gh + 46); lx += 170; });
+    const rx = fx + fw + 28, rw = 2048 - 50 - rx;
+    pnl(x, rx, Y0, rw, YH, L(['Arrivals', 'Chegadas', 'Ankomster']), L(['auto-confirmed', 'confirmadas', 'auto-bekræftet']), A);
+    [['20:00', 'Sofia M.', '4', ['Birthday', 'Aniversário', 'Fødselsdag']], ['20:00', 'Mia B.', '8', ['Set menu', 'Menu fechado', 'Fast menu']], ['20:30', 'Ana P.', '6', ['Nut allergy', 'Alergia a frutos secos', 'Nøddeallergi']], ['21:00', 'Tom R.', '2', ['VIP · 12th visit', 'VIP · 12.ª visita', 'VIP · 12. besøg']], ['21:15', 'Lars K.', '2', ['Waitlist', 'Lista de espera', 'Venteliste']]].forEach((r, i) => {
+      const y = Y0 + 96 + i * 104; x.strokeStyle = '#1b2436'; x.beginPath(); x.moveTo(rx + 28, y - 18); x.lineTo(rx + rw - 28, y - 18); x.stroke();
+      x.fillStyle = A; x.font = `700 24px ${I}`; x.fillText(r[0], rx + 28, y + 28); x.fillStyle = '#eef2fa'; x.font = `600 26px ${I}`; x.fillText(r[1], rx + 120, y + 18); x.fillStyle = '#868fa1'; x.font = `400 21px ${I}`; x.fillText(r[2] + ' ' + L(['guests', 'pessoas', 'gæster']), rx + 120, y + 48);
+      x.font = `600 19px ${I}`; const w = x.measureText(L(r[3])).width + 26; rp(x, rx + rw - 28 - w, y + 2, w, 36, 18); x.fillStyle = A + '22'; x.fill(); x.fillStyle = A; x.fillText(L(r[3]), rx + rw - 15 - w, y + 26);
+    });
+  }
+  // real estate — matched homes with real photos, book a viewing
+  const PROPS = [['estate/e1', 'Cascais', '€585k', ['3 bed · 2 bath · 142 m²', '3 quartos · 2 WC · 142 m²', '3 vær. · 2 bad · 142 m²'], 96, 'Sat 10:00'], ['estate/e2', 'Carvoeiro', '€1.2M', ['4 bed · 4 bath · 290 m²', '4 quartos · 4 WC · 290 m²', '4 vær. · 4 bad · 290 m²'], 91, 'Sat 11:30'], ['estate/e3', 'Lagoa', '€2.4M', ['6 bed · 6 bath · 480 m²', '6 quartos · 6 WC · 480 m²', '6 vær. · 6 bad · 480 m²'], 87, 'Sat 14:00']];
+  function crmEstate(x, S, t, M, A, Y0, YH) {
+    const lw = 1180; pnl(x, 150, Y0, lw, YH, L(['Best matches · Hansen family', 'Melhores imóveis · família Hansen', 'Bedste match · familien Hansen']), L(['3 of 214', '3 de 214', '3 af 214']), A);
+    PROPS.forEach((p, i) => {
+      const X = 178 + i * 376, Y = Y0 + 84, w = 352, h = YH - 120, sel = M.sel === i, hv = hotHit(S, 'pr:' + i, X, Y, w, h);
+      rp(x, X, Y, w, h, 18); x.fillStyle = '#131a29'; x.fill(); x.lineWidth = sel ? 4 : 2; x.strokeStyle = sel ? A : (hv ? '#3a4660' : '#1b2436'); x.stroke();
+      const im = img(p[0]); x.save(); rp(x, X + 2, Y + 2, w - 4, 300, 16); x.clip(); if (im) cover(x, im, X, Y, w, 304); else { x.fillStyle = '#1b2436'; x.fillRect(X, Y, w, 304); } x.restore();
+      x.beginPath(); x.arc(X + w - 54, Y + 54, 34, 0, 7); x.fillStyle = 'rgba(7,10,18,.85)'; x.fill(); x.beginPath(); x.arc(X + w - 54, Y + 54, 34, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * p[4] / 100); x.strokeStyle = A; x.lineWidth = 5; x.stroke(); x.fillStyle = '#fff'; x.font = `700 20px ${I}`; x.textAlign = 'center'; x.fillText(p[4] + '%', X + w - 54, Y + 61); x.textAlign = 'left';
+      x.fillStyle = '#868fa1'; x.font = `600 19px ${I}`; x.fillText(p[1].toUpperCase(), X + 24, Y + 346); x.fillStyle = '#eef2fa'; x.font = `800 44px ${D}`; x.fillText(p[2], X + 24, Y + 398); x.fillStyle = '#aeb6c6'; x.font = `400 21px ${I}`; x.fillText(L(p[3]), X + 24, Y + 436);
+      if (M.booked[i]) tag(x, X + 24, Y + 464, L(['Viewing ✓', 'Visita ✓', 'Fremvisning ✓']), '#7be08c', 'rgba(40,200,64,.16)');
+    });
+    const p = PROPS[M.sel], rx = 150 + lw + 28, rw = 2048 - 50 - rx;
+    pnl(x, rx, Y0, rw, YH, L(['Buyer profile', 'Perfil do comprador', 'Køberprofil']), L(['Hot', 'Quente', 'Varm']), A);
+    [[['Budget', 'Orçamento', 'Budget'], '€450k – 2.5M'], [['Areas', 'Zonas', 'Områder'], 'Cascais · Algarve'], [['Mortgage', 'Crédito', 'Lån'], L(['Pre-approved ✓', 'Pré-aprovado ✓', 'Forhåndsgodkendt ✓'])], [['Language', 'Língua', 'Sprog'], 'Dansk']].forEach((r, i) => { const y = Y0 + 110 + i * 62; x.fillStyle = '#868fa1'; x.font = `500 22px ${I}`; x.fillText(L(r[0]), rx + 28, y); x.fillStyle = '#eef2fa'; x.font = `600 22px ${I}`; x.textAlign = 'right'; x.fillText(r[1], rx + rw - 28, y); x.textAlign = 'left'; });
+    x.fillStyle = '#eef2fa'; x.font = `600 24px ${I}`; x.fillText(L(['Saturday route', 'Roteiro de sábado', 'Lørdagsrute']), rx + 28, Y0 + 400);
+    const bk = Object.keys(M.booked).map(Number).sort();
+    if (!bk.length) { x.fillStyle = '#707a8d'; x.font = `400 21px ${I}`; x.fillText(L(['Book a viewing to build the route', 'Marque uma visita para criar o roteiro', 'Book en fremvisning for at lave ruten']), rx + 28, Y0 + 446); }
+    bk.forEach((i, j) => { const y = Y0 + 446 + j * 50; x.fillStyle = A; x.font = `700 22px ${I}`; x.fillText(PROPS[i][5].split(' ')[1], rx + 28, y); x.fillStyle = '#cfd6e2'; x.font = `500 22px ${I}`; x.fillText(PROPS[i][1] + ' · ' + PROPS[i][2], rx + 120, y); });
+    btn(x, S, 'book', rx + 28, Y0 + YH - 100, rw - 56, 66, M.booked[M.sel] ? L(['Viewing booked · ', 'Visita marcada · ', 'Fremvisning booket · ']) + p[5] : L(['Book a viewing · ', 'Marcar visita · ', 'Book fremvisning · ']) + p[1] + ' →', A, M.booked[M.sel]);
+  }
+  // weddings — run of show (tick steps), RSVPs (send reminder), budget
+  function crmWed(x, S, t, M, A, Y0, YH) {
+    const lw = 1080; pnl(x, 150, Y0, lw, YH, 'Ana & Rui · 14 Jun 2027', L(['Contract signed', 'Contrato assinado', 'Kontrakt underskrevet']), A);
+    const steps = [['16:00', ['Ceremony · garden', 'Cerimónia · jardim', 'Vielse · have']], ['17:00', ['Cocktail hour', 'Cocktail', 'Cocktailtime']], ['19:00', ['Dinner · Classic menu', 'Jantar · menu Clássico', 'Middag · Classic-menu']], ['21:30', ['First dance', 'Primeira dança', 'Første dans']], ['00:00', ['Late-night snack', 'Ceia', 'Natmad']]];
+    steps.forEach((s, i) => { const y = Y0 + 110 + i * ((YH - 150) / 5), d = M.done[i], hv = hotHit(S, 'st:' + i, 178, y - 36, lw - 56, 76);
+      if (hv) { rp(x, 178, y - 36, lw - 56, 76, 14); x.fillStyle = '#131a29'; x.fill(); }
+      x.fillStyle = A; x.font = `700 24px ${I}`; x.fillText(s[0], 200, y + 8); x.beginPath(); x.arc(320, y, 16, 0, 7); x.fillStyle = d ? A : '#0f1420'; x.fill(); x.lineWidth = 3; x.strokeStyle = A; x.stroke(); if (d) { x.strokeStyle = '#0b0f19'; x.lineWidth = 4; x.beginPath(); x.moveTo(312, y); x.lineTo(318, y + 6); x.lineTo(329, y - 7); x.stroke(); }
+      if (i < 4) { x.strokeStyle = '#26304a'; x.lineWidth = 2; x.beginPath(); x.moveTo(320, y + 18); x.lineTo(320, y + (YH - 150) / 5 - 18); x.stroke(); }
+      x.fillStyle = d ? '#707a8d' : '#eef2fa'; x.font = `600 27px ${I}`; x.fillText(L(s[1]), 360, y + 10); x.fillStyle = '#707a8d'; x.font = `500 19px ${I}`; x.textAlign = 'right'; x.fillText(d ? L(['Done', 'Feito', 'Færdig']) : L(['Tap to confirm', 'Toque para confirmar', 'Tryk for at bekræfte']), 178 + lw - 80, y + 8); x.textAlign = 'left'; });
+    const rx = 150 + lw + 28, rw = 2048 - 50 - rx, hh = 380;
+    pnl(x, rx, Y0, rw, hh, 'RSVP', L(['auto-reminders', 'lembretes automáticos', 'auto-påmindelser']), A);
+    const cx = rx + 120, cy = Y0 + 210, pr = M.rsvp / 120; x.lineWidth = 18; x.strokeStyle = '#1b2436'; x.beginPath(); x.arc(cx, cy, 74, 0, 7); x.stroke(); x.strokeStyle = A; x.lineCap = 'round'; x.beginPath(); x.arc(cx, cy, 74, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pr); x.stroke(); x.lineCap = 'butt';
+    x.fillStyle = '#eef2fa'; x.font = `800 46px ${D}`; x.textAlign = 'center'; x.fillText(M.rsvp, cx, cy + 16); x.textAlign = 'left'; x.fillStyle = '#868fa1'; x.font = `500 22px ${I}`; x.fillText('/ 120 ' + L(['confirmed', 'confirmados', 'bekræftet']), rx + 230, cy - 10); x.fillText(L(['8 veggie · 3 gluten-free', '8 vegetarianos · 3 sem glúten', '8 veg. · 3 glutenfri']), rx + 230, cy + 24);
+    btn(x, S, 'remind', rx + 28, Y0 + hh - 84, rw - 56, 58, M.rsvp >= 120 ? L(['Everyone replied ✓', 'Todos responderam ✓', 'Alle har svaret ✓']) : L(['Send reminder to 24 guests', 'Enviar lembrete a 24 convidados', 'Send påmindelse til 24 gæster']), A, M.rsvp >= 120);
+    const by = Y0 + hh + 24, bh = YH - hh - 24;
+    pnl(x, rx, by, rw, bh, L(['Budget & payments', 'Orçamento e pagamentos', 'Budget & betalinger']), '€31,200', A);
+    const segs = [[.52, A], [.18, '#f3c6a5'], [.1, '#9b7bff'], [.08, '#22d3ee'], [.12, '#2f3a50']]; let sx = rx + 28; const sw = rw - 56; segs.forEach(s => { x.fillStyle = s[1]; x.fillRect(sx, by + 84, sw * s[0] - 4, 14); sx += sw * s[0]; });
+    [[['Deposit', 'Sinal', 'Depositum'], '€6,000', ['Paid', 'Pago', 'Betalt'], '#7be08c'], [['2nd instalment', '2.ª prestação', '2. rate'], '€12,000', ['14 Mar', '14 mar', '14. mar'], '#ffcf5a'], [['Final', 'Final', 'Slut'], '€13,200', ['31 May', '31 mai', '31. maj'], '#868fa1']].forEach((r, i) => { const y = by + 150 + i * 56; x.fillStyle = '#aeb6c6'; x.font = `500 22px ${I}`; x.fillText(L(r[0]), rx + 28, y); x.fillStyle = '#eef2fa'; x.font = `600 22px ${I}`; x.fillText(r[1], rx + rw - 260, y); x.fillStyle = r[3]; x.textAlign = 'right'; x.fillText(L(r[2]), rx + rw - 28, y); x.textAlign = 'left'; });
+  }
+  // trades / architecture / construction — crew dispatch + quote you can send
+  const JOBS = [[0, 0, 5, ['Full remodel', 'Remodelação total', 'Totalrenovering'], 'Rua do Sol 14', 1], [1, 0, 3, ['Bathroom', 'Casa de banho', 'Badeværelse'], 'M. Ferreira', 0], [1, 3, 2, ['Roof repair', 'Reparação telhado', 'Tagreparation'], 'Oakfield Rd', 0], [2, 0, 1, ['Site visits', 'Visitas', 'Besigtigelser'], 'AI booked', 2], [2, 1, 2, ['Flooring', 'Pavimento', 'Gulv'], '64 m²', 0], [2, 3, 2, ['Painting', 'Pintura', 'Maling'], 'Villa Azul', 0]];
+  const QSTAT = [['Draft', 'Rascunho', 'Kladde'], ['Sent', 'Enviado', 'Sendt'], ['Opened 2×', 'Aberto 2×', 'Åbnet 2×'], ['Signed ✓', 'Assinado ✓', 'Underskrevet ✓']];
+  function crmTrades(x, S, t, M, A, Y0, YH) {
+    const lw = 1150; pnl(x, 150, Y0, lw, YH, L(['Crews · this week', 'Equipas · esta semana', 'Hold · denne uge']), L(['96% utilised', '96% ocupação', '96% udnyttet']), A);
+    const gx = 330, gw = lw - 210, cw = gw / 5, rh = (YH - 200) / 3;
+    [['Mon', 'Seg', 'Man'], ['Tue', 'Ter', 'Tir'], ['Wed', 'Qua', 'Ons'], ['Thu', 'Qui', 'Tor'], ['Fri', 'Sex', 'Fre']].forEach((d, i) => { x.fillStyle = '#868fa1'; x.font = `600 22px ${I}`; x.textAlign = 'center'; x.fillText(L(d), gx + cw * i + cw / 2, Y0 + 110); x.textAlign = 'left'; });
+    ['A', 'B', 'C'].forEach((c, r) => { const y = Y0 + 140 + r * rh; rp(x, 180, y + rh / 2 - 26, 52, 52, 14); x.fillStyle = '#182032'; x.fill(); x.fillStyle = A; x.font = `800 26px ${D}`; x.fillText(c, 196, y + rh / 2 + 9); x.fillStyle = '#aeb6c6'; x.font = `500 21px ${I}`; x.fillText(L(['Crew', 'Equipa', 'Hold']), 246, y + rh / 2 + 7); });
+    JOBS.forEach((j, i) => { const X = gx + j[1] * cw + 6, Y = Y0 + 140 + j[0] * rh + 8, w = j[2] * cw - 12, h = rh - 16, sel = M.job === i, hv = hotHit(S, 'job:' + i, X, Y, w, h); const c = j[5] === 1 ? A : j[5] === 2 ? '#9b7bff' : '#22d3ee';
+      rp(x, X, Y, w, h, 16); x.fillStyle = c + (sel ? '44' : hv ? '33' : '22'); x.fill(); x.lineWidth = sel ? 4 : 2; x.strokeStyle = c; x.stroke(); x.fillStyle = '#eef2fa'; x.font = `600 25px ${I}`; x.fillText(L(j[3]), X + 20, Y + 44); x.fillStyle = '#aeb6c6'; x.font = `400 20px ${I}`; x.fillText(j[4], X + 20, Y + 76); });
+    const rx = 150 + lw + 28, rw = 2048 - 50 - rx, J = JOBS[M.job];
+    pnl(x, rx, Y0, rw, YH, L(['Quote', 'Orçamento', 'Tilbud']) + ' #Q-' + (1180 + M.job), L(QSTAT[M.quote]), M.quote === 3 ? '#28c840' : A);
+    x.fillStyle = '#aeb6c6'; x.font = `500 21px ${I}`; x.fillText(L(J[3]) + ' · ' + J[4], rx + 28, Y0 + 96);
+    const lines = [[['Demolition & removal', 'Demolição e remoção', 'Nedrivning'], 850], [['Materials', 'Materiais', 'Materialer'], 2140 + M.job * 310], [['Specialist work', 'Trabalho especializado', 'Specialarbejde'], 1620], [['Labour · 5 days', 'Mão de obra · 5 dias', 'Arbejdsløn · 5 dage'], 2250]];
+    let tot = 0; lines.forEach((l, i) => { const y = Y0 + 160 + i * 58; tot += l[1]; x.fillStyle = '#cfd6e2'; x.font = `500 23px ${I}`; x.fillText(L(l[0]), rx + 28, y); x.fillStyle = '#eef2fa'; x.textAlign = 'right'; x.fillText('€' + l[1].toLocaleString('en-US'), rx + rw - 28, y); x.textAlign = 'left'; });
+    const ty2 = Y0 + 160 + lines.length * 58 + 20; x.strokeStyle = '#1b2436'; x.beginPath(); x.moveTo(rx + 28, ty2 - 30); x.lineTo(rx + rw - 28, ty2 - 30); x.stroke();
+    x.fillStyle = '#868fa1'; x.font = `500 22px ${I}`; x.fillText(L(['VAT 23%', 'IVA 23%', 'Moms 23 %']), rx + 28, ty2); x.textAlign = 'right'; x.fillText('€' + Math.round(tot * .23).toLocaleString('en-US'), rx + rw - 28, ty2); x.textAlign = 'left';
+    x.fillStyle = '#eef2fa'; x.font = `600 26px ${I}`; x.fillText('Total', rx + 28, ty2 + 64); x.fillStyle = A; x.font = `800 46px ${D}`; x.textAlign = 'right'; x.fillText('€' + Math.round(tot * 1.23).toLocaleString('en-US'), rx + rw - 28, ty2 + 68); x.textAlign = 'left';
+    btn(x, S, 'quote', rx + 28, Y0 + YH - 100, rw - 56, 66, [L(['Send quote for e-signature →', 'Enviar orçamento para assinar →', 'Send tilbud til e-signatur →']), L(['Sent · waiting…', 'Enviado · à espera…', 'Sendt · venter…']), L(['Opened · send reminder →', 'Aberto · enviar lembrete →', 'Åbnet · send påmindelse →']), L(['Signed — job scheduled ✓', 'Assinado — obra agendada ✓', 'Underskrevet — job planlagt ✓'])][M.quote], A, M.quote === 3);
+  }
+  // gym — class timetable (tap to book), retention radar (send a nudge)
+  function crmGym(x, S, t, M, A, Y0, YH) {
+    const lw = 1180; pnl(x, 150, Y0, lw, YH, L(['Classes this week', 'Aulas esta semana', 'Hold denne uge']), L(['Tap a class to book', 'Toque para marcar', 'Tryk for at booke']), A);
+    const days = [['Mon', 'Seg', 'Man'], ['Tue', 'Ter', 'Tir'], ['Wed', 'Qua', 'Ons'], ['Thu', 'Qui', 'Tor'], ['Fri', 'Sex', 'Fre'], ['Sat', 'Sáb', 'Lør']], times = ['07:00', '12:30', '18:30'], names = ['HIIT', 'Spin', 'HIIT', 'Spin', 'HIIT', 'Yoga', 'Core', 'Pilates', 'Core', 'Pilates', 'Box', 'HIIT', 'Pilates', 'Box', 'Pilates', 'HIIT', 'Yoga', '—'];
+    const gx = 270, cw = (lw - 150) / 6, rh = (YH - 150) / 3;
+    days.forEach((d, i) => { x.fillStyle = '#868fa1'; x.font = `600 22px ${I}`; x.textAlign = 'center'; x.fillText(L(d), gx + cw * i + cw / 2, Y0 + 108); x.textAlign = 'left'; });
+    times.forEach((tm, r) => { x.fillStyle = '#707a8d'; x.font = `500 21px ${I}`; x.fillText(tm, 176, Y0 + 130 + r * rh + rh / 2 + 6); });
+    names.forEach((n, i) => { const c = i % 6, r = Math.floor(i / 6), X = gx + c * cw + 6, Y = Y0 + 130 + r * rh + 6, w = cw - 12, h = rh - 12, f = M.cls[i];
+      if (!f) { rp(x, X, Y, w, h, 14); x.setLineDash([8, 8]); x.strokeStyle = '#1b2436'; x.stroke(); x.setLineDash([]); return; }
+      const full = f >= 100, hv = !full && hotHit(S, 'cl:' + i, X, Y, w, h);
+      rp(x, X, Y, w, h, 14); x.fillStyle = full ? A + '22' : hv ? '#172030' : '#131a29'; x.fill(); x.lineWidth = 2; x.strokeStyle = full ? A : '#1b2436'; x.stroke();
+      x.fillStyle = '#eef2fa'; x.font = `700 24px ${I}`; x.fillText(n, X + 16, Y + 38); x.fillStyle = '#1b2436'; rp(x, X + 16, Y + h - 46, w - 32, 8, 4); x.fill(); x.fillStyle = A; rp(x, X + 16, Y + h - 46, (w - 32) * f / 100, 8, 4); x.fill();
+      x.fillStyle = full ? A : '#868fa1'; x.font = `500 18px ${I}`; x.fillText(full ? L(['Full', 'Cheia', 'Fyldt']) : Math.round(f / 5) + '/20', X + 16, Y + h - 14); });
+    const rx = 150 + lw + 28, rw = 2048 - 50 - rx;
+    pnl(x, rx, Y0, rw, YH, L(['Retention radar', 'Radar de retenção', 'Fastholdelse']), L(['AI churn score', 'risco AI', 'AI-risiko']), A);
+    [['Nuno R.', 21, 91], ['Clara T.', 12, 78], ['Ida M.', 9, 64], ['Rui F.', 8, 52]].forEach((m, i) => { const y = Y0 + 100 + i * ((YH - 130) / 4), sent = M.nudged[i];
+      x.fillStyle = '#eef2fa'; x.font = `600 25px ${I}`; x.fillText(m[0], rx + 28, y + 24); x.fillStyle = '#868fa1'; x.font = `400 20px ${I}`; x.fillText(m[1] + ' ' + L(['days away', 'dias sem vir', 'dage væk']), rx + 28, y + 54);
+      x.fillStyle = '#1b2436'; rp(x, rx + 28, y + 72, rw - 300, 8, 4); x.fill(); x.fillStyle = m[2] > 80 ? '#ff8a7a' : '#ffcf5a'; rp(x, rx + 28, y + 72, (rw - 300) * m[2] / 100, 8, 4); x.fill();
+      btn(x, S, 'nd:' + i, rx + rw - 230, y + 20, 200, 52, sent ? L(['Sent ✓', 'Enviado ✓', 'Sendt ✓']) : L(['Send nudge', 'Enviar lembrete', 'Send påmindelse']), A, sent); });
+  }
+  // café & bike rental / shop — revenue, live orders (simulate one), stock (reorder)
+  function crmShop(x, S, t, M, A, Y0, YH) {
+    const lw = 1180; pnl(x, 150, Y0, lw, YH, L(['Revenue · 30 days', 'Faturação · 30 dias', 'Omsætning · 30 dage']), '€48,920 · +27%', A);
+    const cx = 178, cy = Y0 + 90, cw = lw - 56, ch = 300, pts = [32, 35, 31, 40, 44, 41, 48, 52, 47, 55, 60, 58, 54, 63, 70, 66, 72, 78, 74, 81, 88, 84, 90, 97, 92, 101, 108, 104, 112, 121], kp = ease(st.kpiT);
+    const g = x.createLinearGradient(0, cy, 0, cy + ch); g.addColorStop(0, A + '55'); g.addColorStop(1, A + '00');
+    x.beginPath(); x.moveTo(cx, cy + ch); pts.forEach((v, i) => x.lineTo(cx + i / (pts.length - 1) * cw * kp, cy + ch - v / 125 * ch)); x.lineTo(cx + cw * kp, cy + ch); x.closePath(); x.fillStyle = g; x.fill();
+    x.beginPath(); pts.forEach((v, i) => { const X = cx + i / (pts.length - 1) * cw * kp, Y = cy + ch - v / 125 * ch; i ? x.lineTo(X, Y) : x.moveTo(X, Y); }); x.strokeStyle = A; x.lineWidth = 4; x.stroke();
+    const names = ['Freja N.', 'Oliver S.', 'Marta G.', 'Emil J.', 'Sofie L.', 'Jack T.', 'Inês R.', 'Mads K.'], oy = cy + ch + 40;
+    for (let i = 0; i < 4; i++) { const n = M.orders - i, y = oy + i * 62, fresh = i === 0 && now() - M.simT < 1.2; if (fresh) { rp(x, cx - 8, y - 34, cw + 16, 56, 12); x.fillStyle = A + '22'; x.fill(); }
+      x.fillStyle = '#eef2fa'; x.font = `600 23px ${I}`; x.fillText('#' + (4820 + n), cx, y); x.fillStyle = '#cfd6e2'; x.font = `500 23px ${I}`; x.fillText(names[n % names.length], cx + 140, y); x.fillStyle = '#868fa1'; x.fillText(['DK', 'UK', 'PT'][n % 3], cx + 440, y); x.fillStyle = '#eef2fa'; x.fillText('€' + (39 + (n * 37) % 120), cx + 560, y); tag(x, cx + cw - 150, y - 28, L(i === 0 ? ['Paid', 'Pago', 'Betalt'] : ['Shipped', 'Enviado', 'Afsendt']), i === 0 ? '#7be08c' : '#aeb6c6', i === 0 ? 'rgba(40,200,64,.14)' : 'rgba(255,255,255,.06)'); }
+    btn(x, S, 'sim', cx, Y0 + YH - 90, 380, 60, L(['Simulate an order →', 'Simular encomenda →', 'Simulér en ordre →']), A, false);
+    const rx = 150 + lw + 28, rw = 2048 - 50 - rx;
+    pnl(x, rx, Y0, rw, YH, L(['Stock alerts', 'Alertas de stock', 'Lageralarmer']), L(['auto', 'auto', 'auto']), A);
+    [[['E-bikes ready', 'E-bikes prontas', 'Elcykler klar'], 3, 30], [['Pastéis de nata', 'Pastéis de nata', 'Pastéis de nata'], 14, 45], [['Helmets M', 'Capacetes M', 'Hjelme M'], 6, 20], [['Coffee beans', 'Café em grão', 'Kaffebønner'], 48, 90]].forEach((s, i) => { const y = Y0 + 100 + i * ((YH - 130) / 4), done = M.reord[i];
+      x.fillStyle = '#eef2fa'; x.font = `600 24px ${I}`; x.fillText(L(s[0]), rx + 28, y + 24); x.fillStyle = '#1b2436'; rp(x, rx + 28, y + 50, rw - 300, 8, 4); x.fill(); x.fillStyle = s[2] < 35 ? '#ff8a7a' : A; rp(x, rx + 28, y + 50, (rw - 300) * (done ? 1 : s[2] / 100), 8, 4); x.fill();
+      x.fillStyle = '#868fa1'; x.font = `500 20px ${I}`; x.fillText((done ? s[1] + 40 : s[1]) + ' ' + L(['left', 'restantes', 'tilbage']), rx + 28, y + 88);
+      btn(x, S, 'ro:' + i, rx + rw - 230, y + 14, 200, 52, done ? L(['Ordered ✓', 'Encomendado ✓', 'Bestilt ✓']) : L(['Reorder', 'Encomendar', 'Genbestil']), A, done); });
+  }
+  function handleHot(id) {
+    const k = TYPES[st.type].crm, M = ms(k), [a, b] = id.split(':'), i = +b;
+    if (a === 'tb') { M.tables[i] = (M.tables[i] + 1) % 4; if (M.tables[i] === 2) { st.toastAt = now(); st.toastTxt = ['Table ' + (i + 1) + ' seated · menu sent to kitchen', 'Mesa ' + (i + 1) + ' sentada · pedido enviado à cozinha', 'Bord ' + (i + 1) + ' ankommet · bestilling sendt til køkkenet']; } }
+    else if (a === 'pr') M.sel = i;
+    else if (a === 'book') { if (!M.booked[M.sel]) { M.booked[M.sel] = 1; st.toastAt = now(); st.toastTxt = ['Viewing booked · route sent on WhatsApp ✓', 'Visita marcada · roteiro enviado no WhatsApp ✓', 'Fremvisning booket · rute sendt på WhatsApp ✓']; } }
+    else if (a === 'st') M.done[i] = M.done[i] ? 0 : 1;
+    else if (a === 'remind') { if (M.rsvp < 120) { M.rsvp = Math.min(120, M.rsvp + 8); st.toastAt = now(); st.toastTxt = ['Reminder sent · 8 new RSVPs', 'Lembrete enviado · 8 novas respostas', 'Påmindelse sendt · 8 nye svar']; } }
+    else if (a === 'job') { M.job = i; M.quote = 0; }
+    else if (a === 'quote') { if (M.quote < 3) { M.quote++; if (M.quote === 3) { st.toastAt = now(); st.toastTxt = ['Quote signed · deposit invoice sent ✓', 'Orçamento assinado · fatura de sinal enviada ✓', 'Tilbud underskrevet · depositumfaktura sendt ✓']; } } }
+    else if (a === 'cl') { M.cls[i] = Math.min(100, M.cls[i] + 5); }
+    else if (a === 'nd') { M.nudged[i] = 1; st.toastAt = now(); st.toastTxt = ['Nudge sent on WhatsApp ✓', 'Lembrete enviado no WhatsApp ✓', 'Påmindelse sendt på WhatsApp ✓']; }
+    else if (a === 'sim') { M.orders++; M.simT = now(); st.toastAt = now(); st.toastTxt = ['New order · €' + (39 + (M.orders * 37) % 120) + ' · Meta ad', 'Nova encomenda · ' + (39 + (M.orders * 37) % 120) + ' € · anúncio Meta', 'Ny ordre · ' + (39 + (M.orders * 37) % 120) + ' € · Meta-annonce']; }
+    else if (a === 'ro') M.reord[i] = 1;
+    else if (a === 'cta') { const AS = appState(k); AS.ok = AS.ok ? 0 : 1; AS.at = now(); }
+    else if (a === 'fav') { const AS = appState(k); AS.fav = !AS.fav; }
+  }
+
+  // ================================================================== phone: a different app (layout + colours) per business
+  const THEME = {
+    rest: { bg: '#f6efe6', fg: '#1d1712', sub: '#7a6d60', card: '#ffffff', line: '#eadfce', acc: '#c2410c', acc2: '#f59e0b', dark: 0 },
+    estate: { bg: '#0b1424', fg: '#f3efe4', sub: '#93a0b8', card: '#13203a', line: '#1f2d4a', acc: '#d4af5a', acc2: '#f0d999', dark: 1 },
+    wed: { bg: '#fbf1f1', fg: '#3a2530', sub: '#9a7d88', card: '#ffffff', line: '#f1dede', acc: '#c9708f', acc2: '#f3c6a5', dark: 0 },
+    trades: { bg: '#111214', fg: '#f2f2f2', sub: '#8c8f96', card: '#1b1d21', line: '#2a2d33', acc: '#ffb020', acc2: '#ff7a1a', dark: 1 },
+    gym: { bg: '#050505', fg: '#ffffff', sub: '#8a8a8a', card: '#141414', line: '#222', acc: '#a3e635', acc2: '#22d3ee', dark: 1 },
+    shop: { bg: '#f1faf8', fg: '#0f2a2a', sub: '#5f7d7b', card: '#ffffff', line: '#d7ece8', acc: '#0d9488', acc2: '#fb7185', dark: 0 }
+  };
   function drawApp(x, S, t) {
-    const W = S.w, H = S.h, k = TYPES[st.type].crm, A = APPS[k], AS = appState(k);
-    x.fillStyle = '#080b13'; x.fillRect(0, 0, W, H);
-    x.fillStyle = '#eef2fa'; x.font = `600 27px ${I}`; x.fillText('9:41', 66, 66); rp(x, 520, 48, 56, 24, 7); x.fill();
-    x.fillStyle = '#868fa1'; x.font = `500 28px ${I}`; x.fillText(L(A.hi), 46, 190); x.fillStyle = '#eef2fa'; x.font = `800 60px ${D}`; x.fillText(A.who, 46, 256);
-    const g = x.createLinearGradient(36, 290, 624, 640); g.addColorStop(0, '#3d6bff'); g.addColorStop(1, '#16b8d6'); rp(x, 36, 290, 588, 340, 40); x.fillStyle = g; x.fill();
-    x.fillStyle = 'rgba(255,255,255,.82)'; x.font = `600 25px ${I}`; x.fillText(L(A.k), 74, 350); x.fillStyle = '#fff'; x.font = `800 52px ${D}`; x.fillText(L(A.t), 74, 418); x.font = `500 28px ${I}`; x.fillText(L(A.s), 74, 462);
-    const hk = hotHit(S, 'cta', 74, 504, 512, 84); rp(x, 74, 504, 512, 84, 42); x.fillStyle = AS.ok ? 'rgba(255,255,255,.22)' : (hk ? '#dbe6ff' : '#fff'); x.fill();
-    x.fillStyle = AS.ok ? '#fff' : '#2b55e0'; x.font = `700 28px ${I}`; x.textAlign = 'center'; x.fillText(AS.ok ? '✓  ' + L(A.ok).replace(/ ✓$/, '') : L(A.cta), 330, 556); x.textAlign = 'left';
-    const pr = A.prog[0] + (AS.ok ? 1 : 0);
-    x.fillStyle = '#eef2fa'; x.font = `700 32px ${D}`; x.fillText(L(A.sec), 46, 716); x.fillStyle = '#868fa1'; x.font = `500 24px ${I}`; x.textAlign = 'right'; x.fillText(Math.min(pr, A.prog[1]) + '/' + A.prog[1] + ' ' + L(A.prog[2]), 614, 716); x.textAlign = 'left';
-    const n = A.prog[1], gap = (568 - 20) / n; for (let i = 0; i < n; i++) { x.beginPath(); x.arc(56 + 10 + i * gap + gap / 2 - 10, 772, Math.min(20, gap / 2 - 4), 0, 7); x.fillStyle = i < pr ? '#4d7cff' : '#182032'; x.fill(); }
-    A.list.forEach((r, i) => { const py = 836 + i * 120; rp(x, 36, py, 588, 102, 26); x.fillStyle = '#0f1420'; x.fill(); rp(x, 60, py + 22, 58, 58, 16); x.fillStyle = '#182032'; x.fill(); x.fillStyle = '#eef2fa'; x.font = `600 28px ${I}`; x.fillText(L(r[0]), 142, py + 48); x.fillStyle = '#868fa1'; x.font = `400 24px ${I}`; x.fillText(L(r[1]), 142, py + 80); });
-    rp(x, 36, 1236, 588, 96, 48); x.fillStyle = '#0f1420'; x.fill(); [0, 1, 2, 3].forEach(i => { x.beginPath(); x.arc(110 + i * 146, 1284, 15, 0, 7); x.fillStyle = i === 0 ? '#4d7cff' : '#2f3a50'; x.fill(); });
+    const W = S.w, H = S.h, k = TYPES[st.type].crm, A = APPS[k], AS = appState(k), C = THEME[k] || THEME.rest;
+    x.fillStyle = C.bg; x.fillRect(0, 0, W, H);
+    x.fillStyle = C.fg; x.font = `600 27px ${I}`; x.fillText('9:41', 66, 66); rp(x, 520, 48, 56, 24, 7); x.fill();
+    ({ rest: appRest, estate: appEstate, wed: appWed, trades: appTrades, gym: appGym, shop: appShop }[k] || appRest)(x, S, t, A, AS, C);
+    // tab bar
+    rp(x, 36, 1250, 588, 100, 50); x.fillStyle = C.card; x.fill(); if (!C.dark) { x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); }
+    [0, 1, 2, 3].forEach(i => { x.beginPath(); x.arc(118 + i * 141, 1300, i === 0 ? 17 : 13, 0, 7); x.fillStyle = i === 0 ? C.acc : C.dark ? '#3a3d44' : C.line; x.fill(); });
     const pa = now() - st.pushAt;
-    if (pa < 3.6) { const kk = pa < .45 ? ease(pa / .45) : pa > 3.15 ? 1 - ease((pa - 3.15) / .45) : 1; const py = -120 + kk * 230; rp(x, 22, py, 616, 112, 32); x.fillStyle = 'rgba(238,242,250,.97)'; x.fill(); rp(x, 44, py + 24, 64, 64, 16); x.fillStyle = '#4d7cff'; x.fill(); x.fillStyle = '#0b0f19'; x.font = `700 24px ${I}`; x.fillText(A.brand, 126, py + 50); x.font = `400 23px ${I}`; x.fillText(L(A.list[0][0]) + ' · ' + L(A.list[0][1]), 126, py + 82); }
+    if (pa < 3.6) { const kk = pa < .45 ? ease(pa / .45) : pa > 3.15 ? 1 - ease((pa - 3.15) / .45) : 1; const py = -120 + kk * 230; rp(x, 22, py, 616, 112, 32); x.fillStyle = C.dark ? 'rgba(40,42,48,.97)' : 'rgba(255,255,255,.98)'; x.fill(); rp(x, 44, py + 24, 64, 64, 16); x.fillStyle = C.acc; x.fill(); x.fillStyle = C.fg; x.font = `700 24px ${I}`; x.fillText(A.brand, 126, py + 50); x.fillStyle = C.sub; x.font = `400 23px ${I}`; x.fillText(L(A.list[0][0]) + ' · ' + L(A.list[0][1]), 126, py + 82); }
+  }
+  const appCTA = (x, S, AS, A, C, X, Y, W, H) => { const hk = hotHit(S, 'cta', X, Y, W, H); rp(x, X, Y, W, H, H / 2); x.fillStyle = AS.ok ? C.acc + '33' : hk ? C.acc2 : C.acc; x.fill(); x.fillStyle = AS.ok ? C.acc : (C.dark ? '#0b0b0b' : '#fff'); x.font = `700 28px ${I}`; x.textAlign = 'center'; x.fillText(AS.ok ? '✓  ' + L(A.ok).replace(/ ✓$/, '') : L(A.cta), X + W / 2, Y + H / 2 + 10); x.textAlign = 'left'; };
+  const rowList = (x, A, C, Y, n) => A.list.slice(0, n).forEach((r, i) => { const py = Y + i * 112; rp(x, 36, py, 588, 96, 26); x.fillStyle = C.card; x.fill(); if (!C.dark) { x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); } rp(x, 58, py + 20, 56, 56, 16); x.fillStyle = C.acc + '26'; x.fill(); x.fillStyle = C.acc; x.beginPath(); x.arc(86, py + 48, 9, 0, 7); x.fill(); x.fillStyle = C.fg; x.font = `600 27px ${I}`; x.fillText(L(r[0]), 136, py + 44); x.fillStyle = C.sub; x.font = `400 23px ${I}`; x.fillText(L(r[1]), 136, py + 76); });
+  function appRest(x, S, t, A, AS, C) {
+    x.fillStyle = C.fg; x.font = `800 36px ${D}`; x.fillText('Casa Lume', 46, 170); x.fillStyle = C.sub; x.font = `500 24px ${I}`; x.fillText(L(A.hi) + ' ' + A.who, 46, 206);
+    rp(x, 36, 236, 588, 430, 40); x.save(); x.clip(); const g = x.createLinearGradient(36, 236, 624, 666); g.addColorStop(0, '#3b1f12'); g.addColorStop(1, '#9a3412'); x.fillStyle = g; x.fillRect(36, 236, 588, 430);
+    x.fillStyle = 'rgba(255,200,140,.25)'; x.beginPath(); x.arc(500, 300, 220, 0, 7); x.fill(); x.fillStyle = 'rgba(0,0,0,.25)'; x.beginPath(); x.ellipse(540, 470, 120, 40, 0, 0, 7); x.fill(); x.fillStyle = '#f3ede3'; x.beginPath(); x.ellipse(530, 430, 120, 96, 0, 0, 7); x.fill(); x.fillStyle = '#b45309'; x.beginPath(); x.ellipse(522, 430, 56, 36, .3, 0, 7); x.fill(); x.fillStyle = '#65a30d'; x.beginPath(); x.ellipse(562, 446, 24, 16, 0, 0, 7); x.fill(); x.restore();
+    x.fillStyle = 'rgba(255,255,255,.85)'; x.font = `600 23px ${I}`; x.fillText(L(A.k), 72, 300); x.fillStyle = '#fff'; x.font = `800 46px ${D}`; x.fillText(L(A.s).split(' · ')[0], 72, 356); x.font = `500 25px ${I}`; x.fillText(L(A.s).split(' · ')[1] || '', 72, 394);
+    appCTA(x, S, AS, A, C, 72, 572, 516, 72);
+    x.fillStyle = C.fg; x.font = `700 30px ${D}`; x.fillText(L(A.sec), 46, 730); const pr = A.prog[0] + (AS.ok ? 1 : 0);
+    for (let i = 0; i < 10; i++) { x.beginPath(); x.arc(70 + i * 57, 790, 22, 0, 7); x.fillStyle = i < pr ? C.acc : C.line; x.fill(); if (i < pr) { x.fillStyle = '#fff'; x.font = `700 18px ${I}`; x.textAlign = 'center'; x.fillText('✓', 70 + i * 57, 797); x.textAlign = 'left'; } }
+    [['#b45309', ['Octopus', 'Polvo', 'Blæksprutte']], ['#65a30d', ['Garden', 'Horta', 'Have']], ['#be123c', ['Dessert', 'Sobremesa', 'Dessert']]].forEach((d, i) => { const X = 36 + i * 200; rp(x, X, 850, 188, 360, 28); x.fillStyle = C.card; x.fill(); x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); x.beginPath(); x.arc(X + 94, 960, 70, 0, 7); x.fillStyle = '#f3ede3'; x.fill(); x.beginPath(); x.arc(X + 94, 960, 40, 0, 7); x.fillStyle = d[0]; x.fill(); x.fillStyle = C.fg; x.font = `600 25px ${I}`; x.fillText(L(d[1]), X + 22, 1080); x.fillStyle = C.sub; x.font = `500 22px ${I}`; x.fillText('€' + (14 + i * 4), X + 22, 1116); });
+  }
+  function appEstate(x, S, t, A, AS, C) {
+    rp(x, 36, 120, 588, 76, 38); x.fillStyle = C.card; x.fill(); x.fillStyle = C.sub; x.font = `500 25px ${I}`; x.fillText('⌕  Cascais · Algarve · 3+', 70, 167);
+    x.fillStyle = C.fg; x.font = `700 40px ${D}`; x.fillText(L(A.hi) + ' ' + A.who, 46, 262);
+    rp(x, 36, 296, 588, 560, 36); x.save(); x.clip(); const im = img('estate/e2'); if (im) cover(x, im, 36, 296, 588, 400); else { x.fillStyle = '#1f2d4a'; x.fillRect(36, 296, 588, 400); } x.fillStyle = C.card; x.fillRect(36, 696, 588, 160); x.restore();
+    const fh = hotHit(S, 'fav', 540, 316, 64, 64); x.beginPath(); x.arc(572, 348, 32, 0, 7); x.fillStyle = 'rgba(11,20,36,.75)'; x.fill(); x.fillStyle = AS.fav || fh ? C.acc : '#fff'; x.font = `700 32px ${I}`; x.textAlign = 'center'; x.fillText(AS.fav ? '♥' : '♡', 572, 360); x.textAlign = 'left';
+    rp(x, 60, 316, 150, 48, 24); x.fillStyle = C.acc; x.fill(); x.fillStyle = '#0b1424'; x.font = `700 22px ${I}`; x.fillText('91% match', 78, 348);
+    x.fillStyle = C.sub; x.font = `600 21px ${I}`; x.fillText('CARVOEIRO · ALGARVE', 66, 738); x.fillStyle = C.fg; x.font = `800 48px ${D}`; x.fillText('€1.2M', 66, 796); x.fillStyle = C.sub; x.font = `400 23px ${I}`; x.fillText(L(['4 bed · pool · sea view', 'T4 · piscina · vista mar', '4 vær. · pool · havudsigt']), 66, 832);
+    appCTA(x, S, AS, A, C, 36, 884, 588, 76);
+    x.fillStyle = C.fg; x.font = `700 30px ${D}`; x.fillText(L(A.sec), 46, 1020);
+    ['estate/e1', 'estate/e3', 'estate/e2'].forEach((p, i) => { const X = 36 + i * 200, im2 = img(p); x.save(); rp(x, X, 1046, 188, 170, 22); x.clip(); if (im2) cover(x, im2, X, 1046, 188, 170); else { x.fillStyle = C.card; x.fillRect(X, 1046, 188, 170); } x.restore(); });
+  }
+  function appWed(x, S, t, A, AS, C) {
+    x.fillStyle = C.sub; x.font = `500 26px ${I}`; x.textAlign = 'center'; x.fillText(L(A.k), 330, 170); x.fillStyle = C.fg; x.font = `italic 600 64px 'Fraunces',Georgia,serif`; x.fillText(A.who, 330, 252);
+    x.fillStyle = C.acc; x.font = `800 120px ${D}`; x.fillText('203', 330, 400); x.fillStyle = C.sub; x.font = `600 24px ${I}`; x.fillText(L(['DAYS TO GO', 'DIAS PARA O GRANDE DIA', 'DAGE TILBAGE']), 330, 444); x.textAlign = 'left';
+    const pr = (A.prog[0] + (AS.ok ? 1 : 0)) / A.prog[1]; rp(x, 36, 480, 588, 170, 32); x.fillStyle = C.card; x.fill(); x.strokeStyle = C.line; x.lineWidth = 2; x.stroke();
+    x.lineWidth = 14; x.strokeStyle = C.line; x.beginPath(); x.arc(126, 565, 52, 0, 7); x.stroke(); x.strokeStyle = C.acc; x.lineCap = 'round'; x.beginPath(); x.arc(126, 565, 52, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pr); x.stroke(); x.lineCap = 'butt';
+    x.fillStyle = C.fg; x.font = `700 26px ${I}`; x.textAlign = 'center'; x.fillText(Math.round(pr * 100) + '%', 126, 574); x.textAlign = 'left'; x.font = `700 30px ${D}`; x.fillText(L(A.sec), 210, 556); x.fillStyle = C.sub; x.font = `400 23px ${I}`; x.fillText(L(A.s), 210, 594);
+    appCTA(x, S, AS, A, C, 36, 680, 588, 76);
+    A.list.forEach((r, i) => { const y = 800 + i * 112, done = i === 0 && AS.ok; rp(x, 36, y, 588, 96, 26); x.fillStyle = C.card; x.fill(); x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); x.beginPath(); x.arc(84, y + 48, 18, 0, 7); x.lineWidth = 3; x.strokeStyle = C.acc; x.stroke(); if (done) { x.fillStyle = C.acc; x.fill(); } x.fillStyle = C.fg; x.font = `600 27px ${I}`; x.fillText(L(r[0]), 124, y + 44); x.fillStyle = C.sub; x.font = `400 23px ${I}`; x.fillText(L(r[1]), 124, y + 76); });
+  }
+  function appTrades(x, S, t, A, AS, C) {
+    x.fillStyle = C.sub; x.font = `600 23px ${I}`; x.fillText(A.brand.toUpperCase() + ' · ' + L(['PROJECT', 'OBRA', 'PROJEKT']), 46, 160); x.fillStyle = C.fg; x.font = `800 50px ${D}`; x.fillText(L(A.t), 46, 222); x.fillStyle = C.sub; x.font = `400 24px ${I}`; x.fillText(L(A.k) + ' · ' + L(A.s), 46, 262);
+    const pr = (A.prog[0] + (AS.ok ? 1 : 0)) / A.prog[1]; rp(x, 46, 300, 568, 16, 8); x.fillStyle = C.line; x.fill(); rp(x, 46, 300, 568 * pr, 16, 8); x.fillStyle = C.acc; x.fill(); x.fillStyle = C.fg; x.font = `600 22px ${I}`; x.fillText(Math.round(pr * 100) + '% ' + L(['complete', 'concluído', 'færdig']), 46, 352);
+    x.fillStyle = C.fg; x.font = `700 30px ${D}`; x.fillText(L(['Today on site', 'Hoje em obra', 'I dag på stedet']), 46, 430);
+    [['#4b5563', '#9ca3af'], ['#78350f', '#d97706'], ['#1e3a8a', '#60a5fa']].forEach((g2, i) => { const X = 36 + i * 200; const gg = x.createLinearGradient(X, 460, X + 188, 640); gg.addColorStop(0, g2[0]); gg.addColorStop(1, g2[1]); rp(x, X, 456, 188, 188, 22); x.fillStyle = gg; x.fill(); x.fillStyle = 'rgba(0,0,0,.45)'; rp(x, X + 12, 600, 110, 32, 16); x.fill(); x.fillStyle = '#fff'; x.font = `600 18px ${I}`; x.fillText('09:4' + i, X + 30, 622); });
+    rp(x, 36, 680, 588, 220, 30); x.fillStyle = C.card; x.fill(); x.fillStyle = C.sub; x.font = `600 22px ${I}`; x.fillText(L(['QUOTE #Q-1187', 'ORÇAMENTO #Q-1187', 'TILBUD #Q-1187']), 66, 728); x.fillStyle = C.fg; x.font = `800 54px ${D}`; x.fillText('€9,643', 66, 790);
+    appCTA(x, S, AS, A, C, 66, 812, 528, 68);
+    rowList(x, A, C, 930, 2);
+  }
+  function appGym(x, S, t, A, AS, C) {
+    x.fillStyle = C.fg; x.font = `800 48px ${D}`; x.fillText(L(A.hi) + ' ' + A.who, 46, 190);
+    const cx = 200, cy = 380, rings = [[110, C.acc, .82], [82, C.acc2, .64], [54, '#ff4d8d', .9]];
+    rings.forEach(r => { x.lineWidth = 22; x.strokeStyle = r[1] + '33'; x.beginPath(); x.arc(cx, cy, r[0], 0, 7); x.stroke(); x.strokeStyle = r[1]; x.lineCap = 'round'; x.beginPath(); x.arc(cx, cy, r[0], -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * r[2] * ease(st.kpiT || 1)); x.stroke(); x.lineCap = 'butt'; });
+    [[['Move', 'Mexer', 'Bevæg'], '540', C.acc], [['Train', 'Treinar', 'Træn'], '48 min', C.acc2], [['Streak', 'Série', 'Stime'], '12 🔥', '#ff4d8d']].forEach((s, i) => { x.fillStyle = s[2]; x.font = `600 22px ${I}`; x.fillText(L(s[0]).toUpperCase(), 360, 320 + i * 70); x.fillStyle = C.fg; x.font = `800 34px ${D}`; x.fillText(s[1], 360, 352 + i * 70); });
+    const bars = [40, 70, 55, 90, 30, 80, 60]; bars.forEach((b, i) => { rp(x, 56 + i * 82, 700 - b * 1.6, 50, b * 1.6, 12); x.fillStyle = i === 3 ? C.acc : '#2a2a2a'; x.fill(); });
+    rp(x, 36, 740, 588, 260, 32); x.fillStyle = C.card; x.fill(); x.fillStyle = C.acc; x.font = `600 22px ${I}`; x.fillText(L(A.k), 66, 790); x.fillStyle = C.fg; x.font = `800 44px ${D}`; x.fillText(L(A.t), 66, 846); x.fillStyle = C.sub; x.font = `400 23px ${I}`; x.fillText(L(A.s), 66, 884);
+    appCTA(x, S, AS, A, C, 66, 908, 528, 68);
+    rowList(x, A, C, 1030, 2);
+  }
+  function appShop(x, S, t, A, AS, C) {
+    x.fillStyle = C.fg; x.font = `800 44px ${D}`; x.fillText('Velochique', 46, 180); x.fillStyle = C.sub; x.font = `500 24px ${I}`; x.fillText(L(A.hi) + ' ' + A.who, 46, 216);
+    rp(x, 36, 246, 588, 440, 36); x.save(); x.clip(); x.fillStyle = '#cfe9e4'; x.fillRect(36, 246, 588, 440); x.fillStyle = '#9fd5ea'; x.beginPath(); x.moveTo(36, 520); x.bezierCurveTo(200, 470, 380, 640, 624, 560); x.lineTo(624, 686); x.lineTo(36, 686); x.fill();
+    x.strokeStyle = '#ffffff'; x.lineWidth = 10; for (let i = 0; i < 5; i++) { x.beginPath(); x.moveTo(36, 300 + i * 70); x.lineTo(624, 260 + i * 80); x.stroke(); }
+    x.strokeStyle = C.acc; x.lineWidth = 9; x.setLineDash([22, 14]); x.lineDashOffset = -t * 40; x.beginPath(); x.moveTo(110, 600); x.bezierCurveTo(220, 420, 380, 520, 540, 320); x.stroke(); x.setLineDash([]);
+    [[110, 600, C.acc2], [540, 320, C.acc]].forEach(p => { x.beginPath(); x.arc(p[0], p[1], 22, 0, 7); x.fillStyle = p[2]; x.fill(); x.lineWidth = 6; x.strokeStyle = '#fff'; x.stroke(); }); x.restore();
+    [[['Distance', 'Distância', 'Distance'], '28 km'], [['Time', 'Tempo', 'Tid'], '4 h'], [['Bikes', 'Bicicletas', 'Cykler'], '2']].forEach((s, i) => { const X = 36 + i * 200; rp(x, X, 712, 188, 120, 24); x.fillStyle = C.card; x.fill(); x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); x.fillStyle = C.sub; x.font = `500 21px ${I}`; x.fillText(L(s[0]), X + 22, 754); x.fillStyle = C.fg; x.font = `800 36px ${D}`; x.fillText(s[1], X + 22, 802); });
+    appCTA(x, S, AS, A, C, 36, 860, 588, 86);
+    rowList(x, A, C, 976, 2);
   }
   function drawPhoneWeb(x, S) { const ty = TYPES[st.type], im = img((st.before && ty.old ? 'old-' : '') + ty.site + '-m'); if (im) { x.fillStyle = '#000'; x.fillRect(0, 0, S.w, S.h); cover(x, im, 0, 0, S.w, S.h); } else drawApp(x, S, 0); }
   function cursor(x, S, big) {
@@ -345,7 +548,7 @@
   function renderCfg() {
     const ty = TYPES[st.type], p = PROD[st.prod];
     cfg.innerHTML = `
-      <div class="cf-h"><span>${t3(['Live configurator', 'Configurador ao vivo', 'Live-konfigurator'])}</span><b>${p.dev === 'phone' ? 'iPhone 18 Pro Max' : 'MacBook Pro 16″'}</b><button type="button" class="cf-x" aria-label="Close"><i></i></button></div>
+      <div class="cf-h"><span>${t3(['Live configurator', 'Configurador ao vivo', 'Live-konfigurator'])}</span><b>${t3(['Make it yours', 'Torne-o seu', 'Gør det til dit'])}</b><button type="button" class="cf-x" aria-label="Close"><i></i></button></div>
       <div class="cf-seg">${PROD.map((q, i) => `<button type="button" data-p="${i}" class="${i === st.prod ? 'on' : ''}">${t3(q.w)}</button>`).join('')}</div>
       <small class="cf-l">${t3(['Type of business', 'Tipo de negócio', 'Type virksomhed'])}</small>
       <div class="cf-types">${TYPES.map((q, i) => `<button type="button" data-t="${i}" class="${i === st.type ? 'on' : ''}">${svgI(ICON[q.k])}<span>${t3(q.n)}</span></button>`).join('')}</div>
@@ -353,7 +556,7 @@
       <div class="cf-info"><b>${p.k === 'web' ? ty.proj : p.k === 'crm' ? t3([ty.n[0] + ' CRM', 'CRM · ' + ty.n[1], ty.n[2] + '-CRM']) : APPS[ty.crm].brand + ' app'}</b>
         <ul>${FACTS[p.k].map(f => `<li>${t3(f)}</li>`).join('')}</ul></div>
       <p class="cf-note"><b>${t3(['100% custom.', '100% à medida.', '100 % skræddersyet.'])}</b> ${t3(['Every screen is designed from a blank page for your business — colours, content, flows. Nothing comes from a template.', 'Cada ecrã é desenhado de raiz para o seu negócio — cores, conteúdos, fluxos. Nada vem de um template.', 'Hver skærm designes fra bunden til din virksomhed — farver, indhold, flows. Intet kommer fra en skabelon.'])}</p>
-      <div class="cf-f"><a class="btn p" href="contact.html">${t3(['Design mine', 'Desenhar o meu', 'Design min'])} →</a>${focus === 'phone' ? '' : `<span class="cf-tip">${t3(['Tip: use the screen — it works', 'Dica: use o ecrã — funciona', 'Tip: brug skærmen — den virker'])}</span>`}</div>`;
+      <div class="cf-f"><a class="btn p" href="contact.html">${t3(['Design mine', 'Desenhar o meu', 'Design min'])} →</a>${p.k === 'web' ? '' : `<span class="cf-tip">${t3(['Tip: use the screen — it works', 'Dica: use o ecrã — funciona', 'Tip: brug skærmen — den virker'])}</span>`}</div>`;
     cfg.querySelector('.cf-x').onclick = unfocus;
     cfg.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { setProd(+b.dataset.p, true); focusOn(PROD[st.prod].dev, true); });
     cfg.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { setType(+b.dataset.t); renderCfg(); });
@@ -428,11 +631,7 @@
     if (h.S) {
       h.S.cur = { x: h.x, y: h.y }; h.S.down = true; setTimeout(() => { h.S.down = false; dirtyL = dirtyP = true; }, 160);
       const z = h.S.hot.find(q => h.x >= q.X && h.x <= q.X + q.W && h.y >= q.Y && h.y <= q.Y + q.H);
-      if (z && z.id.startsWith('card:')) {
-        const C = crmState(TYPES[st.type].crm), [, ci, j] = z.id.split(':').map(Number);
-        if (ci < 3) { const card = C.cols[ci].splice(j, 1)[0]; C.cols[ci + 1].push(card); if (C.cols[ci + 1].length > 4) C.cols[ci + 1].shift(); C.moving = { card, t0: now(), fx: COLX[ci], fy: 396 + j * 132, tx: COLX[ci + 1], ty: 396 + (C.cols[ci + 1].length - 1) * 132 }; if (ci + 1 === 3) { st.toastAt = now() + .35; st.toastTxt = ['Done · review request sent to ' + CTx(card[0]) + ' ✓', 'Concluído · pedido de avaliação enviado a ' + CTx(card[0]) + ' ✓', 'Færdig · anmodning om anmeldelse sendt til ' + CTx(card[0]) + ' ✓']; } }
-      }
-      if (z && z.id === 'cta') { const AS = appState(TYPES[st.type].crm); AS.ok = AS.ok ? 0 : 1; AS.at = now(); }
+      if (z) handleHot(z.id);
       dirtyL = dirtyP = true;
     }
   });

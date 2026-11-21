@@ -129,7 +129,8 @@ h2{font-size:clamp(42px,6.4vw,104px)}
 .pj .info .sub{color:var(--mute);font-size:15px}
 .pj .info p.d{margin-top:22px;color:#c5ccd9;font-size:16.5px;max-width:44ch}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
-.chips span{padding:8px 13px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:#c5ccd9}
+.chips>span{display:inline-flex;align-items:center;gap:8px;padding:9px 14px 9px 12px;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid rgba(226,233,248,.09);font:500 13px/1 var(--b);color:#cfd6e2;letter-spacing:.01em}
+.chips>span::before{content:"";width:5px;height:5px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2))}
 .pj .info .go{margin-top:30px;display:inline-flex;align-items:center;gap:10px;font-weight:600;border-bottom:1px solid var(--acc);padding-bottom:4px}
 .pj .info .go:hover{color:var(--acc)}
 .pj .info .kind{display:inline-block;margin-left:10px;padding:5px 10px;border-radius:6px;background:rgba(77,124,255,.12);color:var(--acc2);font:600 11px/1 var(--b);letter-spacing:.08em;text-transform:uppercase;vertical-align:middle}
@@ -1496,3 +1497,4 @@ html[lang=da] .gr-mx .m-y::after{content:"Kerne"}html[lang=da] .gr-mx .m-o::afte
 .sv.sv-cta .cat{color:rgba(255,255,255,.75)}.sv.sv-cta h4{color:#fff}.sv.sv-cta p{color:rgba(255,255,255,.85);font-weight:600}
 .sv.sv-cta:hover{transform:translateY(-4px);box-shadow:0 30px 60px -30px rgba(77,124,255,.8)}
 @media (max-width:1000px){.dv-cap{top:auto;bottom:92px}.dv-cap b{font-size:18px}.dc-k{font-size:9.5px}.hx .wrap .globe-wrap.in-copy{height:min(110vw,480px)}}
+.globe-wrap.dv-focus~.wrap{opacity:0!important}
