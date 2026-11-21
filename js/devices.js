@@ -759,9 +759,9 @@
     if (p === 'web') { title = WEB[ty.k].brand; sub = ['Concept site for a ' + ty.n[0].toLowerCase() + ' — designed by Vero', 'Site conceito para ' + ty.n[1].toLowerCase() + ' — desenhado pela Vero', 'Konceptside til ' + ty.n[2].toLowerCase() + ' — designet af Vero']; }
     else if (p === 'crm') { title = [ty.n[0] + ' CRM', 'CRM · ' + ty.n[1], ty.n[2] + '-CRM']; sub = ['Pipeline, bookings and an AI assistant — built around how they work', 'Pipeline, marcações e assistente AI — à medida de como trabalham', 'Pipeline, booking og AI-assistent — bygget efter, hvordan de arbejder']; }
     else { const A = APPS[ty.crm]; title = A.brand + ' app'; sub = ['Bookings, loyalty and live updates — synced with the CRM', 'Reservas, fidelização e atualizações — sincronizadas com o CRM', 'Booking, loyalitet og live-opdateringer — synkroniseret med CRM']; }
-    return `<span class="dc-k"><i></i>${t3(kick)}</span><b>${Array.isArray(title) ? t3(title) : title}</b><small>${t3(sub)}</small><span class="dc-try"><i></i>${t3(touch ? ['Interactive — tap the screen and try it', 'Interativo — toque no ecrã e experimente', 'Interaktiv — tryk på skærmen og prøv'] : ['Interactive — click the screen and try it', 'Interativo — clique no ecrã e experimente', 'Interaktiv — klik på skærmen og prøv'])}</span><button type="button" class="dc-go">${t3(['Configure', 'Personalizar', 'Tilpas'])} <span aria-hidden="true">→</span></button>`;
+    return `<span class="dc-k"><i></i>${t3(kick)}</span><b>${Array.isArray(title) ? t3(title) : title}</b><small>${t3(sub)}</small><button type="button" class="dc-try"><i></i>${t3(touch ? ['Interactive — tap the screen and try it', 'Interativo — toque no ecrã e experimente', 'Interaktiv — tryk på skærmen og prøv'] : ['Interactive — click the screen and try it', 'Interativo — clique no ecrã e experimente', 'Interaktiv — klik på skærmen og prøv'])}</button><button type="button" class="dc-go">${t3(['Configure', 'Personalizar', 'Tilpas'])} <span aria-hidden="true">→</span></button>`;
   }
-  function setCaption(force) { const h = captionHTML(); if (!force && cap.dataset.h === h) return; cap.dataset.h = h; cap.classList.remove('on'); setTimeout(() => { cap.innerHTML = h; cap.querySelector('.dc-go').onclick = () => focusOn(PROD[st.prod].dev); cap.classList.add('on'); }, force ? 0 : 220); }
+  function setCaption(force) { const h = captionHTML(); if (!force && cap.dataset.h === h) return; cap.dataset.h = h; cap.classList.remove('on'); setTimeout(() => { cap.innerHTML = h; cap.querySelector('.dc-go').onclick = () => focusOn(PROD[st.prod].dev); cap.querySelector('.dc-try').onclick = () => focusOn(PROD[st.prod].dev); cap.classList.add('on'); }, force ? 0 : 220); }
   function renderCfg() {
     const ty = TYPES[st.type], p = PROD[st.prod];
     cfg.innerHTML = `
@@ -776,7 +776,7 @@
       <div class="cf-f"><a class="btn p" href="contact.html">${t3(['Design mine', 'Desenhar o meu', 'Design min'])} →</a></div>`;
     cfg.querySelector('.cf-x').onclick = unfocus;
     cfg.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { setProd(+b.dataset.p, true); focusOn(PROD[st.prod].dev, true); });
-    cfg.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { setType(+b.dataset.t); renderCfg(); });
+    cfg.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { setType(+b.dataset.t); renderCfg(); mountSheet(); });
       }
   new MutationObserver(() => { setCaption(true); if (focus) renderCfg(); dirtyL = dirtyP = true; }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
 
@@ -793,20 +793,56 @@
     if (nextMode === 'crm') st.kpiT = 0;
     st.prod = i; cycleT = 0; setWord(i); btns.forEach((b, j) => b.classList.toggle('on', j === i));
     if (i === 2) st.pushAt = now() + 1; if (i === 1) { st.toastAt = now() + 1.2; st.toastTxt = null; }
-    dirtyL = dirtyP = true; setCaption();
+    dirtyL = dirtyP = true; setCaption(); if (typeof mountSheet === 'function') mountSheet();
   }
   function setType(i) { st.type = i; st.before = false; st.kpiT = 0; st.wipe = 0; st.from = st.prod === 0 ? 'web' : 'crm'; dirtyL = dirtyP = true; setCaption(); ['estate/e1', 'estate/e2', 'estate/e3', 'house/f', 'house/y', 'house/k1', 'house/k2', 'house/k3', 'house/b1', 'house/b2', 'house/s1', 'house/s2', 'house/s3', 'padel/k1', 'padel/k2', 'padel/k3'].forEach(img); }
   btns.forEach(b => b.addEventListener('click', () => setProd(+b.dataset.i, true)));
 
   // ================================================================== focus (zoom + configurator)
   let focus = null;
+  // phones: a full-screen player — the screen shown flat and large, tapped directly (no 3D aiming)
+  const smallQ = matchMedia('(max-width:820px)');
+  const sheet = document.createElement('div'); sheet.className = 'dv-sheet'; sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true');
+  sheet.innerHTML = '<div class="ds-top"><span class="ds-k"></span><button type="button" class="ds-x" aria-label="Close"><i></i></button></div><div class="ds-stage"></div><p class="ds-hint"></p>';
+  document.body.appendChild(sheet);
+  const stage = sheet.querySelector('.ds-stage'), sHint = sheet.querySelector('.ds-hint'), sKick = sheet.querySelector('.ds-k');
+  sheet.querySelector('.ds-x').onclick = () => unfocus();
+  let sheetOn = false;
+  function mountSheet() {
+    if (!sheetOn) return;
+    const S = st.prod === 1 ? SL : SP;
+    if (S.c.parentNode !== stage) { stage.innerHTML = ''; stage.appendChild(S.c); }
+    S.c.className = S === SL ? 'ds-l' : 'ds-p'; stage.classList.toggle('wide', S === SL); if (S === SL) stage.scrollLeft = 0;
+    sKick.innerHTML = t3([['Website', 'Site', 'Hjemmeside'], ['CRM', 'CRM', 'CRM'], ['App', 'App', 'App']][st.prod]) + ' · ' + t3(TYPES[st.type].n);
+    sHint.innerHTML = '<i></i>' + (S === SL ? t3(['Tap the buttons · swipe sideways to see the whole CRM', 'Toque nos botões · deslize para o lado para ver o CRM todo', 'Tryk på knapperne · stryg til siden for hele CRM']) : t3(['Tap the screen — everything works', 'Toque no ecrã — tudo funciona', 'Tryk på skærmen — alt virker']));
+    const on = cfg.querySelector('.cf-types .on'); if (on) { const p = on.parentNode; p.scrollLeft = on.offsetLeft - (p.clientWidth - on.offsetWidth) / 2; }
+    dirtyL = dirtyP = true;
+  }
+  [SL, SP].forEach(S => {
+    let d0 = null;
+    S.c.addEventListener('pointerdown', e => { d0 = { x: e.clientX, y: e.clientY }; });
+    S.c.addEventListener('pointerup', e => {
+      if (!sheetOn || !d0 || Math.hypot(e.clientX - d0.x, e.clientY - d0.y) > 10) { d0 = null; return; } d0 = null;
+      const r = S.c.getBoundingClientRect(), X = (e.clientX - r.left) / r.width * S.w, Y = (e.clientY - r.top) / r.height * S.h;
+      S.cur = { x: X, y: Y }; S.down = true;
+      const z = S.hot.find(q => X >= q.X && X <= q.X + q.W && Y >= q.Y && Y <= q.Y + q.H); if (z) handleHot(z.id);
+      dirtyL = dirtyP = true; setTimeout(() => { S.down = false; S.cur = null; dirtyL = dirtyP = true; }, 260);
+    });
+  });
   function focusOn(dev, keep) {
     focus = dev; userHold = 30; wrap.classList.add('dv-focus'); document.documentElement.classList.add('dv-open');
     if (!keep) { if (dev === 'phone' && st.prod !== 2) setProd(2, true); if (dev === 'laptop' && st.prod === 2) setProd(0, true); }
+    if (smallQ.matches) {
+      if (!sheetOn) { sheetOn = true; sheet.appendChild(cfg); sheet.classList.add('on'); document.documentElement.classList.add('dv-sheet-open'); loop(); }
+      renderCfg(); cfg.classList.add('on'); mountSheet(); return;
+    }
     renderCfg(); cfg.classList.add('on');
     if (mq.matches) { const r = wrap.getBoundingClientRect(); scrollTo({ top: scrollY + r.top - 70, behavior: 'smooth' }); }
   }
-  function unfocus() { focus = null; wrap.classList.remove('dv-focus'); document.documentElement.classList.remove('dv-open'); cfg.classList.remove('on'); SL.cur = SP.cur = null; dirtyL = dirtyP = true; }
+  function unfocus() {
+    focus = null; wrap.classList.remove('dv-focus'); document.documentElement.classList.remove('dv-open'); cfg.classList.remove('on'); SL.cur = SP.cur = null; dirtyL = dirtyP = true;
+    if (sheetOn) { sheetOn = false; sheet.classList.remove('on'); document.documentElement.classList.remove('dv-sheet-open'); document.body.appendChild(cfg); setTimeout(() => { if (!sheetOn) stage.innerHTML = ''; }, 350); }
+  }
   addEventListener('keydown', e => { if (e.key === 'Escape' && focus) unfocus(); });
 
   // ================================================================== input: drag to spin, click to focus, cursor inside screens
@@ -873,7 +909,7 @@
   let t = 0, running = false, intro = reduce ? 1 : 0, lastL = 0, lastP = 0, dirtyL = true, dirtyP = true;
   const cpos = new T.Vector3(1, 4, 13), ctgt = new T.Vector3(...POSE[0].tgt), v3 = new T.Vector3(), v4 = new T.Vector3(), nrm = new T.Vector3();
   const pp = POSE[0].ph.slice();
-  function loop() { if (running) return; running = true; requestAnimationFrame(function f() { if (!visible || document.hidden) { running = false; return; } frame(); requestAnimationFrame(f); }); }
+  function loop() { if (running) return; running = true; requestAnimationFrame(function f() { if ((!visible && !sheetOn) || document.hidden) { running = false; return; } frame(); requestAnimationFrame(f); }); }
   function frame() {
     const dt = Math.min(0.05, clock.getDelta()); t += dt; idle += dt;
     if (intro < 1) intro = Math.min(1, intro + dt * 0.5);
