@@ -34,7 +34,7 @@
 
   // ================================================================== shapes (drawn as layered 2D UI, sampled into 3D)
   const CW = 520, CH = 380, SC = 0.02;
-  const C = { w: '#f3f0e8', g: '#77736b', d: '#3a3936', o: '#ff5a1f', gr: '#2fd158', y: '#ffb84d' };
+  const C = { w: '#eef2fa', g: '#707a8d', d: '#343b4a', o: '#4d7cff', gr: '#2fd158', y: '#ffb84d' };
   function rr(x, y, w, h, r) { const p = new Path2D(); p.moveTo(x + r, y); p.arcTo(x + w, y, x + w, y + h, r); p.arcTo(x + w, y + h, x, y + h, r); p.arcTo(x, y + h, x, y, r); p.arcTo(x, y, x + w, y, r); p.closePath(); return p; }
   const D = "'Bricolage Grotesque',system-ui,sans-serif", B = "'Inter',system-ui,sans-serif";
   function layer(z, fn) { return { z, fn }; }

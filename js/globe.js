@@ -68,15 +68,15 @@ window.VERO_GLOBE2D = function () {
 
     // atmosphere
     let g = ctx.createRadialGradient(cx, cy, R * 0.9, cx, cy, R * 1.35);
-    g.addColorStop(0, 'rgba(255,90,31,.20)'); g.addColorStop(1, 'rgba(255,90,31,0)');
+    g.addColorStop(0, 'rgba(77,124,255,.20)'); g.addColorStop(1, 'rgba(77,124,255,0)');
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R * 1.35, 0, 7); ctx.fill();
     // sphere
     g = ctx.createRadialGradient(cx - R * .35, cy - R * .4, R * .1, cx, cy, R);
-    g.addColorStop(0, '#1d1c1f'); g.addColorStop(1, '#0b0b0c');
+    g.addColorStop(0, '#1d1c1f'); g.addColorStop(1, '#06080e');
     ctx.fillStyle = g; ctx.beginPath(); path({ type: 'Sphere' }); ctx.fill();
     ctx.strokeStyle = 'rgba(255,122,69,.35)'; ctx.lineWidth = 1; ctx.stroke();
     // graticule
-    ctx.beginPath(); path(grat); ctx.strokeStyle = 'rgba(243,240,232,.05)'; ctx.lineWidth = .7; ctx.stroke();
+    ctx.beginPath(); path(grat); ctx.strokeStyle = 'rgba(226,233,248,.05)'; ctx.lineWidth = .7; ctx.stroke();
 
     // dots
     const centre = [-rot[0], -rot[1]];
@@ -90,8 +90,8 @@ window.VERO_GLOBE2D = function () {
     // highlighted countries
     for (const f of hlFeatures) {
       ctx.beginPath(); path(f);
-      ctx.fillStyle = 'rgba(255,90,31,.45)'; ctx.fill();
-      ctx.strokeStyle = '#FF7A45'; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.fillStyle = 'rgba(77,124,255,.45)'; ctx.fill();
+      ctx.strokeStyle = '#22D3EE'; ctx.lineWidth = 1.2; ctx.stroke();
     }
     // arcs + travelling pulses
     ARCS.forEach(([i, j], n) => {
@@ -108,7 +108,7 @@ window.VERO_GLOBE2D = function () {
       if (visible(ll)) {
         const p = lift(ll, Math.sin(Math.PI * u) * 0.16);
         const gg = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], 10);
-        gg.addColorStop(0, 'rgba(255,170,120,1)'); gg.addColorStop(1, 'rgba(255,90,31,0)');
+        gg.addColorStop(0, 'rgba(255,170,120,1)'); gg.addColorStop(1, 'rgba(77,124,255,0)');
         ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(p[0], p[1], 10, 0, 7); ctx.fill();
       }
     });
@@ -124,9 +124,9 @@ window.VERO_GLOBE2D = function () {
       ctx.font = '600 12px Inter, system-ui, sans-serif';
       const w = ctx.measureText(label).width + 18, lx = c.dx < 0 ? p[0] + c.dx + (110 - w) : p[0] + c.dx, ly = p[1] + c.dy;
       ctx.strokeStyle = 'rgba(255,122,69,.5)'; ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(c.dx < 0 ? lx + w : lx, ly + 12); ctx.stroke();
-      ctx.fillStyle = 'rgba(12,12,13,.82)'; ctx.strokeStyle = 'rgba(255,122,69,.6)'; ctx.lineWidth = 1;
+      ctx.fillStyle = 'rgba(7,10,18,.82)'; ctx.strokeStyle = 'rgba(255,122,69,.6)'; ctx.lineWidth = 1;
       ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(lx, ly, w, 24, 12); else ctx.rect(lx, ly, w, 24); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = '#F3F0E8'; ctx.fillText(label, lx + 9, ly + 16);
+      ctx.fillStyle = '#EEF2FA'; ctx.fillText(label, lx + 9, ly + 16);
     });
   }
   requestAnimationFrame(frame);

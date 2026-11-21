@@ -17,7 +17,8 @@
 <body>
 <header class="nav">
   <div class="bar">
-    <a href="index.html" aria-label="Vero Solutions"><img class="logo" src="img/vero-solutions-logo-horizontal-branco.svg" alt="Vero Solutions"></a>
+    <button class="burger" id="burger" aria-label="Menu" aria-controls="mnav" aria-expanded="false"><i></i></button>
+    <a class="brand" href="index.html" aria-label="Vero Solutions"><img class="logo" src="img/vero-solutions-logo-horizontal-branco.svg" alt="Vero Solutions"><img class="mark" src="img/vero-mark.svg" alt=""><span class="bt"><b>vero</b><small>solutions</small></span></a>
     <nav class="links">
       <a href="services.html"><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></a>
       <a href="ai.html" class=on><span data-en>AI</span><span data-pt>AI</span><span data-da>AI</span><i class=new>NEW</i></a>
@@ -29,21 +30,14 @@
     <div class="r">
       <div class="lang"><button data-set="en">EN</button><button data-set="pt">PT</button><button data-set="da">DA</button></div>
       <a class="btn p" href="contact.html"><span data-en>Book a call</span><span data-pt>Marcar chamada</span><span data-da>Book et opkald</span></a>
-      <button class="burger" id="burger" aria-label="Menu"><i></i></button>
     </div>
   </div>
 </header>
-<div class="mnav" id="mnav">
-  <button class="x" id="mx" aria-label="Close">×</button>
-  <a href="index.html"><span data-en>Home</span><span data-pt>Início</span><span data-da>Forside</span></a>
-  <a href="services.html"><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></a>
-  <a href="ai.html"><span data-en>AI</span><span data-pt>AI</span><span data-da>AI</span></a>
-  <a href="work.html"><span data-en>Work</span><span data-pt>Trabalhos</span><span data-da>Projekter</span></a>
-  <a href="industries.html"><span data-en>Industries</span><span data-pt>Setores</span><span data-da>Brancher</span></a>
-  <a href="process.html"><span data-en>Process</span><span data-pt>Processo</span><span data-da>Proces</span></a>
-  <a href="faq.html"><span data-en>FAQ</span><span data-pt>FAQ</span><span data-da>FAQ</span></a>
-  <a href="contact.html" style="color:var(--acc)"><span data-en>Book a call</span><span data-pt>Marcar chamada</span><span data-da>Book et opkald</span></a>
-  <div class="lang" style="margin-top:22px;align-self:flex-start"><button data-set="en">EN</button><button data-set="pt">PT</button><button data-set="da">DA</button></div>
+<div class="mveil" id="mveil"></div>
+<div class="mnav" id="mnav" aria-hidden="true">
+  <div class="mn-top"><a class="brand" href="index.html" aria-label="Vero Solutions"><img class="mark" src="img/vero-mark.svg" alt=""><span class="bt"><b>vero</b><small>solutions</small></span></a><button class="x" id="mx" aria-label="Close"><i></i></button></div>
+  <nav class="mn-links"><a href="index.html"><em>01</em><span data-en>Home</span><span data-pt>Início</span><span data-da>Forside</span></a><a href="services.html"><em>02</em><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></a><a href="ai.html"><em>03</em><span data-en>AI</span><span data-pt>AI</span><span data-da>AI</span></a><a href="work.html"><em>04</em><span data-en>Work</span><span data-pt>Trabalhos</span><span data-da>Projekter</span></a><a href="industries.html"><em>05</em><span data-en>Industries</span><span data-pt>Setores</span><span data-da>Brancher</span></a><a href="process.html"><em>06</em><span data-en>Process</span><span data-pt>Processo</span><span data-da>Proces</span></a><a href="faq.html"><em>07</em><span data-en>FAQ</span><span data-pt>FAQ</span><span data-da>FAQ</span></a><a href="contact.html"><em>08</em><span data-en>Contact</span><span data-pt>Contacto</span><span data-da>Kontakt</span></a></nav>
+  <div class="mn-foot"><div class="lang"><button data-set="en">EN</button><button data-set="pt">PT</button><button data-set="da">DA</button></div><a class="btn p" href="contact.html"><span data-en>Book a free call</span><span data-pt>Marcar chamada grátis</span><span data-da>Book et gratis opkald</span> →</a></div>
 </div>
 <main id="top">
 <section class="ph">
@@ -65,10 +59,15 @@
         <div><b>01</b><span data-en>We learn your business</span><span data-pt>Aprendemos o seu negócio</span><span data-da>Vi lærer din virksomhed at kende</span></div><div><b>02</b><span data-en>We train and test the AI with you</span><span data-pt>Treinamos e testamos a AI consigo</span><span data-da>Vi træner og tester AI'en sammen med dig</span></div><div><b>03</b><span data-en>It goes live on WhatsApp, Instagram, web and phone</span><span data-pt>Fica online no WhatsApp, Instagram, site e telefone</span><span data-da>Den går live på WhatsApp, Instagram, web og telefon</span></div><div><b>04</b><span data-en>We review and improve it every month</span><span data-pt>Revemos e melhoramos todos os meses</span><span data-da>Vi gennemgår og forbedrer den hver måned</span></div>
       </div>
     </div>
-    <div class="phone2 rv" id="chat">
-  <div class="ph-top"><span class="av">V.</span><div><b><span data-en>AI receptionist</span><span data-pt>Rececionista AI</span><span data-da>AI-receptionist</span></b><small><i></i><span data-en>online · replies instantly</span><span data-pt>online · responde de imediato</span><span data-da>online · svarer med det samme</span></small></div></div>
-  <div class="ph-body"><div class="msg u"><span data-en>Hi! Do you have a table for 4 this Friday at 8pm?</span><span data-pt>Olá! Têm mesa para 4 esta sexta às 20h?</span><span data-da>Hej! Har I et bord til 4 på fredag kl. 20?</span></div><div class="msg a"><span data-en>Hi Sofia! Yes — Friday at 20:00 for 4, I have a terrace table free. Shall I book it?</span><span data-pt>Olá Sofia! Sim — sexta às 20:00 para 4, tenho uma mesa livre na esplanada. Quer que reserve?</span><span data-da>Hej Sofia! Ja — fredag kl. 20:00 til 4, jeg har et ledigt bord på terrassen. Skal jeg booke det?</span></div><div class="msg u"><span data-en>Yes please. It’s my husband’s birthday.</span><span data-pt>Sim, por favor. É o aniversário do meu marido.</span><span data-da>Ja tak. Det er min mands fødselsdag.</span></div><div class="msg a"><span data-en>Booked! I’ve told the team about the birthday. You’ll get a confirmation now and a reminder on Friday morning.</span><span data-pt>Reservado! Já avisei a equipa do aniversário. Vai receber a confirmação agora e um lembrete na sexta de manhã.</span><span data-da>Booket! Jeg har fortalt teamet om fødselsdagen. Du får en bekræftelse nu og en påmindelse fredag morgen.</span></div><div class="msg s"><span data-en>New booking · Fri 20:00 · 4 people · Terrace · Birthday</span><span data-pt>Nova reserva · Sex 20:00 · 4 pessoas · Esplanada · Aniversário</span><span data-da>Ny booking · Fre 20:00 · 4 personer · Terrasse · Fødselsdag</span></div><div class="typing"><i></i><i></i><i></i></div></div>
-  <div class="ph-cap"><span data-en>Example conversation</span><span data-pt>Exemplo de conversa</span><span data-da>Eksempel på samtale</span></div>
+    <div class="phone2 iph rv" id="chat" aria-label="iPhone showing an example WhatsApp conversation with the AI receptionist">
+  <i class="ip-b ip-act"></i><i class="ip-b ip-vu"></i><i class="ip-b ip-vd"></i><i class="ip-b ip-pw"></i><i class="ip-b ip-cc"></i>
+  <div class="ip-scr">
+  <div class="ip-sb"><b>9:41</b><span class="ip-di"></span><span class="ip-ic"><svg viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.5 1.5a4.4 4.4 0 0 0-6.2 0zM1.2 4.6a9.6 9.6 0 0 1 13.6 0l-1.5 1.5a7.5 7.5 0 0 0-10.6 0z"/></svg><svg viewBox="0 0 27 12" aria-hidden="true"><rect x=".5" y=".5" width="23" height="11" rx="3.4" fill="none" stroke="currentColor" opacity=".45"/><rect x="2.2" y="2.2" width="17" height="7.6" rx="2"/><rect x="24.6" y="4" width="1.8" height="4" rx=".9" opacity=".45"/></svg></span></div>
+  <div class="ph-top"><span class="ip-back" aria-hidden="true">‹</span><span class="av">V.</span><div><b><span data-en>AI receptionist</span><span data-pt>Rececionista AI</span><span data-da>AI-receptionist</span></b><small><i></i><span data-en>online · replies instantly</span><span data-pt>online · responde de imediato</span><span data-da>online · svarer med det samme</span></small></div></div>
+    <div class="ph-body"><div class="msg u"><span data-en>Hi! Do you have a table for 4 this Friday at 8pm?</span><span data-pt>Olá! Têm mesa para 4 esta sexta às 20h?</span><span data-da>Hej! Har I et bord til 4 på fredag kl. 20?</span></div><div class="msg a"><span data-en>Hi Sofia! Yes — Friday at 20:00 for 4, I have a terrace table free. Shall I book it?</span><span data-pt>Olá Sofia! Sim — sexta às 20:00 para 4, tenho uma mesa livre na esplanada. Quer que reserve?</span><span data-da>Hej Sofia! Ja — fredag kl. 20:00 til 4, jeg har et ledigt bord på terrassen. Skal jeg booke det?</span></div><div class="msg u"><span data-en>Yes please. It’s my husband’s birthday.</span><span data-pt>Sim, por favor. É o aniversário do meu marido.</span><span data-da>Ja tak. Det er min mands fødselsdag.</span></div><div class="msg a"><span data-en>Booked! I’ve told the team about the birthday. You’ll get a confirmation now and a reminder on Friday morning.</span><span data-pt>Reservado! Já avisei a equipa do aniversário. Vai receber a confirmação agora e um lembrete na sexta de manhã.</span><span data-da>Booket! Jeg har fortalt teamet om fødselsdagen. Du får en bekræftelse nu og en påmindelse fredag morgen.</span></div><div class="msg s"><span data-en>New booking · Fri 20:00 · 4 people · Terrace · Birthday</span><span data-pt>Nova reserva · Sex 20:00 · 4 pessoas · Esplanada · Aniversário</span><span data-da>Ny booking · Fre 20:00 · 4 personer · Terrasse · Fødselsdag</span></div><div class="typing"><i></i><i></i><i></i></div></div>
+    <div class="ph-cap"><span data-en>Example conversation</span><span data-pt>Exemplo de conversa</span><span data-da>Eksempel på samtale</span></div>
+  <i class="ip-hi"></i>
+  </div>
 </div>
   </div>
 </section>
@@ -117,10 +116,10 @@
     <div class="ft-grid">
       <div class="ft-brand">
         <a href="index.html" aria-label="Vero Solutions"><img class="logo" src="img/vero-solutions-logo-horizontal-branco.svg" alt="Vero Solutions"></a>
-        <p><span data-en>Websites, advertising and AI that bring in customers — and keep them.</span><span data-pt>Sites, publicidade e AI que trazem clientes — e os mantêm.</span><span data-da>Hjemmesider, annoncering og AI, der skaffer kunder — og fastholder dem.</span></p>
+        <p><span data-en>Websites, CRMs and apps that bring in customers — and keep them.</span><span data-pt>Sites, CRMs e apps que trazem clientes — e os mantêm.</span><span data-da>Hjemmesider, CRM-systemer og apps, der skaffer kunder — og fastholder dem.</span></p>
         <span class="ft-live"><i></i><span data-en>Booking new projects</span><span data-pt>A aceitar novos projetos</span><span data-da>Tager imod nye projekter</span></span>
       </div>
-      <div class="ft-col"><h5><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></h5><a href="services.html#ads"><span data-en>Advertising</span><span data-pt>Publicidade</span><span data-da>Annoncering</span></a><a href="services.html#web"><span data-en>Websites & stores</span><span data-pt>Sites e lojas</span><span data-da>Hjemmesider & webshops</span></a><a href="ai.html"><span data-en>AI receptionist</span><span data-pt>Rececionista AI</span><span data-da>AI-receptionist</span></a><a href="services.html"><span data-en>Reviews & loyalty</span><span data-pt>Avaliações e fidelização</span><span data-da>Anmeldelser & loyalitet</span></a><a href="services.html"><span data-en>Brand, photo & video</span><span data-pt>Marca, foto e vídeo</span><span data-da>Brand, foto & video</span></a></div>
+      <div class="ft-col"><h5><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></h5><a href="services.html#web"><span data-en>Websites & stores</span><span data-pt>Sites e lojas</span><span data-da>Hjemmesider & webshops</span></a><a href="index.html#crm"><span data-en>Custom CRMs</span><span data-pt>CRMs à medida</span><span data-da>Skræddersyede CRM</span></a><a href="contact.html"><span data-en>Apps</span><span data-pt>Apps</span><span data-da>Apps</span></a><a href="ai.html"><span data-en>AI receptionist</span><span data-pt>Rececionista AI</span><span data-da>AI-receptionist</span></a><a href="services.html#ads"><span data-en>Advertising</span><span data-pt>Publicidade</span><span data-da>Annoncering</span></a></div>
       <div class="ft-col"><h5><span data-en>Company</span><span data-pt>Empresa</span><span data-da>Virksomhed</span></h5><a href="work.html"><span data-en>Work</span><span data-pt>Trabalhos</span><span data-da>Arbejde</span></a><a href="industries.html"><span data-en>Industries</span><span data-pt>Setores</span><span data-da>Brancher</span></a><a href="process.html"><span data-en>Process</span><span data-pt>Processo</span><span data-da>Proces</span></a><a href="faq.html"><span data-en>FAQ</span><span data-pt>FAQ</span><span data-da>FAQ</span></a><a href="contact.html"><span data-en>Contact</span><span data-pt>Contacto</span><span data-da>Kontakt</span></a></div>
       <div class="ft-col"><h5><span data-en>Where we work</span><span data-pt>Onde trabalhamos</span><span data-da>Hvor vi arbejder</span></h5>
         <span class="ft-c"><b>UK</b><span data-en>United Kingdom</span><span data-pt>Reino Unido</span><span data-da>Storbritannien</span></span>

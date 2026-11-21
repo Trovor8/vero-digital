@@ -17,7 +17,8 @@
 <body>
 <header class="nav">
   <div class="bar">
-    <a href="index.html" aria-label="Vero Solutions"><img class="logo" src="img/vero-solutions-logo-horizontal-branco.svg" alt="Vero Solutions"></a>
+    <button class="burger" id="burger" aria-label="Menu" aria-controls="mnav" aria-expanded="false"><i></i></button>
+    <a class="brand" href="index.html" aria-label="Vero Solutions"><img class="logo" src="img/vero-solutions-logo-horizontal-branco.svg" alt="Vero Solutions"><img class="mark" src="img/vero-mark.svg" alt=""><span class="bt"><b>vero</b><small>solutions</small></span></a>
     <nav class="links">
       <a href="services.html" class=on><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></a>
       <a href="ai.html"><span data-en>AI</span><span data-pt>AI</span><span data-da>AI</span><i class=new>NEW</i></a>
@@ -29,21 +30,14 @@
     <div class="r">
       <div class="lang"><button data-set="en">EN</button><button data-set="pt">PT</button><button data-set="da">DA</button></div>
       <a class="btn p" href="contact.html"><span data-en>Book a call</span><span data-pt>Marcar chamada</span><span data-da>Book et opkald</span></a>
-      <button class="burger" id="burger" aria-label="Menu"><i></i></button>
     </div>
   </div>
 </header>
-<div class="mnav" id="mnav">
-  <button class="x" id="mx" aria-label="Close">×</button>
-  <a href="index.html"><span data-en>Home</span><span data-pt>Início</span><span data-da>Forside</span></a>
-  <a href="services.html"><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></a>
-  <a href="ai.html"><span data-en>AI</span><span data-pt>AI</span><span data-da>AI</span></a>
-  <a href="work.html"><span data-en>Work</span><span data-pt>Trabalhos</span><span data-da>Projekter</span></a>
-  <a href="industries.html"><span data-en>Industries</span><span data-pt>Setores</span><span data-da>Brancher</span></a>
-  <a href="process.html"><span data-en>Process</span><span data-pt>Processo</span><span data-da>Proces</span></a>
-  <a href="faq.html"><span data-en>FAQ</span><span data-pt>FAQ</span><span data-da>FAQ</span></a>
-  <a href="contact.html" style="color:var(--acc)"><span data-en>Book a call</span><span data-pt>Marcar chamada</span><span data-da>Book et opkald</span></a>
-  <div class="lang" style="margin-top:22px;align-self:flex-start"><button data-set="en">EN</button><button data-set="pt">PT</button><button data-set="da">DA</button></div>
+<div class="mveil" id="mveil"></div>
+<div class="mnav" id="mnav" aria-hidden="true">
+  <div class="mn-top"><a class="brand" href="index.html" aria-label="Vero Solutions"><img class="mark" src="img/vero-mark.svg" alt=""><span class="bt"><b>vero</b><small>solutions</small></span></a><button class="x" id="mx" aria-label="Close"><i></i></button></div>
+  <nav class="mn-links"><a href="index.html"><em>01</em><span data-en>Home</span><span data-pt>Início</span><span data-da>Forside</span></a><a href="services.html"><em>02</em><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></a><a href="ai.html"><em>03</em><span data-en>AI</span><span data-pt>AI</span><span data-da>AI</span></a><a href="work.html"><em>04</em><span data-en>Work</span><span data-pt>Trabalhos</span><span data-da>Projekter</span></a><a href="industries.html"><em>05</em><span data-en>Industries</span><span data-pt>Setores</span><span data-da>Brancher</span></a><a href="process.html"><em>06</em><span data-en>Process</span><span data-pt>Processo</span><span data-da>Proces</span></a><a href="faq.html"><em>07</em><span data-en>FAQ</span><span data-pt>FAQ</span><span data-da>FAQ</span></a><a href="contact.html"><em>08</em><span data-en>Contact</span><span data-pt>Contacto</span><span data-da>Kontakt</span></a></nav>
+  <div class="mn-foot"><div class="lang"><button data-set="en">EN</button><button data-set="pt">PT</button><button data-set="da">DA</button></div><a class="btn p" href="contact.html"><span data-en>Book a free call</span><span data-pt>Marcar chamada grátis</span><span data-da>Book et gratis opkald</span> →</a></div>
 </div>
 <main id="top">
 <section class="ph">
@@ -97,10 +91,10 @@
     <div class="ft-grid">
       <div class="ft-brand">
         <a href="index.html" aria-label="Vero Solutions"><img class="logo" src="img/vero-solutions-logo-horizontal-branco.svg" alt="Vero Solutions"></a>
-        <p><span data-en>Websites, advertising and AI that bring in customers — and keep them.</span><span data-pt>Sites, publicidade e AI que trazem clientes — e os mantêm.</span><span data-da>Hjemmesider, annoncering og AI, der skaffer kunder — og fastholder dem.</span></p>
+        <p><span data-en>Websites, CRMs and apps that bring in customers — and keep them.</span><span data-pt>Sites, CRMs e apps que trazem clientes — e os mantêm.</span><span data-da>Hjemmesider, CRM-systemer og apps, der skaffer kunder — og fastholder dem.</span></p>
         <span class="ft-live"><i></i><span data-en>Booking new projects</span><span data-pt>A aceitar novos projetos</span><span data-da>Tager imod nye projekter</span></span>
       </div>
-      <div class="ft-col"><h5><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></h5><a href="services.html#ads"><span data-en>Advertising</span><span data-pt>Publicidade</span><span data-da>Annoncering</span></a><a href="services.html#web"><span data-en>Websites & stores</span><span data-pt>Sites e lojas</span><span data-da>Hjemmesider & webshops</span></a><a href="ai.html"><span data-en>AI receptionist</span><span data-pt>Rececionista AI</span><span data-da>AI-receptionist</span></a><a href="services.html"><span data-en>Reviews & loyalty</span><span data-pt>Avaliações e fidelização</span><span data-da>Anmeldelser & loyalitet</span></a><a href="services.html"><span data-en>Brand, photo & video</span><span data-pt>Marca, foto e vídeo</span><span data-da>Brand, foto & video</span></a></div>
+      <div class="ft-col"><h5><span data-en>Services</span><span data-pt>Serviços</span><span data-da>Ydelser</span></h5><a href="services.html#web"><span data-en>Websites & stores</span><span data-pt>Sites e lojas</span><span data-da>Hjemmesider & webshops</span></a><a href="index.html#crm"><span data-en>Custom CRMs</span><span data-pt>CRMs à medida</span><span data-da>Skræddersyede CRM</span></a><a href="contact.html"><span data-en>Apps</span><span data-pt>Apps</span><span data-da>Apps</span></a><a href="ai.html"><span data-en>AI receptionist</span><span data-pt>Rececionista AI</span><span data-da>AI-receptionist</span></a><a href="services.html#ads"><span data-en>Advertising</span><span data-pt>Publicidade</span><span data-da>Annoncering</span></a></div>
       <div class="ft-col"><h5><span data-en>Company</span><span data-pt>Empresa</span><span data-da>Virksomhed</span></h5><a href="work.html"><span data-en>Work</span><span data-pt>Trabalhos</span><span data-da>Arbejde</span></a><a href="industries.html"><span data-en>Industries</span><span data-pt>Setores</span><span data-da>Brancher</span></a><a href="process.html"><span data-en>Process</span><span data-pt>Processo</span><span data-da>Proces</span></a><a href="faq.html"><span data-en>FAQ</span><span data-pt>FAQ</span><span data-da>FAQ</span></a><a href="contact.html"><span data-en>Contact</span><span data-pt>Contacto</span><span data-da>Kontakt</span></a></div>
       <div class="ft-col"><h5><span data-en>Where we work</span><span data-pt>Onde trabalhamos</span><span data-da>Hvor vi arbejder</span></h5>
         <span class="ft-c"><b>UK</b><span data-en>United Kingdom</span><span data-pt>Reino Unido</span><span data-da>Storbritannien</span></span>

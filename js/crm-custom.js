@@ -9,13 +9,13 @@
   const t3 = (en, pt, da) => `<span data-en>${en}</span><span data-pt>${pt}</span><span data-da>${da}</span>`;
   const L = (o) => o[document.documentElement.lang] || o.en;
 
-  const COLORS = [['#ff5a1f', 'Vero'], ['#2f6bff', 'Ocean'], ['#12b886', 'Emerald'], ['#8b5cf6', 'Violet'], ['#f43f5e', 'Rose'], ['#d4a72c', 'Gold']];
+  const COLORS = [['#4d7cff', 'Vero'], ['#ff6b2c', 'Ember'], ['#12b886', 'Emerald'], ['#8b5cf6', 'Violet'], ['#f43f5e', 'Rose'], ['#d4a72c', 'Gold']];
   const FONTS = {
     modern: { b: '', d: '' },
     editorial: { b: "'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif", d: "'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif" },
     mono: { b: "ui-monospace,'SF Mono',Menlo,Consolas,monospace", d: "ui-monospace,'SF Mono',Menlo,Consolas,monospace" }
   };
-  const state = { name: '', color: '#ff5a1f', theme: 'dark', rad: 'soft', font: 'modern', kpis: true, side: true, blue: false };
+  const state = { name: '', color: '#4d7cff', theme: 'dark', rad: 'soft', font: 'modern', kpis: true, side: true, blue: false };
   const DEF = Object.assign({}, state);
 
   // ---------- bar button + drawer
@@ -33,7 +33,7 @@
     <div class="cz-h"><b>${t3('Make it yours', 'Torne-o seu', 'Gør det til dit')}</b><span class="cz-live"><i></i>${t3('Live preview', 'Pré-visualização ao vivo', 'Live forhåndsvisning')}</span><button type="button" class="cz-x" aria-label="Close">×</button></div>
     <div class="cz-scroll">
       <div class="cz-f"><small>${t3('Business name', 'Nome do negócio', 'Virksomhedsnavn')}</small><input class="cz-name" type="text" maxlength="28" spellcheck="false" autocomplete="off"></div>
-      <div class="cz-f"><small>${t3('Brand colour', 'Cor da marca', 'Brandfarve')}</small><div class="cz-sw">${COLORS.map(c => `<button type="button" data-c="${c[0]}" style="--c:${c[0]}" title="${c[1]}"></button>`).join('')}<label class="cz-pick" title="Custom"><input type="color" value="#ff5a1f"><span>+</span></label></div></div>
+      <div class="cz-f"><small>${t3('Brand colour', 'Cor da marca', 'Brandfarve')}</small><div class="cz-sw">${COLORS.map(c => `<button type="button" data-c="${c[0]}" style="--c:${c[0]}" title="${c[1]}" aria-label="${c[1]}"></button>`).join('')}<label class="cz-pick" title="Custom" aria-label="Custom colour"><input type="color" value="#4d7cff"><span>+</span></label></div></div>
       <div class="cz-f"><small>${t3('Theme', 'Tema', 'Tema')}</small>${seg('theme', [['dark', 'Dark', 'Escuro', 'Mørk'], ['light', 'Light', 'Claro', 'Lys'], ['glass', 'Glass', 'Vidro', 'Glas']])}</div>
       <div class="cz-f"><small>${t3('Corners', 'Cantos', 'Hjørner')}</small>${seg('rad', [['sharp', 'Sharp', 'Retos', 'Skarpe'], ['soft', 'Soft', 'Suaves', 'Bløde'], ['round', 'Round', 'Redondos', 'Runde']])}</div>
       <div class="cz-f"><small>${t3('Typeface', 'Tipo de letra', 'Skrifttype')}</small>${seg('font', [['modern', 'Modern', 'Moderna', 'Moderne'], ['editorial', 'Editorial', 'Editorial', 'Redaktionel'], ['mono', 'Mono', 'Mono', 'Mono']])}</div>
@@ -44,6 +44,12 @@
     </div>
     <div class="cz-foot"><button type="button" class="cz-reset">${t3('Reset', 'Repor', 'Nulstil')}</button><a class="btn p" href="contact.html">${t3('Design mine', 'Desenhar o meu', 'Design min')} →</a></div>`;
   app.appendChild(dr);
+  // phones/tablets: the panel sits under the app, always visible (no drawer)
+  const mqm = matchMedia('(max-width:1000px)');
+  const placeDr = () => { if (mqm.matches) { if (dr.parentNode !== app.parentNode) app.after(dr); dr.classList.add('inline'); } else { if (dr.parentNode !== app) app.appendChild(dr); dr.classList.remove('inline'); } };
+  placeDr(); mqm.addEventListener ? mqm.addEventListener('change', placeDr) : mqm.addListener(placeDr);
+  // touching the panel on mobile pauses the automatic niche rotation
+  dr.addEventListener('pointerdown', () => { if (!mqm.matches) return; const on = root.querySelector('.crm-tabs button.on'); if (on) on.click(); }, { capture: true });
 
   // ---------- strip under the app explaining customisation
   const strip = document.createElement('div');
@@ -97,9 +103,9 @@
 
   // ---------- events
   const open = v => { app.classList.toggle('cz-open', v); btn.classList.add('used'); stopShow(); };
-  btn.addEventListener('click', () => open(!app.classList.contains('cz-open')));
+  btn.addEventListener('click', () => { if (dr.classList.contains('inline')) { btn.classList.add('used'); stopShow(); dr.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; } open(!app.classList.contains('cz-open')); });
   dr.querySelector('.cz-x').addEventListener('click', () => open(false));
-  strip.querySelector('button').addEventListener('click', () => { open(true); app.scrollIntoView ? null : null; });
+  strip.querySelector('button').addEventListener('click', () => { if (dr.classList.contains('inline')) { dr.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; } open(true); });
   dr.querySelectorAll('.cz-sw button').forEach(b => b.addEventListener('click', () => { state.color = b.dataset.c; apply(); }));
   dr.querySelector('.cz-pick input').addEventListener('input', e => { state.color = e.target.value; apply(); });
   dr.querySelectorAll('.cz-seg button').forEach(b => b.addEventListener('click', () => { state[b.parentElement.dataset.k] = b.dataset.v; apply(); }));

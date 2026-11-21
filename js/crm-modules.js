@@ -152,7 +152,7 @@
     html: () => `
       <div class="cm-grid">
         <div class="cm-p"><div class="cm-ph"><b>${S('Revenue · 30 days', 'Faturação · 30 dias', 'Omsætning · 30 dage')}</b><b class="cm-big">€48,920 <em>+27%</em></b></div>
-          <svg class="cm-chart" viewBox="0 0 300 80" preserveAspectRatio="none"><defs><linearGradient id="cmg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5a1f" stop-opacity=".45"/><stop offset="1" stop-color="#ff5a1f" stop-opacity="0"/></linearGradient></defs><path d="${path.a}" fill="url(#cmg)"/><path class="ln" d="${path.l}" fill="none" stroke="#ff5a1f" stroke-width="1.8" vector-effect="non-scaling-stroke"/></svg>
+          <svg class="cm-chart" viewBox="0 0 300 80" preserveAspectRatio="none"><defs><linearGradient id="cmg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4d7cff" stop-opacity=".45"/><stop offset="1" stop-color="#4d7cff" stop-opacity="0"/></linearGradient></defs><path d="${path.a}" fill="url(#cmg)"/><path class="ln" d="${path.l}" fill="none" stroke="#4d7cff" stroke-width="1.8" vector-effect="non-scaling-stroke"/></svg>
           <div class="cm-chan">${[['Meta', 41], ['TikTok', 22], ['Email', 19], ['Organic', 18]].map(c => `<span><i style="--w:${c[1] * 2}%"></i>${c[0]} <b>${c[1]}%</b></span>`).join('')}</div>
           <div class="cm-ords">${ORD.map(ordRow).join('')}</div></div>
         <div class="cm-rtcol">

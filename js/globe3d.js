@@ -193,7 +193,7 @@
     beam.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), n); beam.position.copy(n);
     fx.add(beam);
     for (let j = 0; j < 2; j++) {
-      const m = new T.Mesh(new T.RingGeometry(0.018, 0.024, 64), new T.MeshBasicMaterial({ color: 0xff5a1f, transparent: true, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide }));
+      const m = new T.Mesh(new T.RingGeometry(0.018, 0.024, 64), new T.MeshBasicMaterial({ color: 0x4d7cff, transparent: true, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide }));
       m.position.copy(n.clone().multiplyScalar(1.004)); m.lookAt(n.clone().multiplyScalar(2));
       fx.add(m); rings.push({ m, ph: j * 0.5 + ci * 0.17 });
     }

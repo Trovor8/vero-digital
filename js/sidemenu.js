@@ -68,7 +68,7 @@
   function open(cat) {
     if (root.classList.contains('open')) return;
     lastFocus = document.activeElement;
-    const m = $('#mnav'); if (m) m.classList.remove('open');
+    if (window.VERO_MNAV) window.VERO_MNAV(false);
     root.classList.add('open'); document.documentElement.classList.add('sm-lock');
     if (cat) expand(cat, true);
     setTimeout(() => (matchMedia('(hover:hover)').matches ? input : panel).focus({ preventScroll: true }), 60);
@@ -152,6 +152,9 @@
     if (s) addEventListener('load', () => setTimeout(() => reveal(s), 300));
   }
 
+  // mobile button appears once you've scrolled past the first screen
+  const fabTick = () => root.classList.toggle('fab-on', scrollY > innerHeight * 0.85);
+  addEventListener('scroll', fabTick, { passive: true }); fabTick();
   // hide the edge tab / floating button while the footer CTA is on screen
   const ft = $('.ft-cta') || $('footer');
   if (ft && 'IntersectionObserver' in window) new IntersectionObserver(es => root.classList.toggle('ft-in', es[0].isIntersecting)).observe(ft);
