@@ -1596,3 +1596,9 @@ html[lang=da] .gr-mx .m-y::after{content:"Kerne"}html[lang=da] .gr-mx .m-o::afte
   .dk-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .35s var(--e)}
 }
 .ctry{grid-template-columns:repeat(4,1fr)}@media (max-width:1100px){.ctry{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){
+  /* grid/flex columns that hold a deck must be allowed to shrink, or the deck widens the whole column */
+  .aigrid>*,*:has(>.mdeck),*:has(>.dk-tabs){min-width:0;max-width:100%}
+  .dk-tabs{margin-top:18px}
+}
+@media (max-width:760px){#crm{padding-bottom:28px!important}.sec2.aisec{padding-top:52px!important}}
