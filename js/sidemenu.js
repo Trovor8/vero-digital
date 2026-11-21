@@ -13,7 +13,8 @@
     all: { en: 'See all 39 services', pt: 'Ver os 39 serviços', da: 'Se alle 39 ydelser' },
     call: { en: 'Book a call', pt: 'Marcar chamada', da: 'Book et opkald' },
     tab: { en: 'Services', pt: 'Serviços', da: 'Ydelser' },
-    close: { en: 'Close', pt: 'Fechar', da: 'Luk' }
+    close: { en: 'Close', pt: 'Fechar', da: 'Luk' },
+    explore: { en: 'All services', pt: 'Todos os serviços', da: 'Alle ydelser' }
   };
   const ICON = {
     ai: '<path d="M12 3v3M8 7h8a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3v-6a3 3 0 0 1 3-3z"/><path d="M9.5 12h.01M14.5 12h.01M9.5 15.5h5"/>',
@@ -55,7 +56,7 @@
         <a class="btn p" href="contact.html">${t3(UI.call)}</a>
       </footer>
     </aside>
-    <button class="sm-tab" aria-label="${UI.tab.en}">${svg('<path d="M4 6h16M4 12h10M4 18h16"/>')}<span>${t3(UI.tab)}</span></button>
+    <button class="sm-tab" aria-label="${UI.all.en}"><span class="sm-tab-i">${svg('<rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/>')}</span><span class="sm-tab-t">${t3(UI.explore)}</span><kbd>${/Mac|iPhone|iPad/.test(navigator.platform) ? '⌘' : 'Ctrl'} K</kbd></button>
     <button class="sm-fab" aria-label="${UI.tab.en}">${svg('<rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/>')}<span>${t3(UI.tab)}</span></button>`;
   document.body.appendChild(root);
 
@@ -81,6 +82,7 @@
   root.querySelector('.sm-tab').addEventListener('click', () => open());
   root.querySelector('.sm-fab').addEventListener('click', () => open());
   addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); root.classList.contains('open') ? close() : open(); return; }
     if (!root.classList.contains('open')) return;
     if (e.key === 'Escape') close();
     if (e.key === 'Tab') { // keep focus inside the panel
@@ -154,6 +156,8 @@
 
   // mobile button appears once you've scrolled past the first screen
   const fabTick = () => root.classList.toggle('fab-on', scrollY > innerHeight * 0.85);
+  const crmSec = document.getElementById('crm');
+  if (crmSec && 'IntersectionObserver' in window) new IntersectionObserver(es => root.classList.toggle('crm-in', es[0].isIntersecting), { rootMargin: '-10% 0px -10% 0px' }).observe(crmSec);
   addEventListener('scroll', fabTick, { passive: true }); fabTick();
   // hide the edge tab / floating button while the footer CTA is on screen
   const ft = $('.ft-cta') || $('footer');

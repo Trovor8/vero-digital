@@ -93,6 +93,11 @@
       auto: [['Missed call → WhatsApp in 30s', 'Chamada perdida → WhatsApp em 30s', 'Mistet opkald → WhatsApp på 30 s'], ['Quote sent → follow-up day 3', 'Orçamento → follow-up dia 3', 'Tilbud → opfølgning dag 3'], ['Job done → review request', 'Obra feita → pedido de avaliação', 'Job færdigt → anmeldelse']] }
   ];
 
+  window.VERO_CRM_N = N;
+  const CTR = {'4 · Fri 20:00':['4 · Sex 20:00','4 · Fre 20:00'],'2 · Sat 13:00':['2 · Sáb 13:00','2 · Lør 13:00'],'6 · Fri 21:00':['6 · Sex 21:00','6 · Fre 21:00'],'2 · Tonight':['2 · Hoje à noite','2 · I aften'],'8 · Birthday':['8 · Aniversário','8 · Fødselsdag'],'3 · Table 12':['3 · Mesa 12','3 · Bord 12'],'Facial · Tue':['Limpeza de pele · Ter','Ansigtsbehandling · Tir'],'Dental check':['Check-up dentário','Tandeftersyn'],'Consent ✓':['Consentimento ✓','Samtykke ✓'],'Thu 10:30':['Qui 10:30','Tor 10:30'],'Thu 15:00':['Qui 15:00','Tor 15:00'],'Day 3 check-in':['Acompanhamento dia 3','Opfølgning dag 3'],'Day 14':['Dia 14','Dag 14'],'Sep · 80':['Set · 80','Sep · 80'],'Sat 11:00':['Sáb 11:00','Lør 11:00'],'Signed ✓':['Assinado ✓','Underskrevet ✓'],'Paid ✓':['Pago ✓','Betalt ✓'],'Jun 2027 · 120':['Jun 2027 · 120','Jun 2027 · 120'],'T3 · Lisbon':['T3 · Lisboa','3 vær. · Lissabon'],'Villa · Algarve':['Moradia · Algarve','Villa · Algarve'],'Golden visa':['Golden visa','Golden visa'],'Sat 10:00':['Sáb 10:00','Lør 10:00'],'Mon 17:30':['Seg 17:30','Man 17:30'],'Hansen fam.':['Família Hansen','Familien Hansen'],'HIIT · Mon':['HIIT · Seg','HIIT · Man'],'Pilates · Wed':['Pilates · Qua','Pilates · Ons'],'Loved it ✓':['Adorou ✓','Elskede det ✓'],'Monthly':['Mensal','Månedlig'],'Annual':['Anual','Årlig'],'12 days away':['12 dias sem vir','12 dage væk'],'3 weeks away':['3 semanas sem vir','3 uger væk'],'Instagram ad':['Anúncio Instagram','Instagram-annonce'],'€89 · 2 items':['89 € · 2 artigos','89 € · 2 varer'],'€142 · paid':['142 € · pago','142 € · betalt'],'Shipped':['Enviado','Afsendt'],'2nd order':['2.ª encomenda','2. ordre'],'Kitchen reno':['Remodelação cozinha','Nyt køkken'],'Missed call':['Chamada perdida','Mistet opkald'],'Bathroom':['Casa de banho','Badeværelse'],'Web form':['Formulário web','Webformular'],'Roof repair':['Reparação telhado','Tagreparation'],'Wed 9:00':['Qua 9:00','Ons 9:00'],'Full remodel':['Remodelação total','Totalrenovering'],'Flooring':['Pavimento','Gulv'],'Painting':['Pintura','Maling'],'Starts Mon':['Começa seg','Starter man'],'Windows':['Janelas','Vinduer']};
+  const ctr = q => { const v = CTR[q]; if (!v) return q; const l = document.documentElement.lang; return l === 'pt' ? v[0] : l === 'da' ? v[1] : q; };
+  window.VERO_CRM_TR = ctr;
+  const CT3 = q => CTR[q] ? t3(q, CTR[q][0], CTR[q][1]) : q;
   const UI = {
     tag: ['Digital products · Custom CRMs', 'Produtos digitais · CRMs à medida', 'Digitale produkter · Skræddersyede CRM'],
     badge: ['Interactive demo · example data', 'Demo interativa · dados de exemplo', 'Interaktiv demo · eksempeldata'],
@@ -150,13 +155,13 @@
     main.innerHTML = `
       <div class="crm-head"><span class="crm-av">${svg(n.ic)}</span><b>${T(n.biz)}</b><span class="crm-on"><i></i>${T(UI.on)}</span></div>
       <div class="crm-kpis">${n.kpi.map(k => `<div class="crm-kpi"><small>${T(k[0])}</small><b data-v="${k[1]}">0</b><em class="${String(k[2]).startsWith('−') && !/no-show|faltas|udebl|risk|risco/i.test(k[0][0]) ? 'dn' : ''}">${k[2]}</em></div>`).join('')}</div>
-      <div class="cm-sub">${MODS[n.k] ? `<button class="on" data-v="mod">${T(MODS[n.k].lbl)}</button>` : ''}<button data-v="pipe" class="${MODS[n.k] ? '' : 'on'}">${T(UI.pipeai)}</button><span class="cm-live"><i></i>Live</span></div>
+      <div class="cm-sub">${MODS[n.k] ? `<button class="on" data-v="mod">${T(MODS[n.k].lbl)}</button>` : ''}<button data-v="pipe" class="${MODS[n.k] ? '' : 'on'}">${T(UI.pipeai)}</button><span class="cm-live"><i></i>${t3('Live', 'Ao vivo', 'Live')}</span></div>
       <div class="cm-view"></div>`;
     const view = main.querySelector('.cm-view');
     const pipeHTML = `
       <div class="crm-split">
         <div class="crm-pipe"><small class="crm-lbl">${T(UI.pipe)}</small><div class="crm-cols">${n.st.map((s, c) => `
-          <div class="crm-col"><div class="crm-colh">${T(s)}<i>${cols[c].length}</i></div>${cols[c].map(j => `<div class="crm-card"><b>${n.cards[j][0]}</b><span>${n.cards[j][1]}</span></div>`).join('')}</div>`).join('')}</div></div>
+          <div class="crm-col"><div class="crm-colh">${T(s)}<i>${cols[c].length}</i></div>${cols[c].map(j => `<div class="crm-card"><b>${CT3(n.cards[j][0])}</b><span>${CT3(n.cards[j][1])}</span></div>`).join('')}</div>`).join('')}</div></div>
         <div class="crm-rt">
           <div class="crm-chat"><small class="crm-lbl"><i class="crm-dot"></i>${T(UI.ai)}</small>
             <div class="crm-msg in">${T(n.chat[0])}</div>
@@ -166,7 +171,7 @@
           <div class="crm-autos"><small class="crm-lbl">${T(UI.autos)}</small>${n.auto.map(a => `<div class="crm-auto">${svg('M13 3L4 14h7l-1 7 9-11h-7z')}<span>${T(a)}</span><i></i></div>`).join('')}</div>
         </div>
       </div>`;
-    const setView = v => { view.dataset.v = v; view.innerHTML = v === 'mod' ? MODS[n.k].html() : pipeHTML; main.querySelectorAll('.cm-sub button').forEach(b => b.classList.toggle('on', b.dataset.v === v)); };
+    const setView = v => { view.dataset.v = v; view.innerHTML = v === 'mod' ? MODS[n.k].html() : pipeHTML; if (v === 'mod' && MODS[n.k].bind) MODS[n.k].bind(view); main.querySelectorAll('.cm-sub button').forEach(b => b.classList.toggle('on', b.dataset.v === v)); };
     main.querySelectorAll('.cm-sub button').forEach(b => b.addEventListener('click', () => setView(b.dataset.v)));
     setView(MODS[n.k] ? 'mod' : 'pipe');
     // count-up
@@ -201,6 +206,7 @@
   }
   addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', onScroll);
+  root.querySelector('.crm-app').addEventListener('pointerdown', () => { userPicked = true; }, { capture: true });
   tabs.forEach((b, i) => b.addEventListener('click', () => {
     userPicked = true;
     if (desk()) {
@@ -219,7 +225,7 @@
   setInterval(() => {
     if (cur < 0 || document.hidden) return;
     const n = N[cur], c = n.cards[Math.floor(Math.random() * 2)];
-    toast.innerHTML = `<i></i><b>${T(UI.lead)}</b><span>${c[0]} · ${c[1]}</span>`;
+    toast.innerHTML = `<i></i><b>${T(UI.lead)}</b><span>${CT3(c[0])} · ${CT3(c[1])}</span>`;
     toast.classList.remove('on'); void toast.offsetWidth; toast.classList.add('on');
     const view = main.querySelector('.cm-view');
     if (view && view.dataset.v === 'mod' && MODS[n.k] && MODS[n.k].live) { try { MODS[n.k].live(view); } catch (e) {} }

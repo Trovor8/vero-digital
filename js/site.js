@@ -16,7 +16,7 @@ $$('.lang button').forEach(b=>b.onclick=()=>setLang(b.dataset.set));setLang(lang
   let sx=null;mn.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});mn.addEventListener('touchend',e=>{if(sx!==null&&e.changedTouches[0].clientX-sx<-60)set(false);sx=null},{passive:true});
 })();
 /* rotating word */
-$$('[data-rot]:not([data-rot-ext])').forEach(r=>{const w=[...r.children];let i=0;setInterval(()=>{const a=w[i];a.classList.remove('on');a.classList.add('out');setTimeout(()=>a.classList.remove('out'),700);i=(i+1)%w.length;w[i].classList.add('on')},2600)});
+$$('[data-rot]:not([data-rot-ext])').forEach(r=>{const w=[...r.children];let i=0;setInterval(()=>{const a=w[i];a.classList.remove('on');a.classList.add('out');setTimeout(()=>a.classList.remove('out'),700);i=(i+1)%w.length;w[i].classList.add('on');if(r.closest('#hero'))$$('#hero .lead-x .lx').forEach((l,j)=>l.classList.toggle('on',j===i))},3600)});
 /* service filter */
 function filt(f){$$('#svTabs button').forEach(b=>b.classList.toggle('on',b.dataset.f===f));$$('.sv').forEach((c,k)=>{const s=f==='all'||c.dataset.c===f;c.classList.toggle('hide',!s);if(s){c.style.animation='none';c.offsetHeight;c.style.animation='';c.style.animationDelay=(k%8)*0.03+'s'}})}
 $$('#svTabs button').forEach(b=>b.onclick=()=>filt(b.dataset.f));

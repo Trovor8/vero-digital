@@ -97,26 +97,36 @@
   };
 
   // ---------------------------------------------------------------- real estate: buyer matching
+  const PROPS = [
+    { img: 'img/estate/e1.jpg', town: 'Cascais', price: '€585k', spec: ['3 bed · 2 bath · 142 m²', '3 quartos · 2 WC · 142 m²', '3 vær. · 2 bad · 142 m²'], match: 96, tags: [['Sea view', 'Vista mar', 'Havudsigt'], ['Garage', 'Garagem', 'Garage']], slot: 'Sat 10:00' },
+    { img: 'img/estate/e2.jpg', town: 'Carvoeiro', price: '€1.2M', spec: ['4 bed · 4 bath · 290 m²', '4 quartos · 4 WC · 290 m²', '4 vær. · 4 bad · 290 m²'], match: 91, tags: [['Pool', 'Piscina', 'Pool'], ['Architect-designed', 'Arquitetura de autor', 'Arkitekttegnet']], slot: 'Sat 11:30' },
+    { img: 'img/estate/e3.jpg', town: 'Lagoa', price: '€2.4M', spec: ['6 bed · 6 bath · 480 m²', '6 quartos · 6 WC · 480 m²', '6 vær. · 6 bad · 480 m²'], match: 87, tags: [['Ocean view', 'Vista oceano', 'Havudsigt'], ['Solar', 'Solar', 'Solceller']], slot: 'Sat 14:00' }
+  ];
+  const estDetail = (p, booked) => `
+    <div class="cm-ed"><div class="cm-edi" style="background-image:url(${p.img})"><span class="cm-match" style="--p:${p.match}"><b>${p.match}%</b></span></div>
+      <div class="cm-edh"><div><small>${p.town}</small><b>${p.price}</b></div><span class="cm-chip g">${S('Match for the Hansens', 'Ideal para os Hansen', 'Match til familien Hansen')}</span></div>
+      <span class="cm-mute">${T(p.spec)}</span>
+      <div class="cm-tags">${p.tags.map(t => `<span class="cm-chip">${T(t)}</span>`).join('')}</div>
+      <button type="button" class="cm-book ${booked ? 'done' : ''}">${booked ? S('Viewing booked · ' + p.slot + ' ✓', 'Visita marcada · ' + p.slot + ' ✓', 'Fremvisning booket · ' + p.slot + ' ✓') : S('Book a viewing →', 'Marcar visita →', 'Book fremvisning →')}</button>
+      <small class="cm-note">${S('Sends the route, keys info and a reminder on WhatsApp — automatically.', 'Envia o roteiro, info das chaves e um lembrete no WhatsApp — automaticamente.', 'Sender rute, nøgleinfo og en påmindelse på WhatsApp — automatisk.')}</small></div>`;
   const estate = {
     lbl: ['Buyer match', 'Match de compradores', 'Købermatch'],
     html: () => `
       <div class="cm-grid">
         <div class="cm-p"><div class="cm-ph"><b>${S('Best matches · Hansen family', 'Melhores imóveis · família Hansen', 'Bedste match · familien Hansen')}</b><span class="cm-chip g">${S('3 of 214 listings', '3 de 214 imóveis', '3 af 214 boliger')}</span></div>
-          <div class="cm-props">${[
-            ['Cascais', '€585k', 'T3 · 2 · 142m²', 96, [['Sea view', 'Vista mar', 'Havudsigt'], ['Garage', 'Garagem', 'Garage']], 'a'],
-            ['Estoril', '€612k', 'V3 · 3 · 190m²', 89, [['Pool', 'Piscina', 'Pool'], ['Garden', 'Jardim', 'Have']], 'b'],
-            ['Parede', '€498k', 'T3 · 2 · 128m²', 84, [['School 400m', 'Escola a 400m', 'Skole 400 m'], ['New build', 'Novo', 'Nybyg']], 'c']
-          ].map(p => `<div class="cm-prop"><div class="cm-img ${p[5]}"><span class="cm-match" style="--p:${p[3]}"><b>${p[3]}%</b></span></div><div class="cm-pi"><small>${p[0]}</small><b>${p[1]}</b><span>${p[2]}</span><div>${p[4].map(t => `<em>${T(t)}</em>`).join('')}</div></div></div>`).join('')}</div></div>
-        <div class="cm-p"><div class="cm-ph"><b>${S('Buyer profile', 'Perfil do comprador', 'Køberprofil')}</b><span class="cm-chip g">${S('Hot', 'Quente', 'Varm')}</span></div>
-          <div class="cm-kv"><span>${S('Budget', 'Orçamento', 'Budget')}</span><b>€450–600k</b></div>
-          <div class="cm-kv"><span>${S('Areas', 'Zonas', 'Områder')}</span><b>Cascais · Estoril</b></div>
-          <div class="cm-kv"><span>${S('Mortgage', 'Crédito', 'Lån')}</span><b>${S('Pre-approved ✓', 'Pré-aprovado ✓', 'Forhåndsgodkendt ✓')}</b></div>
-          <div class="cm-kv"><span>${S('Language', 'Língua', 'Sprog')}</span><b>Dansk</b></div>
-          <div class="cm-ph" style="margin-top:10px"><b>${S('Saturday viewing route', 'Roteiro de visitas · sábado', 'Fremvisningsrute · lørdag')}</b></div>
-          <div class="cm-route">${[['10:00', 'Cascais T3'], ['11:15', 'Estoril V3'], ['12:30', 'Parede T3']].map(r => `<div><time>${r[0]}</time><i></i><span>${r[1]}</span></div>`).join('')}</div>
-          <span class="cm-chip g cm-sent">${S('Route + keys info sent on WhatsApp ✓', 'Roteiro enviado no WhatsApp ✓', 'Rute sendt på WhatsApp ✓')}</span></div>
+          <div class="cm-props">${PROPS.map((p, i) => `<button type="button" class="cm-prop ${i === 0 ? 'sel' : ''}" data-i="${i}"><div class="cm-img" style="background-image:url(${p.img})"><span class="cm-match" style="--p:${p.match}"><b>${p.match}%</b></span></div><div class="cm-pi"><small>${p.town}</small><b>${p.price}</b><span>${T(p.spec)}</span><div>${p.tags.map(t => `<em>${T(t)}</em>`).join('')}</div></div></button>`).join('')}</div>
+          <div class="cm-ph" style="margin:12px 0 6px"><b>${S('Saturday viewing route', 'Roteiro de visitas · sábado', 'Fremvisningsrute · lørdag')}</b><span class="cm-mute">${S('auto-planned', 'planeado automaticamente', 'auto-planlagt')}</span></div>
+          <div class="cm-route"></div></div>
+        <div class="cm-p cm-estd">${estDetail(PROPS[0], false)}</div>
       </div>`,
-    live: v => { const m = pick([...v.querySelectorAll('.cm-prop')]); m.classList.remove('ping'); void m.offsetWidth; m.classList.add('ping'); }
+    bind: v => {
+      const booked = new Set();
+      const route = () => { const r = v.querySelector('.cm-route'); if (!r) return; const list = [...booked].sort().map(i => PROPS[i]); r.innerHTML = list.length ? list.map(p => `<div><time>${p.slot.split(' ')[1]}</time><i></i><span>${p.town} · ${p.price}</span></div>`).join('') : `<span class="cm-mute">${S('Pick a home and book a viewing — the route builds itself.', 'Escolha um imóvel e marque visita — o roteiro faz-se sozinho.', 'Vælg en bolig og book en fremvisning — ruten laver sig selv.')}</span>`; };
+      const show = i => { v.querySelectorAll('.cm-prop').forEach(b => b.classList.toggle('sel', +b.dataset.i === i)); const d = v.querySelector('.cm-estd'); d.innerHTML = estDetail(PROPS[i], booked.has(i)); d.querySelector('.cm-book').onclick = () => { booked.add(i); show(i); route(); }; d.classList.remove('flip'); void d.offsetWidth; d.classList.add('flip'); };
+      v.querySelectorAll('.cm-prop').forEach(b => b.addEventListener('click', () => show(+b.dataset.i)));
+      show(0); route();
+    },
+    live: v => { const m = pick([...v.querySelectorAll('.cm-prop:not(.sel)')]); if (!m) return; m.classList.remove('ping'); void m.offsetWidth; m.classList.add('ping'); }
   };
 
   // ---------------------------------------------------------------- gym: timetable + retention

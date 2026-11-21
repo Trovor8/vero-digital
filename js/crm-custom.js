@@ -6,6 +6,7 @@
   const root = document.getElementById('crm');
   const app = root && root.querySelector('.crm-app');
   if (!app) return;
+  const stage = document.createElement('div'); stage.className = 'crm-stage'; app.parentNode.insertBefore(stage, app); stage.appendChild(app);
   const t3 = (en, pt, da) => `<span data-en>${en}</span><span data-pt>${pt}</span><span data-da>${da}</span>`;
   const L = (o) => o[document.documentElement.lang] || o.en;
 
@@ -30,7 +31,7 @@
   const dr = document.createElement('aside');
   dr.className = 'crm-cz'; dr.setAttribute('aria-label', 'Customise this CRM');
   dr.innerHTML = `
-    <div class="cz-h"><b>${t3('Make it yours', 'Torne-o seu', 'Gør det til dit')}</b><span class="cz-live"><i></i>${t3('Live preview', 'Pré-visualização ao vivo', 'Live forhåndsvisning')}</span><button type="button" class="cz-x" aria-label="Close">×</button></div>
+    <div class="cz-h"><b>${t3('Make it yours', 'Torne-o seu', 'Gør det til dit')}</b><span class="cz-live"><i></i>${t3('Live', 'Ao vivo', 'Live')}</span><button type="button" class="cz-x" aria-label="Close">×</button></div>
     <div class="cz-scroll">
       <div class="cz-f"><small>${t3('Business name', 'Nome do negócio', 'Virksomhedsnavn')}</small><input class="cz-name" type="text" maxlength="28" spellcheck="false" autocomplete="off"></div>
       <div class="cz-f"><small>${t3('Brand colour', 'Cor da marca', 'Brandfarve')}</small><div class="cz-sw">${COLORS.map(c => `<button type="button" data-c="${c[0]}" style="--c:${c[0]}" title="${c[1]}" aria-label="${c[1]}"></button>`).join('')}<label class="cz-pick" title="Custom" aria-label="Custom colour"><input type="color" value="#4d7cff"><span>+</span></label></div></div>
@@ -43,10 +44,10 @@
         <div class="cz-int">${['WhatsApp', 'Stripe', 'Google Calendar', 'Shopify', 'Meta', 'Outlook', 'Moloni', 'Zapier', 'Your API'].map(x => `<span>${x}</span>`).join('')}</div></div>
     </div>
     <div class="cz-foot"><button type="button" class="cz-reset">${t3('Reset', 'Repor', 'Nulstil')}</button><a class="btn p" href="contact.html">${t3('Design mine', 'Desenhar o meu', 'Design min')} →</a></div>`;
-  app.appendChild(dr);
+  stage.appendChild(dr);
   // phones/tablets: the panel sits under the app, always visible (no drawer)
   const mqm = matchMedia('(max-width:1000px)');
-  const placeDr = () => { if (mqm.matches) { if (dr.parentNode !== app.parentNode) app.after(dr); dr.classList.add('inline'); } else { if (dr.parentNode !== app) app.appendChild(dr); dr.classList.remove('inline'); } };
+  const placeDr = () => { if (mqm.matches) { if (dr.previousElementSibling !== stage) stage.after(dr); dr.classList.add('inline'); } else { if (dr.parentNode !== stage) stage.appendChild(dr); dr.classList.remove('inline'); } };
   placeDr(); mqm.addEventListener ? mqm.addEventListener('change', placeDr) : mqm.addListener(placeDr);
   // touching the panel on mobile pauses the automatic niche rotation
   dr.addEventListener('pointerdown', () => { if (!mqm.matches) return; const on = root.querySelector('.crm-tabs button.on'); if (on) on.click(); }, { capture: true });
@@ -63,10 +64,10 @@
 
   // ---------- apply
   function apply() {
-    app.style.setProperty('--acc', state.color);
-    app.style.setProperty('--rad', { sharp: .22, soft: 1, round: 1.75 }[state.rad]);
+    stage.style.setProperty('--acc', state.color);
+    stage.style.setProperty('--rad', { sharp: .22, soft: 1, round: 1.75 }[state.rad]);
     const f = FONTS[state.font];
-    if (f.b) { app.style.setProperty('--b', f.b); app.style.setProperty('--d', f.d); } else { app.style.removeProperty('--b'); app.style.removeProperty('--d'); }
+    [app, dr].forEach(el => { if (f.b) { el.style.setProperty('--b', f.b); el.style.setProperty('--d', f.d); } else { el.style.removeProperty('--b'); el.style.removeProperty('--d'); } });
     app.classList.toggle('th-light', state.theme === 'light');
     app.classList.toggle('th-glass', state.theme === 'glass');
     root.classList.toggle('cz-glass', state.theme === 'glass');
@@ -102,8 +103,8 @@
   new MutationObserver(() => decorate()).observe(main, { childList: true });
 
   // ---------- events
-  const open = v => { app.classList.toggle('cz-open', v); btn.classList.add('used'); stopShow(); };
-  btn.addEventListener('click', () => { if (dr.classList.contains('inline')) { btn.classList.add('used'); stopShow(); dr.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; } open(!app.classList.contains('cz-open')); });
+  const open = v => { app.classList.toggle('cz-open', v); stage.classList.toggle('cz-open', v); btn.classList.add('used'); stopShow(); };
+  btn.addEventListener('click', () => { if (dr.classList.contains('inline')) { btn.classList.add('used'); stopShow(); dr.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; } open(!stage.classList.contains('cz-open')); });
   dr.querySelector('.cz-x').addEventListener('click', () => open(false));
   strip.querySelector('button').addEventListener('click', () => { if (dr.classList.contains('inline')) { dr.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; } open(true); });
   dr.querySelectorAll('.cz-sw button').forEach(b => b.addEventListener('click', () => { state.color = b.dataset.c; apply(); }));
@@ -136,6 +137,6 @@
     io.observe(app);
   }
   ['pointerdown', 'keydown'].forEach(ev => dr.addEventListener(ev, stopShow));
-  new MutationObserver(() => { app.querySelectorAll('[data-w]').forEach(x => delete x.dataset.w); decorate(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  new MutationObserver(() => { app.querySelectorAll('[data-w]').forEach(x => delete x.dataset.w); apply(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
   apply();
 })();
