@@ -1231,3 +1231,16 @@ html.sm-lock,html.sm-lock body{overflow:hidden}
 .dv-mail span{font:500 12.5px/1 var(--b);color:#e2ded5}
 @media (max-width:1000px){.sol-dossier{top:auto;right:0;left:0;bottom:0;width:auto;max-height:78vh;border-radius:22px 22px 0 0;transform:translateY(30px)}.sol-dossier.on{transform:none}.hx.sol-explore .wrap{opacity:1;filter:none;pointer-events:auto}.sol-label b{font-size:12px}.sol-label.add{display:none}}
 .sol-open .sm-fab,.sol-open .sm-tab{opacity:0;pointer-events:none}
+/* ---------- hero morph (particles → website / CRM / app) */
+.mf-ui{position:absolute;left:71.5%;bottom:74px;transform:translateX(-50%);display:flex;gap:6px;padding:5px;border-radius:999px;background:rgba(14,14,16,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(243,240,232,.1);z-index:4}
+.mf-ui button{position:relative;display:flex;align-items:center;gap:7px;padding:9px 16px 10px;border-radius:999px;font:600 13px/1 var(--b);color:#9d988e;overflow:hidden;transition:color .3s,background .3s}
+.mf-ui button em{font:600 9.5px/1 var(--b);font-style:normal;letter-spacing:.12em;color:#6f6b63;transition:color .3s}
+.mf-ui button:hover{color:#f3f0e8}
+.mf-ui button.on{color:#fff;background:rgba(255,255,255,.08)}
+.mf-ui button.on em{color:var(--acc)}
+.mf-ui button i{position:absolute;left:14px;right:14px;bottom:4px;height:2px;border-radius:2px;background:rgba(255,255,255,.08);opacity:0;transition:opacity .3s}
+.mf-ui button.on i{opacity:1}
+.mf-ui button i b{display:block;height:100%;border-radius:inherit;background:var(--acc);transform-origin:0 50%;transform:scaleX(0)}
+.globe-wrap .globe-hint{bottom:30px}
+.mf-ui.narrow{left:50%;bottom:44px}
+@media (max-width:640px){.mf-ui button{padding:8px 12px 9px;font-size:12px}}

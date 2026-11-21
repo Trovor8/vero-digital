@@ -9,7 +9,7 @@ function setLang(l){lang=l;document.documentElement.lang=l;try{localStorage.setI
 $$('.lang button').forEach(b=>b.onclick=()=>setLang(b.dataset.set));setLang(lang);
 const bg=$('#burger');if(bg){bg.onclick=()=>$('#mnav').classList.add('open');$('#mx').onclick=()=>$('#mnav').classList.remove('open');$$('#mnav a').forEach(a=>a.onclick=()=>$('#mnav').classList.remove('open'))}
 /* rotating word */
-$$('[data-rot]').forEach(r=>{const w=[...r.children];let i=0;setInterval(()=>{const a=w[i];a.classList.remove('on');a.classList.add('out');setTimeout(()=>a.classList.remove('out'),700);i=(i+1)%w.length;w[i].classList.add('on')},2600)});
+$$('[data-rot]:not([data-rot-ext])').forEach(r=>{const w=[...r.children];let i=0;setInterval(()=>{const a=w[i];a.classList.remove('on');a.classList.add('out');setTimeout(()=>a.classList.remove('out'),700);i=(i+1)%w.length;w[i].classList.add('on')},2600)});
 /* service filter */
 function filt(f){$$('#svTabs button').forEach(b=>b.classList.toggle('on',b.dataset.f===f));$$('.sv').forEach((c,k)=>{const s=f==='all'||c.dataset.c===f;c.classList.toggle('hide',!s);if(s){c.style.animation='none';c.offsetHeight;c.style.animation='';c.style.animationDelay=(k%8)*0.03+'s'}})}
 $$('#svTabs button').forEach(b=>b.onclick=()=>filt(b.dataset.f));
