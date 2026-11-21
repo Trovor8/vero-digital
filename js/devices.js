@@ -128,7 +128,7 @@
   // ================================================================== state
   const st = { prod: 0, type: 1, before: false, wipe: 1, from: null, site: { booked: 0, bookedAt: -9 }, crm: {}, app: {}, toastAt: -9, pushAt: -9, kpiT: 0 };
   const crmState = k => st.crm[k] || (st.crm[k] = (() => { const N = (window.VERO_CRM_N || []).find(n => n.k === k); const c = N ? N.cards.map(x => x.slice()) : []; return { N, cols: [[c[0], c[1]], [c[2], c[3]], [c[4], c[5]], [c[6]]].map(a => a.filter(Boolean)), moving: null }; })());
-  const appState = k => st.app[k] || (st.app[k] = { ok: 0, at: -9 });
+  const appState = k => st.app[k] || (st.app[k] = { ok: 0, at: -9, tab: 0, day: 2, slot: 1, booked: 0, pts: 1240, red: 0, tg: [1, 1, 0], lang: 0, rows: {}, touched: 0 });
 
   // ================================================================== laptop + phone: an interactive concept site per business (fictional brands)
   const SERIF = "'Fraunces',Georgia,serif";
@@ -567,7 +567,15 @@
     else if (a === 'nd') { M.nudged[i] = 1; st.toastAt = now(); st.toastTxt = ['Nudge sent on WhatsApp ✓', 'Lembrete enviado no WhatsApp ✓', 'Påmindelse sendt på WhatsApp ✓']; }
     else if (a === 'sim') { M.orders++; M.simT = now(); st.toastAt = now(); st.toastTxt = ['New order · €' + (39 + (M.orders * 37) % 120) + ' · Meta ad', 'Nova encomenda · ' + (39 + (M.orders * 37) % 120) + ' € · anúncio Meta', 'Ny ordre · ' + (39 + (M.orders * 37) % 120) + ' € · Meta-annonce']; }
     else if (a === 'ro') M.reord[i] = 1;
-    else if (a === 'cta') { const AS = appState(k); AS.ok = AS.ok ? 0 : 1; AS.at = now(); }
+    else if (a === 'cta') { const AS = appState(k); AS.ok = AS.ok ? 0 : 1; AS.at = now(); AS.touched = 1; }
+    else if (a.startsWith('a') && ['atab', 'aday', 'aslot', 'abook', 'ared', 'aearn', 'atg', 'alang', 'arow'].includes(a)) {
+      const AS = appState(k); AS.touched = 1;
+      if (a === 'atab') AS.tab = i; else if (a === 'aday') AS.day = i; else if (a === 'aslot') { AS.slot = i; AS.booked = 0; }
+      else if (a === 'abook') { AS.booked = AS.booked ? 0 : 1; if (AS.booked) { AS.pts += 150; st.pushAt = now(); } }
+      else if (a === 'ared') { if (AS.pts >= 500) { AS.pts -= 500; AS.red = 1; } }
+      else if (a === 'aearn') { if (!AS.rows['e' + i]) { AS.rows['e' + i] = 1; AS.pts += [150, 200, 400][i]; } }
+      else if (a === 'atg') AS.tg[i] = AS.tg[i] ? 0 : 1; else if (a === 'alang') AS.lang = i;
+    }
     else if (a === 'fav') { const AS = appState(k); AS.fav = !AS.fav; }
   }
 
@@ -580,16 +588,77 @@
     gym: { bg: '#050505', fg: '#ffffff', sub: '#8a8a8a', card: '#141414', line: '#222', acc: '#a3e635', acc2: '#22d3ee', dark: 1 },
     shop: { bg: '#f1faf8', fg: '#0f2a2a', sub: '#5f7d7b', card: '#ffffff', line: '#d7ece8', acc: '#0d9488', acc2: '#fb7185', dark: 0 }
   };
+  const THEME_DARK = C => ({ ...C, bg: '#0b0c10', fg: '#f3f4f6', sub: '#8b909a', card: '#16181d', line: '#262a31', dark: 1 });
+  const THEME_LIGHT = C => ({ ...C, bg: '#f5f6f8', fg: '#111318', sub: '#6b7280', card: '#ffffff', line: '#e4e6ea', dark: 0 });
   function drawApp(x, S, t) {
-    const W = S.w, H = S.h, k = TYPES[st.type].crm, A = APPS[k], AS = appState(k), C = THEME[k] || THEME.rest;
+    const W = S.w, H = S.h, k = TYPES[st.type].crm, A = APPS[k], AS = appState(k), C0 = THEME[k] || THEME.rest, C = AS.tg[2] ? (C0.dark ? THEME_LIGHT(C0) : THEME_DARK(C0)) : C0;
     x.fillStyle = C.bg; x.fillRect(0, 0, W, H);
     x.fillStyle = C.fg; x.font = `600 27px ${I}`; x.fillText('9:41', 66, 66); rp(x, 520, 48, 56, 24, 7); x.fill();
-    ({ rest: appRest, estate: appEstate, wed: appWed, trades: appTrades, gym: appGym, shop: appShop }[k] || appRest)(x, S, t, A, AS, C);
-    // tab bar
+    if (AS.tab === 0) ({ rest: appRest, estate: appEstate, wed: appWed, trades: appTrades, gym: appGym, shop: appShop }[k] || appRest)(x, S, t, A, AS, C);
+    else [null, appBookTab, appPerksTab, appMeTab][AS.tab](x, S, t, A, AS, C, k);
+    // tab bar (works)
     rp(x, 36, 1250, 588, 100, 50); x.fillStyle = C.card; x.fill(); if (!C.dark) { x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); }
-    [0, 1, 2, 3].forEach(i => { x.beginPath(); x.arc(118 + i * 141, 1300, i === 0 ? 17 : 13, 0, 7); x.fillStyle = i === 0 ? C.acc : C.dark ? '#3a3d44' : C.line; x.fill(); });
+    const TL = appTabs(k);
+    TL.forEach((lb, i) => { const cx = 110 + i * 147, on = AS.tab === i, hv = hotHit(S, 'atab:' + i, cx - 70, 1250, 140, 100);
+      if (on) { rp(x, cx - 66, 1262, 132, 76, 38); x.fillStyle = C.acc + (C.dark ? '33' : '1f'); x.fill(); }
+      appIcon(x, i, cx, 1288, on ? C.acc : hv ? C.fg : C.sub); x.fillStyle = on ? C.acc : C.sub; x.font = `${on ? 700 : 500} 18px ${I}`; x.textAlign = 'center'; x.fillText(L(lb), cx, 1328); x.textAlign = 'left'; });
+    if (!AS.touched && AS.tab === 0) { S.anim = true; const p = (now() % 1.6) / 1.6, cx = 257; x.save(); x.globalAlpha = (1 - p) * .9; x.strokeStyle = C.acc; x.lineWidth = 4; x.beginPath(); x.arc(cx, 1300, 40 + p * 26, 0, 7); x.stroke(); x.restore();
+      const tx = L(['Tap the tabs', 'Toque nos separadores', 'Tryk på fanerne']); x.font = `700 21px ${I}`; const tw = x.measureText(tx).width + 36, bx = cx - tw / 2, by = 1182 - Math.sin(now() * 4) * 4; rp(x, bx, by, tw, 48, 24); x.fillStyle = C.fg; x.fill(); x.beginPath(); x.moveTo(cx - 12, by + 48); x.lineTo(cx, by + 62); x.lineTo(cx + 12, by + 48); x.fill(); x.fillStyle = C.bg; x.fillText(tx, bx + 18, by + 32); }
     const pa = now() - st.pushAt;
     if (pa < 3.6) { const kk = pa < .45 ? ease(pa / .45) : pa > 3.15 ? 1 - ease((pa - 3.15) / .45) : 1; const py = -120 + kk * 230; rp(x, 22, py, 616, 112, 32); x.fillStyle = C.dark ? 'rgba(40,42,48,.97)' : 'rgba(255,255,255,.98)'; x.fill(); rp(x, 44, py + 24, 64, 64, 16); x.fillStyle = C.acc; x.fill(); x.fillStyle = C.fg; x.font = `700 24px ${I}`; x.fillText(A.brand, 126, py + 50); x.fillStyle = C.sub; x.font = `400 23px ${I}`; x.fillText(L(A.list[0][0]) + ' · ' + L(A.list[0][1]), 126, py + 82); }
+  }
+  const appTabs = k => [['Home', 'Início', 'Hjem'], { rest: ['Book', 'Reservar', 'Book'], estate: ['Viewings', 'Visitas', 'Fremvisning'], wed: ['Plan', 'Planear', 'Planlæg'], trades: ['Visits', 'Visitas', 'Besøg'], gym: ['Classes', 'Aulas', 'Hold'], shop: ['Rent', 'Alugar', 'Lej'] }[k], ['Rewards', 'Pontos', 'Point'], ['Profile', 'Perfil', 'Profil']];
+  function appIcon(x, i, cx, cy, c) {
+    x.strokeStyle = c; x.fillStyle = c; x.lineWidth = 3.2; x.lineJoin = 'round'; x.lineCap = 'round'; x.beginPath();
+    if (i === 0) { x.moveTo(cx - 14, cy); x.lineTo(cx, cy - 13); x.lineTo(cx + 14, cy); x.moveTo(cx - 10, cy - 3); x.lineTo(cx - 10, cy + 13); x.lineTo(cx + 10, cy + 13); x.lineTo(cx + 10, cy - 3); }
+    else if (i === 1) { rp(x, cx - 14, cy - 11, 28, 26, 5); x.moveTo(cx - 14, cy - 3); x.lineTo(cx + 14, cy - 3); x.moveTo(cx - 7, cy - 15); x.lineTo(cx - 7, cy - 8); x.moveTo(cx + 7, cy - 15); x.lineTo(cx + 7, cy - 8); }
+    else if (i === 2) { x.moveTo(cx, cy - 15); x.lineTo(cx + 4.5, cy - 5); x.lineTo(cx + 15, cy - 4); x.lineTo(cx + 7, cy + 4); x.lineTo(cx + 9, cy + 14); x.lineTo(cx, cy + 9); x.lineTo(cx - 9, cy + 14); x.lineTo(cx - 7, cy + 4); x.lineTo(cx - 15, cy - 4); x.lineTo(cx - 4.5, cy - 5); x.closePath(); }
+    else { x.arc(cx, cy - 6, 7, 0, 7); x.moveTo(cx - 13, cy + 14); x.quadraticCurveTo(cx, cy - 2, cx + 13, cy + 14); }
+    x.stroke(); x.lineCap = 'butt';
+  }
+  const aHead = (x, C, t, sub) => { x.fillStyle = C.fg; x.font = `800 46px ${D}`; x.fillText(t, 46, 186); if (sub) { x.fillStyle = C.sub; x.font = `500 23px ${I}`; x.fillText(sub, 46, 224); } };
+  const aBtn = (x, S, C, id, X, Y, W, H, label, done) => { const hv = hotHit(S, id, X, Y, W, H); rp(x, X, Y, W, H, H / 2); x.fillStyle = done ? C.acc + '33' : hv ? C.acc2 : C.acc; x.fill(); x.fillStyle = done ? C.acc : (C.dark ? '#0b0b0b' : '#fff'); x.font = `700 27px ${I}`; x.textAlign = 'center'; x.fillText(label, X + W / 2, Y + H / 2 + 10); x.textAlign = 'left'; };
+  function appBookTab(x, S, t, A, AS, C, k) {
+    const ttl = { rest: ['Book a table', 'Reservar mesa', 'Book et bord'], estate: ['Book a viewing', 'Marcar visita', 'Book fremvisning'], wed: ['Book a tasting', 'Marcar prova', 'Book smagning'], trades: ['Book a site visit', 'Marcar visita', 'Book besigtigelse'], gym: ['Book a class', 'Marcar aula', 'Book et hold'], shop: ['Rent bikes', 'Alugar bicicletas', 'Lej cykler'] }[k];
+    aHead(x, C, L(ttl), L(['Pick a day and a time', 'Escolha o dia e a hora', 'Vælg dag og tid']));
+    const days = [['Mon', 'Seg', 'Man'], ['Tue', 'Ter', 'Tir'], ['Wed', 'Qua', 'Ons'], ['Thu', 'Qui', 'Tor'], ['Fri', 'Sex', 'Fre'], ['Sat', 'Sáb', 'Lør'], ['Sun', 'Dom', 'Søn']];
+    days.forEach((d, i) => { const X = 36 + i * 85, on = AS.day === i, hv = hotHit(S, 'aday:' + i, X, 266, 76, 112); rp(x, X, 266, 76, 112, 22); x.fillStyle = on ? C.acc : hv ? C.line : C.card; x.fill(); if (!on && !C.dark) { x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); }
+      x.textAlign = 'center'; x.fillStyle = on ? (C.dark ? '#0b0b0b' : '#fff') : C.sub; x.font = `600 19px ${I}`; x.fillText(L(d), X + 38, 304); x.fillStyle = on ? (C.dark ? '#0b0b0b' : '#fff') : C.fg; x.font = `800 32px ${D}`; x.fillText(String(17 + i), X + 38, 352); x.textAlign = 'left'; });
+    x.fillStyle = C.fg; x.font = `700 28px ${D}`; x.fillText(L(['Available', 'Disponível', 'Ledige']), 46, 440);
+    const slots = k === 'gym' ? ['07:00', '08:30', '12:30', '17:30', '18:30', '20:00'] : k === 'rest' ? ['19:00', '19:30', '20:00', '20:30', '21:00', '21:30'] : ['09:00', '10:30', '12:00', '14:00', '15:30', '17:00'];
+    slots.forEach((sl, i) => { const X = 36 + (i % 3) * 200, Y = 470 + Math.floor(i / 3) * 104, full = (i + AS.day) % 5 === 4, on = AS.slot === i && !full, hv = !full && hotHit(S, 'aslot:' + i, X, Y, 188, 88);
+      rp(x, X, Y, 188, 88, 22); x.fillStyle = on ? C.acc + '26' : C.card; x.fill(); x.lineWidth = on ? 3 : 2; x.strokeStyle = on ? C.acc : hv ? C.sub : C.line; x.stroke();
+      x.textAlign = 'center'; x.fillStyle = full ? C.sub : on ? C.acc : C.fg; x.font = `700 28px ${I}`; x.fillText(sl, X + 94, Y + 42); x.font = `500 17px ${I}`; x.fillStyle = C.sub; x.fillText(full ? L(['Full', 'Cheio', 'Fyldt']) : L([(2 + (i + AS.day) % 4) + ' left', 'restam ' + (2 + (i + AS.day) % 4), (2 + (i + AS.day) % 4) + ' ledige']), X + 94, Y + 70); x.textAlign = 'left'; });
+    rp(x, 36, 700, 588, 150, 28); x.fillStyle = C.card; x.fill(); if (!C.dark) { x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); }
+    x.fillStyle = C.sub; x.font = `600 19px ${I}`; x.fillText(L(['SUMMARY', 'RESUMO', 'OVERSIGT']), 66, 744); x.fillStyle = C.fg; x.font = `700 30px ${I}`; x.fillText(L(days[AS.day]) + ' ' + (17 + AS.day) + ' · ' + slots[AS.slot], 66, 790); x.fillStyle = C.sub; x.font = `400 22px ${I}`; x.fillText(L(A.s), 66, 826);
+    if (AS.booked) { x.beginPath(); x.arc(330, 960, 50, 0, 7); x.fillStyle = '#16a34a'; x.fill(); x.strokeStyle = '#fff'; x.lineWidth = 8; x.beginPath(); x.moveTo(306, 960); x.lineTo(324, 978); x.lineTo(356, 944); x.stroke(); x.textAlign = 'center'; x.fillStyle = C.fg; x.font = `700 28px ${I}`; x.fillText(L(['Booked — see you there!', 'Reservado — até já!', 'Booket — vi ses!']), 330, 1050); x.fillStyle = C.sub; x.font = `500 21px ${I}`; x.fillText(L(['Reminder set · synced with the CRM', 'Lembrete criado · sincronizado com o CRM', 'Påmindelse sat · synkroniseret med CRM']), 330, 1086); x.textAlign = 'left'; aBtn(x, S, C, 'abook', 136, 1120, 388, 70, L(['Change booking', 'Alterar reserva', 'Ændr booking']), 1); }
+    else aBtn(x, S, C, 'abook', 36, 900, 588, 90, L(['Confirm', 'Confirmar', 'Bekræft']) + ' · ' + slots[AS.slot] + '  →');
+  }
+  function appPerksTab(x, S, t, A, AS, C, k) {
+    const ttl = appTabs(k)[2]; aHead(x, C, L(ttl), A.brand);
+    const next = 2000, pr = Math.min(1, AS.pts / next);
+    x.save(); rp(x, 36, 260, 588, 300, 36); x.clip(); const g = x.createLinearGradient(36, 260, 624, 560); g.addColorStop(0, C.acc); g.addColorStop(1, C.acc2); x.fillStyle = g; x.fillRect(36, 260, 588, 300);
+    x.fillStyle = 'rgba(255,255,255,.14)'; x.beginPath(); x.arc(560, 280, 160, 0, 7); x.fill(); x.restore();
+    const ink = C.dark ? '#0b0b0b' : '#fff'; x.fillStyle = ink; x.font = `600 21px ${I}`; x.fillText(L(['YOUR POINTS', 'OS SEUS PONTOS', 'DINE POINT']), 76, 316); x.font = `800 92px ${D}`; x.fillText(AS.pts.toLocaleString('en-US'), 70, 418);
+    rp(x, 76, 456, 508, 14, 7); x.fillStyle = 'rgba(255,255,255,.3)'; x.fill(); rp(x, 76, 456, 508 * pr, 14, 7); x.fillStyle = ink; x.fill(); x.font = `600 20px ${I}`; x.fillText(L([`${Math.max(0, next - AS.pts)} to your next reward`, `faltam ${Math.max(0, next - AS.pts)} para a próxima oferta`, `${Math.max(0, next - AS.pts)} til næste belønning`]), 76, 512);
+    const can = AS.pts >= 500; aBtn(x, S, C, 'ared', 36, 590, 588, 84, can ? L(['Redeem 500 pts →', 'Trocar 500 pts →', 'Indløs 500 point →']) : L(['Keep going — 500 pts needed', 'Continue — precisa de 500 pts', 'Fortsæt — 500 point kræves']), !can);
+    if (AS.red) { x.textAlign = 'center'; x.fillStyle = C.acc; x.font = `700 22px ${I}`; x.fillText(L(['Reward unlocked ✓ — show this at the counter', 'Oferta desbloqueada ✓ — mostre ao balcão', 'Belønning låst op ✓ — vis den ved disken']), 330, 712); x.textAlign = 'left'; }
+    x.fillStyle = C.fg; x.font = `700 28px ${D}`; x.fillText(L(['Earn more', 'Ganhe mais', 'Optjen mere']), 46, 780);
+    [[['Visit this week', 'Visita esta semana', 'Besøg i denne uge'], 150], [['Leave a Google review', 'Deixe uma avaliação Google', 'Skriv en Google-anmeldelse'], 200], [['Invite a friend', 'Convide um amigo', 'Inviter en ven'], 400]].forEach((r, i) => { const y = 806 + i * 112, done = AS.rows['e' + i], hv = hotHit(S, 'aearn:' + i, 36, y, 588, 96);
+      rp(x, 36, y, 588, 96, 26); x.fillStyle = hv ? C.line : C.card; x.fill(); if (!C.dark) { x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); }
+      x.fillStyle = C.fg; x.font = `600 25px ${I}`; x.fillText(L(r[0]), 66, y + 58); rp(x, 470, y + 26, 128, 44, 22); x.fillStyle = done ? C.acc + '33' : C.acc; x.fill(); x.fillStyle = done ? C.acc : (C.dark ? '#0b0b0b' : '#fff'); x.font = `700 20px ${I}`; x.textAlign = 'center'; x.fillText(done ? '✓' : '+' + r[1], 534, y + 55); x.textAlign = 'left'; });
+  }
+  function appMeTab(x, S, t, A, AS, C, k) {
+    x.beginPath(); x.arc(330, 230, 74, 0, 7); const g = x.createLinearGradient(256, 156, 404, 304); g.addColorStop(0, C.acc); g.addColorStop(1, C.acc2); x.fillStyle = g; x.fill();
+    x.fillStyle = C.dark ? '#0b0b0b' : '#fff'; x.font = `800 60px ${D}`; x.textAlign = 'center'; x.fillText(A.who.replace('?', '')[0], 330, 252); x.fillStyle = C.fg; x.font = `800 36px ${D}`; x.fillText(A.who.replace('?', ''), 330, 350); x.fillStyle = C.sub; x.font = `500 21px ${I}`; x.fillText(L(['Member since 2024', 'Cliente desde 2024', 'Medlem siden 2024']), 330, 384); x.textAlign = 'left';
+    [['Push notifications', 'Notificações', 'Notifikationer'], ['WhatsApp updates', 'Atualizações no WhatsApp', 'WhatsApp-opdateringer'], ['Dark mode', 'Modo escuro', 'Mørk tilstand']].forEach((r, i) => { const y = 430 + i * 104, on = AS.tg[i], hv = hotHit(S, 'atg:' + i, 36, y, 588, 88);
+      rp(x, 36, y, 588, 88, 24); x.fillStyle = hv ? C.line : C.card; x.fill(); if (!C.dark) { x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); }
+      x.fillStyle = C.fg; x.font = `600 25px ${I}`; x.fillText(L(r), 66, y + 54); rp(x, 524, y + 24, 76, 42, 21); x.fillStyle = on ? C.acc : (C.dark ? '#3a3d44' : '#d4d4d8'); x.fill(); x.beginPath(); x.arc(on ? 579 : 545, y + 45, 17, 0, 7); x.fillStyle = '#fff'; x.fill(); });
+    x.fillStyle = C.fg; x.font = `700 28px ${D}`; x.fillText(L(['App language', 'Língua da app', 'Appens sprog']), 46, 790);
+    ['English', 'Português', 'Dansk', 'Español', 'Français', 'Deutsch', 'Italiano', 'Nederlands', 'Svenska'].forEach((n, i) => { const X = 36 + (i % 3) * 200, Y = 820 + Math.floor(i / 3) * 84, on = AS.lang === i, hv = hotHit(S, 'alang:' + i, X, Y, 188, 70);
+      rp(x, X, Y, 188, 70, 35); x.fillStyle = on ? C.acc : hv ? C.line : C.card; x.fill(); if (!on && !C.dark) { x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); }
+      x.fillStyle = on ? (C.dark ? '#0b0b0b' : '#fff') : C.fg; x.font = `600 21px ${I}`; x.textAlign = 'center'; x.fillText(n, X + 94, Y + 43); x.textAlign = 'left'; });
+    x.fillStyle = C.sub; x.font = `500 19px ${I}`; x.textAlign = 'center'; x.fillText(L(['Any European language — built into your app', 'Qualquer língua europeia — na sua app', 'Ethvert europæisk sprog — i din app']), 330, 1100); x.textAlign = 'left';
   }
   const appCTA = (x, S, AS, A, C, X, Y, W, H) => { const hk = hotHit(S, 'cta', X, Y, W, H); rp(x, X, Y, W, H, H / 2); x.fillStyle = AS.ok ? C.acc + '33' : hk ? C.acc2 : C.acc; x.fill(); x.fillStyle = AS.ok ? C.acc : (C.dark ? '#0b0b0b' : '#fff'); x.font = `700 28px ${I}`; x.textAlign = 'center'; x.fillText(AS.ok ? '✓  ' + L(A.ok).replace(/ ✓$/, '') : L(A.cta), X + W / 2, Y + H / 2 + 10); x.textAlign = 'left'; };
   const rowList = (x, A, C, Y, n) => A.list.slice(0, n).forEach((r, i) => { const py = Y + i * 112; rp(x, 36, py, 588, 96, 26); x.fillStyle = C.card; x.fill(); if (!C.dark) { x.strokeStyle = C.line; x.lineWidth = 2; x.stroke(); } rp(x, 58, py + 20, 56, 56, 16); x.fillStyle = C.acc + '26'; x.fill(); x.fillStyle = C.acc; x.beginPath(); x.arc(86, py + 48, 9, 0, 7); x.fill(); x.fillStyle = C.fg; x.font = `600 27px ${I}`; x.fillText(L(r[0]), 136, py + 44); x.fillStyle = C.sub; x.font = `400 23px ${I}`; x.fillText(L(r[1]), 136, py + 76); });

@@ -70,3 +70,26 @@ const pick=document.createElement('div');pick.className='mx-pick';pick.setAttrib
 ths.forEach((th,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.innerHTML=th.innerHTML;b.onclick=()=>set(i+1);pick.appendChild(b)});
 mx.parentNode.insertBefore(pick,mx);
 function set(c){mx.dataset.col=c;[...pick.children].forEach((b,j)=>{b.classList.toggle('on',j===c-1);b.setAttribute('aria-selected',j===c-1)})}set(1)})();
+/* Europe card: say hello in your language */
+document.querySelectorAll('.eu').forEach(c=>{const hi=c.querySelector('.eu-hi');c.querySelectorAll('[data-hi]').forEach(b=>b.addEventListener('click',()=>{c.querySelectorAll('[data-hi]').forEach(x=>x.classList.toggle('on',x===b));hi.classList.remove('pop');void hi.offsetWidth;hi.textContent=b.dataset.hi;hi.classList.add('pop')}))});
+/* phones: long stacks become swipeable decks with tabs, arrows and a counter */
+(()=>{const mq=matchMedia('(max-width:760px)');
+document.querySelectorAll('.core3,.projects,.ailist,.aicards,.sys,.how3,.cine,.svgrid,.ctry').forEach(box=>{
+  const items=[...box.children];if(items.length<3)return;
+  const heads=items.map(c=>c.querySelector('h3,h4')||c.querySelector('b'));
+  const tabs=items.length<=7&&heads.every(Boolean)?document.createElement('div'):null;
+  if(tabs){tabs.className='dk-tabs';heads.forEach((h,i)=>{const b=document.createElement('button');b.type='button';b.innerHTML=h.innerHTML;b.onclick=()=>go(items[i]);tabs.appendChild(b)});box.parentNode.insertBefore(tabs,box)}
+  const nav=document.createElement('div');nav.className='dk-nav';nav.innerHTML='<button type="button" class="dk-p" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button><span class="dk-c"></span><span class="dk-bar"><i></i></span><button type="button" class="dk-n" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button>';
+  box.after(nav);box.classList.add('mdeck');
+  const vis=()=>items.filter(c=>getComputedStyle(c).display!=='none');
+  const cur=()=>{const v=vis(),mid=box.scrollLeft+box.clientWidth/2;let k=0,d=1e9;v.forEach((c,i)=>{const e=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(e<d){d=e;k=i}});return k};
+  function go(el){box.scrollTo({left:el.offsetLeft-(box.clientWidth-el.offsetWidth)/2,behavior:'smooth'})}
+  function upd(){if(!mq.matches)return;const v=vis(),k=cur();nav.querySelector('.dk-c').textContent=(k+1)+' / '+v.length;nav.querySelector('.dk-bar i').style.width=((k+1)/v.length*100)+'%';
+    nav.querySelector('.dk-p').disabled=k===0;nav.querySelector('.dk-n').disabled=k===v.length-1;
+    if(tabs){const idx=items.indexOf(v[k]);[...tabs.children].forEach((b,j)=>b.classList.toggle('on',j===idx));const on=tabs.children[idx];if(on)tabs.scrollTo({left:on.offsetLeft-(tabs.clientWidth-on.offsetWidth)/2,behavior:'smooth'})}}
+  let raf=0;box.addEventListener('scroll',()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(upd)},{passive:true});
+  nav.querySelector('.dk-p').onclick=()=>{const v=vis();go(v[Math.max(0,cur()-1)])};nav.querySelector('.dk-n').onclick=()=>{const v=vis();go(v[Math.min(v.length-1,cur()+1)])};
+  new MutationObserver(()=>{box.scrollLeft=0;upd()}).observe(box,{subtree:false,childList:true,attributes:true,attributeFilter:['class','style']});
+  items.forEach(c=>new MutationObserver(()=>{requestAnimationFrame(()=>{box.scrollLeft=0;upd()})}).observe(c,{attributes:true,attributeFilter:['style','hidden']}));
+  addEventListener('resize',upd);upd();
+})})();
