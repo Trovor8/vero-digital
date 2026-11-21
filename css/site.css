@@ -1498,3 +1498,16 @@ html[lang=da] .gr-mx .m-y::after{content:"Kerne"}html[lang=da] .gr-mx .m-o::afte
 .sv.sv-cta:hover{transform:translateY(-4px);box-shadow:0 30px 60px -30px rgba(77,124,255,.8)}
 @media (max-width:1000px){.dv-cap{top:auto;bottom:92px}.dv-cap b{font-size:18px}.dc-k{font-size:9.5px}.hx .wrap .globe-wrap.in-copy{height:min(110vw,480px)}}
 .globe-wrap.dv-focus~.wrap{opacity:0!important}
+/* interactive-demo hints */
+.dc-try{display:inline-flex;align-items:center;gap:8px;margin-top:2px;padding:7px 13px;border-radius:999px;background:rgba(77,124,255,.14);border:1px solid rgba(77,124,255,.35);font:600 12.5px/1 var(--b);color:#c9d6ff;letter-spacing:.01em}
+.dc-try i,.cf-try i{position:relative;width:8px;height:8px;border-radius:50%;background:var(--acc2);flex:none}
+.dc-try i::after,.cf-try i::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--acc2);animation:tryPing 1.6s var(--e) infinite}
+@keyframes tryPing{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.6);opacity:0}}
+.cf-try{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,rgba(77,124,255,.16),rgba(34,211,238,.08));border:1px solid rgba(77,124,255,.3);font-size:13px;line-height:1.4;color:#c5ccd9}
+.cf-try b{color:#fff;font-weight:600}
+@media (max-width:1000px){.dc-try{font-size:11.5px;padding:6px 11px}}
+/* services grid: 38 cards + CTA fill every row */
+.sv.sv-cta{grid-column:span 2}.sv.sv-cta .cat{position:static;display:block;margin-bottom:14px}.sv.sv-cta h4{max-width:24ch}
+@media (max-width:1100px){.sv.sv-cta{grid-column:span 1}}
+@media (max-width:1000px){.sv.sv-cta{grid-column:span 2}}
+@media (max-width:640px){.sv.sv-cta{grid-column:span 1}}

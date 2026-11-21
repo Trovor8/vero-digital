@@ -130,56 +130,272 @@
   const crmState = k => st.crm[k] || (st.crm[k] = (() => { const N = (window.VERO_CRM_N || []).find(n => n.k === k); const c = N ? N.cards.map(x => x.slice()) : []; return { N, cols: [[c[0], c[1]], [c[2], c[3]], [c[4], c[5]], [c[6]]].map(a => a.filter(Boolean)), moving: null }; })());
   const appState = k => st.app[k] || (st.app[k] = { ok: 0, at: -9 });
 
-  function drawSite(x, S, t) {
-    const W = 1600, H = 1000;
-    x.fillStyle = '#f4efe6'; x.fillRect(0, 0, W, H);
-    x.fillStyle = '#1b1712'; x.font = `800 34px ${D}`; x.fillText('Casa Lume', 70, 82);
-    x.font = `500 21px ${I}`; x.fillStyle = '#5e564c'; ['Menu', 'Story', 'Events'].forEach((s, i) => x.fillText(s, 980 + i * 120, 80));
-    const hn = hotHit(S, 'navbook', 1350, 48, 180, 50); rp(x, 1350, 48, 180, 50, 25); x.fillStyle = hn ? '#c2410c' : '#1b1712'; x.fill(); x.fillStyle = '#fff'; x.font = `600 20px ${I}`; x.fillText('Book', 1412, 80);
-    x.fillStyle = '#1b1712'; x.font = `800 92px ${D}`; x.fillText('A table worth', 70, 270); x.fillText('crossing town for.', 70, 370);
-    x.font = `400 27px ${I}`; x.fillStyle = '#6b6258'; x.fillText('Seasonal Portuguese cooking in Lisbon.', 70, 440); x.fillText('Open tonight from 19:00.', 70, 478);
-    const hb = hotHit(S, 'book', 70, 530, 320, 84); rp(x, 70, 530, 320, 84, 42); x.fillStyle = hb ? '#c2410c' : '#1b1712'; x.fill(); x.fillStyle = '#fff'; x.font = `600 27px ${I}`; x.fillText('Book a table  →', 110, 582);
-    rp(x, 410, 530, 250, 84, 42); x.strokeStyle = '#1b1712'; x.lineWidth = 2.5; x.stroke(); x.fillStyle = '#1b1712'; x.fillText('See the menu', 450, 582);
-    rp(x, 70, 660, 420, 56, 28); x.fillStyle = '#e9e1d4'; x.fill(); x.fillStyle = '#1b1712'; x.font = `600 21px ${I}`; x.fillText('★ 4.9  ·  1,240 Google reviews', 96, 696);
-    const pulse = .5 + .5 * Math.sin(t * 3); x.fillStyle = `rgba(22,163,74,${.4 + pulse * .6})`; x.beginPath(); x.arc(92, 770, 8, 0, 7); x.fill(); x.fillStyle = '#5e564c'; x.font = `500 21px ${I}`; x.fillText('Live: 12 tables left tonight', 112, 777);
-    // photo
-    x.save(); rp(x, 860, 140, 670, 760, 36); x.clip();
-    const g = x.createLinearGradient(860, 140, 1530, 900); g.addColorStop(0, '#2a1a12'); g.addColorStop(1, '#7c2d12'); x.fillStyle = g; x.fillRect(860, 140, 670, 760);
-    const lg = x.createRadialGradient(1300, 260, 10, 1300, 260, 520); lg.addColorStop(0, 'rgba(255,190,120,.55)'); lg.addColorStop(1, 'rgba(255,190,120,0)'); x.fillStyle = lg; x.fillRect(860, 140, 670, 760);
-    x.fillStyle = 'rgba(0,0,0,.35)'; x.beginPath(); x.ellipse(1205, 560, 250, 70, 0, 0, 7); x.fill();
-    x.fillStyle = '#f3ede3'; x.beginPath(); x.ellipse(1195, 500, 255, 205, 0, 0, 7); x.fill();
-    x.fillStyle = '#e4dccf'; x.beginPath(); x.ellipse(1195, 500, 190, 150, 0, 0, 7); x.fill();
-    const blob = (cx, cy, rx, ry, c) => { x.fillStyle = c; x.beginPath(); x.ellipse(cx, cy, rx, ry, .3, 0, 7); x.fill(); };
-    blob(1170, 490, 95, 60, '#b45309'); blob(1220, 470, 60, 38, '#ea580c'); blob(1130, 530, 40, 26, '#4d7c0f'); blob(1250, 530, 34, 22, '#65a30d'); blob(1185, 445, 26, 16, '#fde68a');
-    for (let i = 0; i < 14; i++) { x.fillStyle = 'rgba(255,255,255,.75)'; x.beginPath(); x.arc(1090 + (i * 53) % 220, 430 + (i * 37) % 140, 3, 0, 7); x.fill(); }
-    x.fillStyle = 'rgba(255,255,255,.85)'; x.font = `600 19px ${I}`; x.fillText('Octopus · smoked paprika · charred greens', 900, 870);
+  // ================================================================== laptop + phone: an interactive concept site per business (fictional brands)
+  const SERIF = "'Fraunces',Georgia,serif";
+  const WEB = {
+    rest: { brand: 'Casa Lume', url: 'casalume.pt', serif: 1, bg: '#f4efe6', fg: '#1b1712', sub: '#6b6258', acc: '#c2410c', on: '#fff', card: '#ffffff', line: '#e6dccd', soft: '#efe7da',
+      nav: [['Menu', 'Menu', 'Menu'], ['Story', 'História', 'Historie'], ['Events', 'Eventos', 'Events']], cta: ['Book', 'Reservar', 'Book'],
+      eye: ['SEASONAL KITCHEN · LISBON', 'COZINHA DE ESTAÇÃO · LISBOA', 'SÆSONKØKKEN · LISSABON'],
+      h: [['A table worth', 'crossing town for.'], ['Uma mesa que vale', 'atravessar a cidade.'], ['Et bord, der er', 'turen værd.']],
+      sub: ['Portuguese cooking, wood fire and natural wine. Open tonight from 19:00.', 'Cozinha portuguesa, fogo de lenha e vinho natural. Aberto hoje a partir das 19:00.', 'Portugisisk køkken, brændeovn og naturvin. Åbent i aften fra 19:00.'] },
+    estate: { brand: 'COSTA PRIME', url: 'costaprime.pt', serif: 0, track: 1, bg: '#0b1424', fg: '#f3efe4', sub: '#93a0b8', acc: '#d4af5a', on: '#0b1424', card: '#111d33', line: '#22324f', soft: '#16243f',
+      nav: [['Buy', 'Comprar', 'Køb'], ['Sell', 'Vender', 'Sælg'], ['Regions', 'Regiões', 'Regioner']], cta: ['Valuation', 'Avaliação', 'Vurdering'],
+      eye: ['LUXURY HOMES · CASCAIS & ALGARVE', 'CASAS DE LUXO · CASCAIS E ALGARVE', 'LUKSUSBOLIGER · CASCAIS & ALGARVE'],
+      h: [['Find the house', 'the sea chose', 'for you.'], ['Encontre a casa', 'que o mar escolheu', 'para si.'], ['Find huset,', 'havet har valgt', 'til dig.']],
+      sub: ['214 homes, matched to you by our AI. Viewings in your language.', '214 casas, escolhidas para si pela nossa AI. Visitas na sua língua.', '214 boliger, matchet til dig af vores AI. Fremvisning på dit sprog.'] },
+    wed: { brand: 'Maré', url: 'mareweddings.com', serif: 1, italic: 1, bg: '#fbf3f1', fg: '#3a2530', sub: '#8f7480', acc: '#b85c7a', on: '#fff', card: '#ffffff', line: '#f0dcdc', soft: '#f7e6e4',
+      nav: [['Venues', 'Espaços', 'Steder'], ['Stories', 'Histórias', 'Historier'], ['Journal', 'Journal', 'Journal']], cta: ['Enquire', 'Pedir proposta', 'Forespørg'],
+      eye: ['WEDDINGS BY THE ATLANTIC', 'CASAMENTOS JUNTO AO ATLÂNTICO', 'BRYLLUPPER VED ATLANTERHAVET'],
+      h: [['Your day,', 'beautifully', 'composed.'], ['O vosso dia,', 'desenhado ao', 'pormenor.'], ['Jeres dag,', 'smukt', 'komponeret.']],
+      sub: ['Planning, design and production — one team from the first call to the last dance.', 'Planeamento, design e produção — uma equipa do primeiro contacto à última dança.', 'Planlægning, design og produktion — ét team fra første opkald til sidste dans.'] },
+    arch: { brand: 'atelier norte', url: 'ateliernorte.pt', serif: 0, lower: 1, bg: '#f3f2ee', fg: '#121212', sub: '#6d6a63', acc: '#121212', on: '#fff', card: '#ffffff', line: '#e2dfd7', soft: '#e9e7e1',
+      nav: [['Projects', 'Projetos', 'Projekter'], ['Studio', 'Estúdio', 'Studie'], ['Process', 'Processo', 'Proces']], cta: ['Start a project', 'Iniciar projeto', 'Start et projekt'],
+      eye: ['ARCHITECTURE & INTERIORS · ALGARVE', 'ARQUITETURA E INTERIORES · ALGARVE', 'ARKITEKTUR & INTERIØR · ALGARVE'],
+      h: [['Houses drawn', 'around the way', 'you live.'], ['Casas desenhadas', 'à volta da forma', 'como vive.'], ['Huse tegnet', 'omkring måden,', 'du lever på.']],
+      sub: ['Villas, renovations and interiors — from the first sketch to the keys.', 'Moradias, remodelações e interiores — do primeiro esboço às chaves.', 'Villaer, renoveringer og interiør — fra første skitse til nøglerne.'] },
+    build: { brand: 'SÓLIDO', url: 'solido.pt', serif: 0, track: 1, bg: '#111214', fg: '#f2f2f2', sub: '#8c8f96', acc: '#ffb020', on: '#111214', card: '#1a1c20', line: '#2a2d33', soft: '#222429',
+      nav: [['Services', 'Serviços', 'Ydelser'], ['Projects', 'Obras', 'Projekter'], ['About', 'Empresa', 'Om os']], cta: ['Free quote', 'Orçamento grátis', 'Gratis tilbud'],
+      eye: ['CONSTRUCTION & REMODELLING · SINCE 2008', 'CONSTRUÇÃO E REMODELAÇÃO · DESDE 2008', 'BYGGERI & RENOVERING · SIDEN 2008'],
+      h: [['Built right.', 'On time.', 'On budget.'], ['Bem feito.', 'No prazo.', 'No orçamento.'], ['Bygget rigtigt.', 'Til tiden.', 'Til prisen.']],
+      sub: ['One team for the whole job, a fixed price and a 2-year guarantee.', 'Uma equipa para a obra toda, preço fechado e 2 anos de garantia.', 'Ét hold til hele opgaven, fast pris og 2 års garanti.'] },
+    fit: { brand: 'FORMA', url: 'formaclub.pt', serif: 0, track: 1, bg: '#0a0a0a', fg: '#ffffff', sub: '#8a8a8a', acc: '#c6f432', on: '#0a0a0a', card: '#151515', line: '#262626', soft: '#1d1d1d',
+      nav: [['Courts', 'Campos', 'Baner'], ['Coaching', 'Treino', 'Træning'], ['Members', 'Sócios', 'Medlemmer']], cta: ['Join', 'Aderir', 'Bliv medlem'],
+      eye: ['PADEL · STRENGTH · COACHING', 'PADEL · FORÇA · COACHING', 'PADEL · STYRKE · COACHING'],
+      h: [['Train hard.', 'Play better.', 'Belong here.'], ['Treina forte.', 'Joga melhor.', 'Pertence aqui.'], ['Træn hårdt.', 'Spil bedre.', 'Hør til her.']],
+      sub: ['6 courts, a strength studio and coaches who track every session.', '6 campos, estúdio de força e treinadores que acompanham cada sessão.', '6 baner, styrkestudie og trænere, der følger hver session.'] },
+    rent: { brand: 'Ondas', url: 'ondas.bike', serif: 1, italic: 1, bg: '#eef8f5', fg: '#0f2a2a', sub: '#5f7d7b', acc: '#0d9488', on: '#fff', card: '#ffffff', line: '#d3ebe5', soft: '#e1f2ed',
+      nav: [['Bikes', 'Bicicletas', 'Cykler'], ['Routes', 'Rotas', 'Ruter'], ['Café', 'Café', 'Café']], cta: ['Rent', 'Alugar', 'Lej'],
+      eye: ['CAFÉ & E-BIKES · ALGARVE COAST', 'CAFÉ E E-BIKES · COSTA ALGARVIA', 'CAFÉ & ELCYKLER · ALGARVEKYSTEN'],
+      h: [['Coffee first.', 'Then the', 'coast.'], ['Primeiro o café.', 'Depois, a', 'costa.'], ['Kaffe først.', 'Så', 'kysten.']],
+      sub: ['E-bikes, helmets and a route on your phone — ready in 5 minutes.', 'E-bikes, capacetes e a rota no telemóvel — pronto em 5 minutos.', 'Elcykler, hjelme og ruten på din telefon — klar på 5 minutter.'] }
+  };
+  const WSt = {};
+  const wst = k => WSt[k] || (WSt[k] = { a: 1, b: 1, n: k === 'wed' ? 120 : k === 'build' ? 12 : k === 'rent' ? 4 : 4, v: 0, done: 0, at: -9, fav: 0, touched: 0, stage: 2, route: 0 });
+  const PROPS_W = [['estate/e1', 'Cascais', '€585,000', ['3 bed · 2 bath · 142 m² · garden', 'T3 · 2 WC · 142 m² · jardim', '3 vær. · 2 bad · 142 m² · have'], 96], ['estate/e2', 'Carvoeiro', '€1,200,000', ['4 bed · pool · sea view · 290 m²', 'T4 · piscina · vista mar · 290 m²', '4 vær. · pool · havudsigt · 290 m²'], 91], ['estate/e3', 'Lagoa', '€2,400,000', ['6 bed · 480 m² · 1.2 ha', 'T6 · 480 m² · 1,2 ha', '6 vær. · 480 m² · 1,2 ha'], 87]];
+  // shared UI atoms -------------------------------------------------
+  const ff = (C, w, s) => `${C.serif ? (C.italic ? 'italic ' : '') + '500' : w} ${s}px ${C.serif ? SERIF : D}`;
+  function chips(x, S, C, id, X, Y, items, sel, h, fs) {
+    h = h || 54; fs = fs || 21; let cx = X;
+    items.forEach((it, i) => {
+      const t = L(it); x.font = `600 ${fs}px ${I}`; const w = x.measureText(t).width + fs * 1.9, on = i === sel, hv = hotHit(S, `w:${id}:${i}`, cx, Y, w, h);
+      rp(x, cx, Y, w, h, h / 2); x.fillStyle = on ? C.acc : hv ? C.soft : C.card; x.fill(); if (!on) { x.lineWidth = 2; x.strokeStyle = C.line; x.stroke(); }
+      x.fillStyle = on ? C.on : C.fg; x.fillText(t, cx + fs * .95, Y + h / 2 + fs * .36); cx += w + 10;
+    });
+    return cx;
+  }
+  function stepper(x, S, C, id, X, Y, val, h) {
+    h = h || 54;
+    [[-1, X], [1, X + h + 96]].forEach(([d, bx]) => { const hv = hotHit(S, `w:${id}:${d > 0 ? 'p' : 'm'}`, bx, Y, h, h); x.beginPath(); x.arc(bx + h / 2, Y + h / 2, h / 2, 0, 7); x.fillStyle = hv ? C.soft : C.card; x.fill(); x.lineWidth = 2; x.strokeStyle = C.line; x.stroke(); x.strokeStyle = C.fg; x.lineWidth = 3; x.beginPath(); x.moveTo(bx + h / 2 - 9, Y + h / 2); x.lineTo(bx + h / 2 + 9, Y + h / 2); if (d > 0) { x.moveTo(bx + h / 2, Y + h / 2 - 9); x.lineTo(bx + h / 2, Y + h / 2 + 9); } x.stroke(); });
+    x.fillStyle = C.fg; x.font = `700 28px ${I}`; x.textAlign = 'center'; x.fillText(val, X + h + 48, Y + h / 2 + 10); x.textAlign = 'left';
+    return X + h * 2 + 96;
+  }
+  function wbtn(x, S, C, id, X, Y, W, H, label, done) {
+    const hv = hotHit(S, `w:${id}`, X, Y, W, H); rp(x, X, Y, W, H, H / 2);
+    x.fillStyle = done ? C.soft : C.acc; x.fill(); if (hv && !done) { x.fillStyle = 'rgba(255,255,255,.12)'; x.fill(); }
+    x.fillStyle = done ? C.fg : C.on; x.font = `700 ${Math.round(H * .34)}px ${I}`; x.textAlign = 'center'; x.fillText(label, X + W / 2, Y + H / 2 + H * .12); x.textAlign = 'left';
+  }
+  function tryMe(x, S, C, X, Y, W, H) { // pulsing ring + bubble until the visitor taps something
+    S.anim = true; const p = (now() % 1.6) / 1.6;
+    x.save(); x.globalAlpha = (1 - p) * .9; x.lineWidth = 4; x.strokeStyle = C.acc; rp(x, X - p * 18, Y - p * 18, W + p * 36, H + p * 36, H / 2 + p * 18); x.stroke(); x.restore();
+    const tx = L(['Try it — tap here', 'Experimente — toque aqui', 'Prøv — tryk her']); x.font = `700 20px ${I}`; const tw = x.measureText(tx).width + 36, bx = X + W - tw, by = Y - 64 - Math.sin(now() * 4) * 4;
+    rp(x, bx, by, tw, 46, 23); x.fillStyle = C.fg; x.fill(); x.beginPath(); x.moveTo(bx + tw - 52, by + 46); x.lineTo(bx + tw - 38, by + 60); x.lineTo(bx + tw - 24, by + 46); x.fill(); x.fillStyle = C.bg; x.fillText(tx, bx + 18, by + 30);
+  }
+  function card(x, C, X, Y, W, H) { x.save(); x.shadowColor = 'rgba(0,0,0,.16)'; x.shadowBlur = 50; x.shadowOffsetY = 18; rp(x, X, Y, W, H, 30); x.fillStyle = C.card; x.fill(); x.restore(); if (C.card !== '#ffffff') { rp(x, X, Y, W, H, 30); x.lineWidth = 2; x.strokeStyle = C.line; x.stroke(); } }
+  function wTitle(x, C, X, Y, t, right) { x.fillStyle = C.fg; x.font = ff(C, 700, 32); x.fillText(t, X, Y); if (right) { x.font = `500 19px ${I}`; x.fillStyle = C.sub; x.textAlign = 'right'; x.fillText(right, X + 10000, Y); x.textAlign = 'left'; } }
+  function doneBlock(x, S, C, X, Y, W, l1, l2, id) {
+    x.beginPath(); x.arc(X + 34, Y + 34, 34, 0, 7); x.fillStyle = '#16a34a'; x.fill(); x.strokeStyle = '#fff'; x.lineWidth = 6; x.beginPath(); x.moveTo(X + 18, Y + 35); x.lineTo(X + 30, Y + 47); x.lineTo(X + 52, Y + 22); x.stroke();
+    x.fillStyle = C.fg; x.font = `700 26px ${I}`; x.fillText(l1, X + 90, Y + 28); x.fillStyle = C.sub; x.font = `400 21px ${I}`; x.fillText(l2, X + 90, Y + 62);
+    const hv = hotHit(S, `w:${id}`, X, Y + 104, 240, 50); x.fillStyle = hv ? C.acc : C.sub; x.font = `600 20px ${I}`; x.fillText('↺  ' + L(['Start again', 'Recomeçar', 'Start forfra']), X, Y + 136);
+  }
+  // hero visuals ----------------------------------------------------
+  function photo(x, name, X, Y, W, H, R) { x.save(); rp(x, X, Y, W, H, R); x.clip(); const im = img(name); if (im) cover(x, im, X, Y, W, H); else { x.fillStyle = '#20232a'; x.fillRect(X, Y, W, H); } x.restore(); }
+  const MENU = [
+    [['Starters', 'Entradas', 'Forretter'], [[['Grilled sardines, tomato water', 'Sardinha grelhada, água de tomate', 'Grillede sardiner, tomatvand'], 12], [['Clams Bulhão Pato', 'Amêijoas à Bulhão Pato', 'Muslinger Bulhão Pato'], 16], [['Bread, olive oil, cured butter', 'Pão, azeite, manteiga curada', 'Brød, olivenolie, smør'], 6], [['Tuna crudo, citrus, chilli', 'Atum cru, citrinos, malagueta', 'Rå tun, citrus, chili'], 15]]],
+    [['Mains', 'Principais', 'Hovedretter'], [[['Octopus, smoked paprika, greens', 'Polvo, colorau fumado, verdes', 'Blæksprutte, røget paprika'], 26], [['Black pork, clams, coriander', 'Porco preto, amêijoas, coentros', 'Sort gris, muslinger, koriander'], 24], [['Catch of the day, wood fire', 'Peixe do dia, forno a lenha', 'Dagens fisk, brændeovn'], 29], [['Rice of wild mushrooms', 'Arroz de cogumelos', 'Ris med svampe'], 21]]],
+    [['Desserts', 'Sobremesas', 'Desserter'], [[['Burnt custard tart, cinnamon', 'Pastel de nata, canela', 'Pastel de nata, kanel'], 7], [['Olive oil cake, figs', 'Bolo de azeite, figos', 'Olivenoliekage, figner'], 9], [['Chocolate, sea salt, port', 'Chocolate, flor de sal, Porto', 'Chokolade, havsalt, portvin'], 10], [['Cheese from the Serra', 'Queijo da Serra', 'Ost fra Serra'], 12]]]
+  ];
+  function visRest(x, S, C, X, Y, W, H, t, M, m) {
+    x.save(); rp(x, X, Y, W, H, Math.min(W / 2, 420)); x.clip();
+    const g = x.createLinearGradient(X, Y, X + W, Y + H); g.addColorStop(0, '#3a1d10'); g.addColorStop(1, '#a43a0e'); x.fillStyle = g; x.fillRect(X, Y, W, H);
+    const lg = x.createRadialGradient(X + W * .75, Y + H * .1, 10, X + W * .75, Y + H * .1, W); lg.addColorStop(0, 'rgba(255,190,120,.5)'); lg.addColorStop(1, 'rgba(255,190,120,0)'); x.fillStyle = lg; x.fillRect(X, Y, W, H);
     x.restore();
-    // booking widget
-    const bk = S === SL ? st.site.booked : 0, bt = ease((now() - st.site.bookedAt) / .5);
-    x.save(); x.shadowColor = 'rgba(0,0,0,.25)'; x.shadowBlur = 40; x.shadowOffsetY = 16; rp(x, 720, 640, 440, 270, 28); x.fillStyle = '#fff'; x.fill(); x.restore();
-    x.fillStyle = '#1b1712'; x.font = `800 30px ${D}`; x.fillText(bk ? 'You’re booked' : 'Reserve', 752, 694);
-    if (!bk) {
-      [['Fri 21', 752], ['20:00', 886], ['4 guests', 1000]].forEach(([s, px]) => { rp(x, px, 716, s.length > 6 ? 130 : 118, 50, 25); x.fillStyle = '#f1ebe1'; x.fill(); x.fillStyle = '#1b1712'; x.font = `600 20px ${I}`; x.fillText(s, px + 20, 748); });
-      const hc = hotHit(S, 'confirm', 752, 790, 376, 76); rp(x, 752, 790, 376, 76, 38); x.fillStyle = hc ? '#9a3412' : '#c2410c'; x.fill(); x.fillStyle = '#fff'; x.font = `600 25px ${I}`; x.fillText('Confirm booking', 850, 838);
+    const sel = M.menu || 0, it = MENU[sel][1].slice(0, m ? 3 : 4), cw = W * (m ? .86 : .78), ch = m ? 300 : H * .56, cx = X + (W - cw) / 2, cy = Y + H - ch - (m ? 22 : H * .1);
+    x.save(); x.shadowColor = 'rgba(0,0,0,.35)'; x.shadowBlur = 40; x.shadowOffsetY = 20; rp(x, cx, cy, cw, ch, 8); x.fillStyle = '#f7f1e6'; x.fill(); x.restore();
+    rp(x, cx + 14, cy + 14, cw - 28, ch - 28, 4); x.strokeStyle = '#d9c9ae'; x.lineWidth = 1.5; x.stroke();
+    x.textAlign = 'center'; x.fillStyle = '#9a3412'; x.font = `600 ${m ? 15 : 18}px ${I}`; x.fillText(L(['TONIGHT · FRIDAY', 'ESTA NOITE · SEXTA', 'I AFTEN · FREDAG']), cx + cw / 2, cy + (m ? 46 : 70));
+    x.fillStyle = '#1b1712'; x.font = `italic 500 ${m ? 34 : 50}px ${SERIF}`; x.fillText(L(MENU[sel][0]), cx + cw / 2, cy + (m ? 90 : 134)); x.textAlign = 'left';
+    const rh = (ch - (m ? 120 : 190)) / it.length;
+    it.forEach((r, i) => { const yy = cy + (m ? 126 : 196) + i * rh + rh * .45, nm = L(r[0]); x.fillStyle = '#2a211a'; x.font = `500 ${m ? 19 : 25}px ${SERIF}`; x.fillText(nm, cx + 40, yy); const nw = x.measureText(nm).width; x.font = `600 ${m ? 17 : 21}px ${I}`; const pr = '€' + r[1]; const pw = x.measureText(pr).width; x.fillStyle = '#9a3412'; x.fillText(pr, cx + cw - 40 - pw, yy);
+      x.fillStyle = '#c9b897'; for (let d = cx + 52 + nw; d < cx + cw - 52 - pw; d += 9) { x.beginPath(); x.arc(d, yy - 5, 1.4, 0, 7); x.fill(); } });
+    let tx = X + W / 2; x.font = `600 ${m ? 17 : 20}px ${I}`; const tws = MENU.map(q => x.measureText(L(q[0])).width + (m ? 32 : 38)); tx -= (tws.reduce((a2, b2) => a2 + b2, 0) + 8 * 2) / 2;
+    const ty2 = m ? Y + 26 : Y + H * .16, hh = m ? 46 : 54;
+    MENU.forEach((q, i) => { const on = i === sel, hv = hotHit(S, `w:menu:${i}`, tx, ty2, tws[i], hh); rp(x, tx, ty2, tws[i], hh, hh / 2); x.fillStyle = on ? '#f7f1e6' : hv ? 'rgba(255,255,255,.22)' : 'rgba(255,255,255,.12)'; x.fill(); x.fillStyle = on ? '#9a3412' : '#fff'; x.fillText(L(q[0]), tx + (m ? 16 : 19), ty2 + hh / 2 + 7); tx += tws[i] + 8; });
+    if (!m) { x.fillStyle = 'rgba(255,255,255,.85)'; x.font = `italic 500 34px ${SERIF}`; x.textAlign = 'center'; x.fillText(L(['Wood fire. Natural wine. Lisbon.', 'Fogo de lenha. Vinho natural. Lisboa.', 'Brændeovn. Naturvin. Lissabon.']), X + W / 2, Y + H * .1); x.textAlign = 'left'; }
+  }
+  function visWed(x, C, X, Y, W, H, t, m) {
+    x.save(); rp(x, X, Y, W, H, 34); x.clip();
+    const g = x.createLinearGradient(X, Y, X + W, Y + H); g.addColorStop(0, '#f3d3cc'); g.addColorStop(1, '#e7b9b4'); x.fillStyle = g; x.fillRect(X, Y, W, H);
+    const lg = x.createRadialGradient(X + W * .2, Y + H * .15, 10, X + W * .2, Y + H * .15, W * .9); lg.addColorStop(0, 'rgba(255,250,240,.7)'); lg.addColorStop(1, 'rgba(255,250,240,0)'); x.fillStyle = lg; x.fillRect(X, Y, W, H);
+    // botanical sprigs
+    const sprig = (sx, sy, len, ang, sw) => { x.save(); x.translate(sx, sy); x.rotate(ang + Math.sin(t * .8 + sx) * .03); x.strokeStyle = 'rgba(96,120,92,.55)'; x.fillStyle = 'rgba(120,146,112,.45)'; x.lineWidth = 2; x.beginPath(); x.moveTo(0, 0); x.lineTo(0, -len); x.stroke(); for (let i = 1; i < 9; i++) { const yy = -len * i / 9, s2 = sw * (1 - i / 12); [-1, 1].forEach(d => { x.save(); x.translate(0, yy); x.rotate(d * .9); x.beginPath(); x.ellipse(0, -s2, s2 * .35, s2, 0, 0, 7); x.fill(); x.restore(); }); } x.restore(); };
+    const k = Math.min(W, H) / 900; sprig(X + W * .08, Y + H * 1.02, 520 * k, .35, 34 * k); sprig(X + W * .95, Y + H * .05, 480 * k, Math.PI + .5, 30 * k); sprig(X + W * .9, Y + H * 1.05, 420 * k, -.3, 28 * k);
+    // back card (RSVP) + invitation
+    const cw = Math.min(W * .62, 520 * (m ? .82 : 1.05)), ch = cw * 1.35, cx = X + W / 2, cy = Y + H / 2 + (m ? 10 : 0), sc = m ? .62 : 1;
+    const crd = (rot, dx, dy, w, h, fn) => { x.save(); x.translate(cx + dx, cy + dy); x.rotate(rot); x.shadowColor = 'rgba(90,40,50,.25)'; x.shadowBlur = 40; x.shadowOffsetY = 18; x.fillStyle = '#fffaf4'; x.fillRect(-w / 2, -h / 2, w, h); x.shadowColor = 'transparent'; x.strokeStyle = '#c9a66b'; x.lineWidth = 1.5; x.strokeRect(-w / 2 + 16, -h / 2 + 16, w - 32, h - 32); fn(w, h); x.restore(); };
+    crd(.09, cw * .32, -ch * .08, cw * .8, ch * .62, (w, h) => { x.textAlign = 'center'; x.fillStyle = '#b85c7a'; x.font = `600 ${15 * sc + 2}px ${I}`; x.fillText('RSVP', 0, -h * .18); x.fillStyle = '#3a2530'; x.font = `italic 500 ${30 * sc + 4}px ${SERIF}`; x.fillText(L(['Kindly reply', 'Responda, por favor', 'Svar venligst']), 0, -h * .02); x.font = `500 ${15 * sc + 3}px ${I}`; x.fillStyle = '#8f7480'; x.fillText(L(['by 1 May 2027', 'até 1 de maio de 2027', 'senest 1. maj 2027']), 0, h * .12); x.textAlign = 'left'; });
+    crd(-.05, -cw * .12, ch * .04, cw, ch, (w, h) => { x.textAlign = 'center'; x.fillStyle = '#b85c7a'; x.font = `600 ${16 * sc + 3}px ${I}`; x.fillText(L(['SAVE THE DATE', 'RESERVE A DATA', 'SÆT KRYDS I KALENDEREN']), 0, -h * .28); x.fillStyle = '#3a2530'; x.font = `italic 500 ${74 * sc + 6}px ${SERIF}`; x.fillText('Ana', 0, -h * .1); x.font = `italic 500 ${44 * sc + 4}px ${SERIF}`; x.fillStyle = '#c9a66b'; x.fillText('&', 0, h * .0); x.fillStyle = '#3a2530'; x.font = `italic 500 ${74 * sc + 6}px ${SERIF}`; x.fillText('Rui', 0, h * .12);
+      x.strokeStyle = '#c9a66b'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(-w * .18, h * .2); x.lineTo(w * .18, h * .2); x.stroke(); x.fillStyle = '#3a2530'; x.font = `600 ${22 * sc + 4}px ${I}`; x.fillText('14 · 06 · 2027', 0, h * .29); x.fillStyle = '#8f7480'; x.font = `500 ${16 * sc + 3}px ${I}`; x.fillText('Quinta da Maré · Algarve', 0, h * .36); x.textAlign = 'left'; });
+    x.restore();
+  }
+  function visRent(x, S, C, X, Y, W, H, t, M, m) {
+    x.save(); rp(x, X, Y, W, H, 34); x.clip(); x.fillStyle = '#d7ece6'; x.fillRect(X, Y, W, H);
+    x.fillStyle = '#8fd0e3'; x.beginPath(); x.moveTo(X, Y + H * .78); x.bezierCurveTo(X + W * .3, Y + H * .66, X + W * .6, Y + H * .92, X + W, Y + H * .72); x.lineTo(X + W, Y + H); x.lineTo(X, Y + H); x.fill();
+    x.fillStyle = '#c6e5dc'; [[.2, .25, .12], [.72, .2, .16], [.5, .45, .1]].forEach(p => { x.beginPath(); x.ellipse(X + W * p[0], Y + H * p[1], W * p[2], H * p[2] * .8, 0, 0, 7); x.fill(); });
+    x.strokeStyle = '#fff'; x.lineWidth = 8; for (let i = 0; i < 5; i++) { x.beginPath(); x.moveTo(X, Y + H * (.12 + i * .15)); x.lineTo(X + W, Y + H * (.05 + i * .17)); x.stroke(); }
+    const R = [[[.12, .8], [.3, .55], [.55, .7], [.86, .62]], [[.12, .8], [.25, .35], [.5, .2], [.82, .3]], [[.4, .62], [.5, .5], [.62, .48], [.66, .6]]][M.route];
+    x.strokeStyle = C.acc; x.lineWidth = 9; x.lineCap = 'round'; x.setLineDash([24, 14]); x.lineDashOffset = -t * 40; x.beginPath(); R.forEach((p, i) => i ? x.lineTo(X + W * p[0], Y + H * p[1]) : x.moveTo(X + W * p[0], Y + H * p[1])); x.stroke(); x.setLineDash([]); x.lineCap = 'butt';
+    [[R[0], '#fb7185'], [R[R.length - 1], C.acc]].forEach(([p, c]) => { x.beginPath(); x.arc(X + W * p[0], Y + H * p[1], 20, 0, 7); x.fillStyle = c; x.fill(); x.lineWidth = 6; x.strokeStyle = '#fff'; x.stroke(); });
+    x.restore(); S.anim = true;
+    const rs = [['Coast · 18 km', 'Costa · 18 km', 'Kyst · 18 km'], ['Hills · 32 km', 'Serra · 32 km', 'Bakker · 32 km'], ['Old town · 9 km', 'Centro · 9 km', 'Gamleby · 9 km']];
+    chips(x, S, C, 'route', X + 24, Y + 24, rs, M.route, m ? 48 : 54, m ? 18 : 20);
+  }
+  function visTabs(x, S, C, X, Y, W, H, M, opts, id, m) { // photo with overlay chips (dark glass)
+    const o = opts[M[id] || 0]; photo(x, o[1], X, Y, W, H, 34);
+    const g = x.createLinearGradient(0, Y + H * .55, 0, Y + H); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.55)'); x.save(); rp(x, X, Y, W, H, 34); x.clip(); x.fillStyle = g; x.fillRect(X, Y, W, H); x.restore();
+    let cx = X + 24; const h = m ? 46 : 52, fs = m ? 17 : 20;
+    opts.forEach((op, i) => { const t = L(op[0]); x.font = `600 ${fs}px ${I}`; const w = x.measureText(t).width + fs * 1.8, on = (M[id] || 0) === i, hv = hotHit(S, `w:${id}:${i}`, cx, Y + 24, w, h); rp(x, cx, Y + 24, w, h, h / 2); x.fillStyle = on ? '#fff' : hv ? 'rgba(0,0,0,.6)' : 'rgba(0,0,0,.42)'; x.fill(); x.fillStyle = on ? '#111' : '#fff'; x.fillText(t, cx + fs * .9, Y + 24 + h / 2 + fs * .36); cx += w + 8; });
+    if (o[2]) { x.fillStyle = '#fff'; x.font = `600 ${m ? 19 : 22}px ${I}`; x.fillText(L(o[2]), X + 28, Y + H - 30); }
+  }
+  // widgets (each fits a ~612–840 × 420 card) -------------------------
+  function wRest(x, S, C, X, Y, W, M) {
+    if (M.done) return doneBlock(x, S, C, X, Y + 120, W, L(['You’re booked!', 'Mesa reservada!', 'I er booket!']), [['Today', 'Hoje', 'I dag'], ['Fri 21', 'Sex 21', 'Fre 21'], ['Sat 22', 'Sáb 22', 'Lør 22']].map(L)[M.a] + ' · ' + ['19:30', '20:00', '21:30'][M.b] + ' · ' + M.n + ' ' + L(['guests', 'pessoas', 'gæster']), 'reset');
+    wTitle(x, C, X, Y + 40, L(['Reserve a table', 'Reservar mesa', 'Book et bord']));
+    chips(x, S, C, 'a', X, Y + 70, [['Today', 'Hoje', 'I dag'], ['Fri 21', 'Sex 21', 'Fre 21'], ['Sat 22', 'Sáb 22', 'Lør 22']], M.a);
+    chips(x, S, C, 'b', X, Y + 140, [['19:30'], ['20:00'], ['21:30']], M.b);
+    const e = stepper(x, S, C, 'n', X, Y + 210, M.n); x.fillStyle = C.sub; x.font = `500 20px ${I}`; x.fillText(L(['guests', 'pessoas', 'gæster']), e + 16, Y + 245);
+    x.fillStyle = '#16a34a'; x.beginPath(); x.arc(X + W - 200, Y + 237, 7, 0, 7); x.fill(); x.fillStyle = C.sub; x.fillText(L([(3 + M.b * 2) + ' tables left', 'restam ' + (3 + M.b * 2) + ' mesas', (3 + M.b * 2) + ' borde tilbage']), X + W - 184, Y + 244);
+    wbtn(x, S, C, 'go', X, Y + 300, W, 76, L(['Confirm booking', 'Confirmar reserva', 'Bekræft booking']) + '  →');
+    if (!M.touched) tryMe(x, S, C, X, Y + 300, W, 76);
+  }
+  function wEstate(x, S, C, X, Y, W, M) {
+    const p = PROPS_W[M.v];
+    if (M.done) return doneBlock(x, S, C, X, Y + 120, W, L(['Viewing booked · Sat 10:00', 'Visita marcada · sáb 10:00', 'Fremvisning booket · lør 10:00']), p[1] + ' · ' + L(['details sent on WhatsApp', 'detalhes enviados no WhatsApp', 'detaljer sendt på WhatsApp']), 'reset');
+    wTitle(x, C, X, Y + 40, L(['Homes matched to you', 'Casas escolhidas para si', 'Boliger matchet til dig']));
+    chips(x, S, C, 'v', X, Y + 70, PROPS_W.map(q => [q[1]]), M.v);
+    x.fillStyle = C.acc; x.font = `600 19px ${I}`; x.fillText(p[4] + '% MATCH', X, Y + 176); x.fillStyle = C.fg; x.font = `700 44px ${D}`; x.fillText(p[2], X, Y + 226); x.fillStyle = C.sub; x.font = `400 21px ${I}`; x.fillText(L(p[3]), X, Y + 262);
+    const fh = hotHit(S, 'w:fav', X + W - 70, Y + 170, 64, 64); x.beginPath(); x.arc(X + W - 38, Y + 202, 32, 0, 7); x.fillStyle = fh ? C.soft : C.card; x.fill(); x.lineWidth = 2; x.strokeStyle = C.line; x.stroke(); x.fillStyle = M.fav & (1 << M.v) ? C.acc : C.fg; x.font = `700 30px ${I}`; x.textAlign = 'center'; x.fillText(M.fav & (1 << M.v) ? '♥' : '♡', X + W - 38, Y + 213); x.textAlign = 'left';
+    wbtn(x, S, C, 'go', X, Y + 300, W, 76, L(['Book a viewing', 'Marcar visita', 'Book fremvisning']) + '  →');
+    if (!M.touched) tryMe(x, S, C, X, Y + 300, W, 76);
+  }
+  function wWed(x, S, C, X, Y, W, M) {
+    const base = [9800, 14500, 26000][M.a], ph = [95, 120, 165][M.a], tot = base + ph * M.n;
+    if (M.done) return doneBlock(x, S, C, X, Y + 120, W, L(['Proposal on its way', 'Proposta a caminho', 'Forslaget er på vej']), L(['A planner replies within 24 h', 'Uma planner responde em 24 h', 'En planner svarer inden for 24 t']), 'reset');
+    wTitle(x, C, X, Y + 40, L(['Plan your day', 'Planeie o vosso dia', 'Planlæg jeres dag']));
+    chips(x, S, C, 'a', X, Y + 70, [['Intimate', 'Íntimo', 'Intim'], ['Classic', 'Clássico', 'Klassisk'], ['Grand', 'Grandioso', 'Storslået']], M.a);
+    const e = stepper(x, S, C, 'n', X, Y + 150, M.n); x.fillStyle = C.sub; x.font = `500 20px ${I}`; x.fillText(L(['guests', 'convidados', 'gæster']), e + 16, Y + 185);
+    x.fillStyle = C.sub; x.font = `500 19px ${I}`; x.fillText(L(['Estimate', 'Estimativa', 'Estimat']), X, Y + 248); x.fillStyle = C.fg; x.font = ff(C, 700, 46); x.fillText('€' + tot.toLocaleString('en-US'), X + 120, Y + 254);
+    wbtn(x, S, C, 'go', X, Y + 300, W, 76, L(['Request a proposal', 'Pedir proposta', 'Bed om et forslag']) + '  →');
+    if (!M.touched) tryMe(x, S, C, X, Y + 300, W, 76);
+  }
+  const ARCH = [[['Exterior', 'Exterior', 'Facade'], [['Day', 'Dia', 'Dag'], ['Dusk', 'Entardecer', 'Skumring']], ['house/f', 'house/y']], [['Kitchen', 'Cozinha', 'Køkken'], [['Oak', 'Carvalho', 'Eg'], ['Navy', 'Azul', 'Marine'], ['Sage', 'Salva', 'Salvie']], ['house/k1', 'house/k2', 'house/k3']], [['Bathroom', 'Casa de banho', 'Bad'], [['Marble', 'Mármore', 'Marmor'], ['Walnut', 'Nogueira', 'Valnød']], ['house/b1', 'house/b2']]];
+  function wArch(x, S, C, X, Y, W, M) {
+    if (M.done) return doneBlock(x, S, C, X, Y + 120, W, L(['Thank you — talk soon', 'Obrigado — falamos já', 'Tak — vi tales ved']), L(['An architect calls you within a day', 'Um arquiteto liga-lhe num dia', 'En arkitekt ringer inden for en dag']), 'reset');
+    wTitle(x, C, X, Y + 40, L(['Villa Serra · 2025', 'Villa Serra · 2025', 'Villa Serra · 2025']));
+    chips(x, S, C, 'a', X, Y + 70, ARCH.map(r => r[0]), M.a);
+    x.fillStyle = C.sub; x.font = `500 19px ${I}`; x.fillText(L(['Try a finish', 'Experimente um acabamento', 'Prøv en finish']), X, Y + 172);
+    const fin = ARCH[M.a][1]; if (M.b >= fin.length) M.b = 0;
+    chips(x, S, C, 'b', X, Y + 190, fin, M.b, 50, 19);
+    wbtn(x, S, C, 'go', X, Y + 300, W, 76, L(['Start your project', 'Iniciar o seu projeto', 'Start dit projekt']) + '  →');
+    if (!M.touched) tryMe(x, S, C, X, Y + 300, W, 76);
+  }
+  function wBuild(x, S, C, X, Y, W, M) {
+    const per = [1350, 1100, 950][M.a], lo = Math.round(per * M.n * .9 / 100) * 100, hi = Math.round(per * M.n * 1.15 / 100) * 100, wk = Math.max(2, Math.round(M.n / [3, 3, 12][M.a]));
+    if (M.done) return doneBlock(x, S, C, X, Y + 120, W, L(['Site visit booked · Tue 09:00', 'Visita marcada · ter 09:00', 'Besigtigelse booket · tir 09:00']), L(['Fixed quote within 48 h', 'Orçamento fechado em 48 h', 'Fast tilbud inden for 48 t']), 'reset');
+    wTitle(x, C, X, Y + 40, L(['Instant estimate', 'Estimativa imediata', 'Hurtigt estimat']));
+    chips(x, S, C, 'a', X, Y + 70, [['Kitchen', 'Cozinha', 'Køkken'], ['Bathroom', 'Casa de banho', 'Bad'], ['Full home', 'Casa inteira', 'Hele huset']], M.a);
+    const e = stepper(x, S, C, 'n', X, Y + 150, M.n + ' m²');
+    x.fillStyle = C.sub; x.font = `500 19px ${I}`; x.fillText(L(['From', 'Desde', 'Fra']), X, Y + 248); x.fillStyle = C.acc; x.font = `800 44px ${D}`; x.fillText('€' + (lo / 1000).toFixed(1) + 'k – €' + (hi / 1000).toFixed(1) + 'k', X + 70, Y + 254);
+    x.fillStyle = C.sub; x.font = `500 19px ${I}`; x.fillText('≈ ' + wk + ' ' + L(['weeks', 'semanas', 'uger']), Math.min(e + 20, X + W - 130), Y + 185);
+    wbtn(x, S, C, 'go', X, Y + 300, W, 76, L(['Book a free site visit', 'Marcar visita gratuita', 'Book gratis besigtigelse']) + '  →');
+    if (!M.touched) tryMe(x, S, C, X, Y + 300, W, 76);
+  }
+  function wFit(x, S, C, X, Y, W, M) {
+    if (M.done) return doneBlock(x, S, C, X, Y + 120, W, L(['Court booked · ', 'Campo reservado · ', 'Bane booket · ']) + ['08:00', '18:30', '20:00'][M.b], L(['Invites sent to 3 players', 'Convites enviados a 3 jogadores', 'Invitationer sendt til 3 spillere']), 'reset');
+    wTitle(x, C, X, Y + 40, L(['Book a court', 'Reservar campo', 'Book en bane']));
+    chips(x, S, C, 'a', X, Y + 70, [['Court 1', 'Campo 1', 'Bane 1'], ['Court 2', 'Campo 2', 'Bane 2'], ['Court 3', 'Campo 3', 'Bane 3']], M.a);
+    chips(x, S, C, 'b', X, Y + 140, [['08:00'], ['18:30'], ['20:00']], M.b);
+    x.fillStyle = C.sub; x.font = `500 20px ${I}`; x.fillText(['2', '1', '3'][M.b] + ' ' + L(['slots left · 90 min · 4 players', 'vagas · 90 min · 4 jogadores', 'ledige · 90 min · 4 spillere']), X, Y + 250);
+    wbtn(x, S, C, 'go', X, Y + 300, W, 76, L(['Book · €32', 'Reservar · 32 €', 'Book · 32 €']) + '  →');
+    if (!M.touched) tryMe(x, S, C, X, Y + 300, W, 76);
+  }
+  function wRent(x, S, C, X, Y, W, M) {
+    const ph = [8, 15, 12][M.a], tot = ph * M.n * (M.b + 1);
+    if (M.done) return doneBlock(x, S, C, X, Y + 120, W, L(['Bikes ready at 10:30', 'Bicicletas prontas às 10:30', 'Cykler klar kl. 10:30']), L(['Unlock code + route sent to your phone', 'Código + rota enviados para o telemóvel', 'Kode + rute sendt til din telefon']), 'reset');
+    wTitle(x, C, X, Y + 40, L(['Rent a bike', 'Alugar bicicleta', 'Lej en cykel']));
+    chips(x, S, C, 'a', X, Y + 70, [['City', 'Cidade', 'By'], ['E-bike', 'E-bike', 'Elcykel'], ['Gravel', 'Gravel', 'Gravel']], M.a);
+    const e = stepper(x, S, C, 'n', X, Y + 150, M.n + ' h');
+    chips(x, S, C, 'b', e + 20, Y + 150, [['1 ' + L(['bike', 'bicicleta', 'cykel'])], ['2'], ['3']], M.b, 54, 19);
+    x.fillStyle = C.sub; x.font = `500 19px ${I}`; x.fillText(L([`€${ph}/h per bike · helmet & lock included`, `${ph} €/h por bicicleta · capacete e cadeado incluídos`, `${ph} €/t pr. cykel · hjelm & lås inkluderet`]), X, Y + 248);
+    wbtn(x, S, C, 'go', X, Y + 300, W, 76, L(['Book bikes · €', 'Reservar · ', 'Book · ']) + tot + L(['', ' €', ' €']) + '  →');
+    if (!M.touched) tryMe(x, S, C, X, Y + 300, W, 76);
+  }
+  const WIDGET = { rest: wRest, estate: wEstate, wed: wWed, arch: wArch, build: wBuild, fit: wFit, rent: wRent };
+  function heroVisual(x, S, C, k, X, Y, W, H, t, M, m) {
+    if (k === 'rest') visRest(x, S, C, X, Y, W, H, t, M, m);
+    else if (k === 'wed') { visWed(x, C, X, Y, W, H, t, m); S.anim = true; }
+    else if (k === 'rent') visRent(x, S, C, X, Y, W, H, t, M, m);
+    else if (k === 'estate') { const p = PROPS_W[M.v]; photo(x, p[0], X, Y, W, H, 34); x.font = `600 21px ${I}`; const lw = x.measureText(p[1] + ' · ' + p[2]).width + 46; rp(x, X + 24, Y + H - 84, lw, 60, 30); x.fillStyle = 'rgba(11,20,36,.8)'; x.fill(); x.fillStyle = '#fff'; x.fillText(p[1] + ' · ' + p[2], X + 46, Y + H - 46); }
+    else if (k === 'arch') { const r = ARCH[M.a]; photo(x, r[2][Math.min(M.b, r[2].length - 1)], X, Y, W, H, 4); }
+    else if (k === 'build') visTabs(x, S, C, X, Y, W, H, M, [[['Plans', 'Projeto', 'Plan'], 'house/s1', ['Week 1 · 3D plans approved', 'Semana 1 · projeto 3D aprovado', 'Uge 1 · 3D-plan godkendt']], [['Structure', 'Estrutura', 'Råhus'], 'house/s2', ['Week 9 · structure done', 'Semana 9 · estrutura feita', 'Uge 9 · råhus færdigt']], [['Handover', 'Entrega', 'Aflevering'], 'house/s3', ['Week 26 · keys handed over', 'Semana 26 · chaves entregues', 'Uge 26 · nøgler afleveret']]], 'stage', m);
+    else if (k === 'fit') { photo(x, ['padel/k1', 'padel/k2', 'padel/k3'][M.a], X, Y, W, H, 34); }
+  }
+  function drawConcept(x, S, t, m) {
+    const ty = TYPES[st.type], k = ty.k, C = WEB[k], M = wst(k), W = S.w, oy = m ? 0 : 64, H = S.h - oy;
+    x.fillStyle = C.bg; x.fillRect(0, oy, W, H);
+    const brandF = C.serif ? `${C.italic ? 'italic ' : ''}500 ${m ? 36 : 44}px ${SERIF}` : `800 ${m ? 30 : 36}px ${D}`;
+    const brand = (bx, by) => { x.fillStyle = C.fg; x.font = brandF; if (C.track) { let cx = bx; for (const ch of C.brand) { x.fillText(ch, cx, by); cx += x.measureText(ch).width + (m ? 4 : 6); } } else x.fillText(C.brand, bx, by); };
+    if (!m) {
+      brand(110, oy + 92);
+      x.font = `500 22px ${I}`; x.fillStyle = C.sub; C.nav.forEach((n, i) => x.fillText(L(n), W - 860 + i * 160, oy + 88));
+      x.font = `600 21px ${I}`; const cw = x.measureText(L(C.cta)).width + 56; rp(x, W - 110 - cw, oy + 52, cw, 60, 30); x.fillStyle = C.fg; x.fill(); x.fillStyle = C.bg; x.fillText(L(C.cta), W - 110 - cw + 28, oy + 89);
+      const VX = 1080, VY = oy + 150, VW = W - VX - 90, VH = H - 200;
+      heroVisual(x, S, C, k, VX, VY, VW, VH, t, M, 0);
+      x.fillStyle = C.acc; x.font = `700 20px ${I}`; x.fillText(L(C.eye), 110, oy + 236);
+      const hl = L(C.h), hs = hl.length > 2 ? 92 : 100; x.fillStyle = C.fg; x.font = C.serif ? `${C.italic ? 'italic ' : ''}500 ${hs + 6}px ${SERIF}` : `800 ${hs}px ${D}`; hl.forEach((l, i) => x.fillText(C.lower ? l.toLowerCase() : l, 104, oy + 330 + i * (hs + 6)));
+      x.fillStyle = C.sub; x.font = `400 25px ${I}`; const sy = oy + 330 + hl.length * (hs + 6) + 6; wrapText(x, L(C.sub), 110, sy, 820, 36, 2);
+      card(x, C, 90, oy + 768, 900, 440); WIDGET[k](x, S, C, 130, oy + 790, 820, M);
     } else {
-      x.globalAlpha = bt; x.fillStyle = '#16a34a'; x.beginPath(); x.arc(790, 770, 34, 0, 7); x.fill(); x.strokeStyle = '#fff'; x.lineWidth = 6; x.beginPath(); x.moveTo(774, 770); x.lineTo(786, 783); x.lineTo(808, 758); x.stroke();
-      x.fillStyle = '#1b1712'; x.font = `600 23px ${I}`; x.fillText('Fri 21 · 20:00 · 4 guests', 840, 762); x.fillStyle = '#6b6258'; x.font = `400 19px ${I}`; x.fillText('Confirmation sent on WhatsApp ✓', 840, 792);
-      x.fillStyle = '#6b6258'; x.fillText('Added to the CRM automatically', 752, 870); x.globalAlpha = 1;
+      brand(40, 158);
+      x.strokeStyle = C.fg; x.lineWidth = 3.5; for (let i = 0; i < 2; i++) { x.beginPath(); x.moveTo(W - 92, 140 + i * 14); x.lineTo(W - 46, 140 + i * 14); x.stroke(); }
+      heroVisual(x, S, C, k, 24, 196, W - 48, 430, t, M, 1);
+      x.fillStyle = C.acc; x.font = `700 17px ${I}`; x.fillText(L(C.eye), 40, 680);
+      const hl = L(C.h); x.fillStyle = C.fg; x.font = C.serif ? `${C.italic ? 'italic ' : ''}500 58px ${SERIF}` : `800 54px ${D}`; hl.forEach((l, i) => x.fillText(C.lower ? l.toLowerCase() : l, 36, 748 + i * 60));
+      card(x, C, 16, 950, W - 32, 462); WIDGET[k](x, S, C, 40, 968, W - 80, M);
     }
   }
+  function wrapText(x, s, X, Y, maxW, lh, maxL) { const ws2 = s.split(' '); let line = '', n = 0; for (const w of ws2) { const tt = line ? line + ' ' + w : w; if (x.measureText(tt).width > maxW && line) { x.fillText(line, X, Y + n * lh); n++; line = w; if (n >= maxL) return; } else line = tt; } x.fillText(line, X, Y + n * lh); }
+  function webHot(id) {
+    const k = TYPES[st.type].k, M = wst(k), [a, b] = id.split(':'); M.touched = 1;
+    if (a === 'go') { M.done = 1; M.at = now(); }
+    else if (a === 'reset') M.done = 0;
+    else if (a === 'fav') M.fav ^= (1 << M.v);
+    else if (a === 'n') { const step = k === 'wed' ? 10 : k === 'build' ? 2 : 1, lo = k === 'wed' ? 20 : k === 'build' ? 4 : 1, hi = k === 'wed' ? 300 : k === 'build' ? 200 : k === 'rent' ? 8 : 12; M.n = Math.max(lo, Math.min(hi, M.n + (b === 'p' ? step : -step))); }
+    else if (a === 'v') M.v = +b;
+    else if (a === 'a') { M.a = +b; if (k === 'arch') M.b = 0; }
+    else if (a === 'b') M.b = +b;
+    else if (a === 'stage') M.stage = +b;
+    else if (a === 'route') M.route = +b;
+    else if (a === 'menu') M.menu = +b;
+  }
 
-
-  // ---- laptop: real website in a browser frame
   function drawWeb(x, S, t) {
-    const W = S.w, H = S.h, ty = TYPES[st.type];
+    const W = S.w, C = WEB[TYPES[st.type].k];
+    drawConcept(x, S, t, 0);
     x.fillStyle = '#16171b'; x.fillRect(0, 0, W, 64);
-    ['#ff5f57', '#febc2e', '#28c840'].forEach((c, i) => { x.fillStyle = c; x.beginPath(); x.arc(40 + i * 30, 32, 9, 0, 7); x.fill(); });
+    ['#ff5f57', '#febc2e', '#28c840'].forEach((c2, i) => { x.fillStyle = c2; x.beginPath(); x.arc(40 + i * 30, 32, 9, 0, 7); x.fill(); });
     rp(x, W / 2 - 300, 14, 600, 36, 10); x.fillStyle = '#26272c'; x.fill();
-    x.fillStyle = '#c9cdd6'; x.font = `500 21px ${I}`; x.textAlign = 'center'; x.fillText((st.before && ty.old ? '⟲  ' : '🔒  ') + ty.url, W / 2, 39); x.textAlign = 'left';
-    const im = img((st.before && ty.old ? 'old-' : '') + ty.site);
-    if (im) cover(x, im, 0, 64, W, H - 64);
-    else { x.fillStyle = '#0d0f14'; x.fillRect(0, 64, W, H - 64); x.fillStyle = '#5a6376'; x.font = `500 26px ${I}`; x.textAlign = 'center'; x.fillText(L(['Loading…', 'A carregar…', 'Indlæser…']), W / 2, H / 2); x.textAlign = 'left'; }
-    if (st.before && ty.old) { rp(x, 28, 92, 210, 50, 25); x.fillStyle = 'rgba(0,0,0,.72)'; x.fill(); x.fillStyle = '#fff'; x.font = `600 22px ${I}`; x.fillText(L(['Before Vero', 'Antes da Vero', 'Før Vero']), 50, 125); }
+    x.fillStyle = '#c9cdd6'; x.font = `500 21px ${I}`; x.textAlign = 'center'; x.fillText('🔒  ' + C.url, W / 2, 39); x.textAlign = 'left';
+    const tg = L(['Concept by Vero', 'Conceito Vero', 'Koncept af Vero']); x.font = `600 18px ${I}`; const tw = x.measureText(tg).width + 30; rp(x, W - 40 - tw, 16, tw, 32, 16); x.fillStyle = 'rgba(77,124,255,.22)'; x.fill(); x.fillStyle = '#9db6ff'; x.fillText(tg, W - 25 - tw, 38);
   }
   // ================================================================== laptop: a different, interactive CRM per business
   const CTx = q => (window.VERO_CRM_TR ? window.VERO_CRM_TR(q) : q);
@@ -338,6 +554,7 @@
       btn(x, S, 'ro:' + i, rx + rw - 230, y + 14, 200, 52, done ? L(['Ordered ✓', 'Encomendado ✓', 'Bestilt ✓']) : L(['Reorder', 'Encomendar', 'Genbestil']), A, done); });
   }
   function handleHot(id) {
+    if (id.startsWith('w:')) return webHot(id.slice(2));
     const k = TYPES[st.type].crm, M = ms(k), [a, b] = id.split(':'), i = +b;
     if (a === 'tb') { M.tables[i] = (M.tables[i] + 1) % 4; if (M.tables[i] === 2) { st.toastAt = now(); st.toastTxt = ['Table ' + (i + 1) + ' seated · menu sent to kitchen', 'Mesa ' + (i + 1) + ' sentada · pedido enviado à cozinha', 'Bord ' + (i + 1) + ' ankommet · bestilling sendt til køkkenet']; } }
     else if (a === 'pr') M.sel = i;
@@ -435,7 +652,7 @@
     appCTA(x, S, AS, A, C, 36, 860, 588, 86);
     rowList(x, A, C, 976, 2);
   }
-  function drawPhoneWeb(x, S) { const ty = TYPES[st.type], im = img((st.before && ty.old ? 'old-' : '') + ty.site + '-m'); if (im) { x.fillStyle = '#000'; x.fillRect(0, 0, S.w, S.h); cover(x, im, 0, 0, S.w, S.h); } else drawApp(x, S, 0); }
+  function drawPhoneWeb(x, S, t) { drawConcept(x, S, t, 1); x.fillStyle = WEB[TYPES[st.type].k].fg; x.font = `600 27px ${I}`; x.fillText('9:41', 66, 66); }
   function cursor(x, S, big) {
     if (!S.cur || !focus) return;
     const { x: cx, y: cy } = S.cur;
@@ -443,7 +660,7 @@
     x.save(); x.translate(cx, cy); x.scale(big, big); x.beginPath(); x.moveTo(0, 0); x.lineTo(0, 26); x.lineTo(6.5, 20); x.lineTo(11, 30); x.lineTo(15, 28.5); x.lineTo(10.6, 18.8); x.lineTo(19, 18.6); x.closePath(); x.fillStyle = '#111'; x.fill(); x.strokeStyle = '#fff'; x.lineWidth = 2; x.stroke(); x.restore();
   }
   function paintLaptop(t) {
-    const S = SL, x = S.x; S.hot = [];
+    const S = SL, x = S.x; S.hot = []; S.anim = false;
     const mode = st.prod === 0 ? 'web' : 'crm';
     const draw = m => (m === 'web' ? drawWeb : drawCRM)(x, S, t);
     if (st.wipe < 1 && st.from) { const w = ease(st.wipe); draw(st.from); x.save(); x.beginPath(); x.rect(0, 0, S.w * w, S.h); x.clip(); draw(mode); x.restore(); x.fillStyle = 'rgba(77,124,255,.9)'; x.fillRect(S.w * w - 3, 0, 6, S.h); S.hot = []; }
@@ -451,9 +668,9 @@
     cursor(x, S, 2.6); S.tex.needsUpdate = true;
   }
   function paintPhone(t) {
-    const S = SP, x = S.x; S.hot = [];
+    const S = SP, x = S.x; S.hot = []; S.anim = false;
     x.clearRect(0, 0, S.w, S.h); x.save(); rp(x, 0, 0, S.w, S.h, 92); x.clip();
-    if (st.prod === 0) drawPhoneWeb(x, S); else drawApp(x, S, t);
+    if (st.prod === 0) drawPhoneWeb(x, S, t); else drawApp(x, S, t);
     rp(x, S.w / 2 - 96, 26, 192, 56, 28); x.fillStyle = '#000'; x.fill(); // dynamic island
     cursor(x, S); x.restore(); S.tex.needsUpdate = true;
   }
@@ -539,29 +756,28 @@
     const ty = TYPES[st.type], p = PROD[st.prod].k;
     const kick = [['Now showing · Website', 'Em exibição · Site', 'Vises nu · Hjemmeside'], ['Now showing · CRM', 'Em exibição · CRM', 'Vises nu · CRM'], ['Now showing · App', 'Em exibição · App', 'Vises nu · App']][st.prod];
     let title, sub;
-    if (p === 'web') { title = ty.proj; sub = [ty.n[0] + (ty.where ? ' · ' + ty.where[0] : '') + ' — live client project', ty.n[1] + (ty.where ? ' · ' + ty.where[1] : '') + ' — projeto real de cliente', ty.n[2] + (ty.where ? ' · ' + ty.where[2] : '') + ' — rigtigt kundeprojekt']; }
+    if (p === 'web') { title = WEB[ty.k].brand; sub = ['Concept site for a ' + ty.n[0].toLowerCase() + ' — designed by Vero', 'Site conceito para ' + ty.n[1].toLowerCase() + ' — desenhado pela Vero', 'Konceptside til ' + ty.n[2].toLowerCase() + ' — designet af Vero']; }
     else if (p === 'crm') { title = [ty.n[0] + ' CRM', 'CRM · ' + ty.n[1], ty.n[2] + '-CRM']; sub = ['Pipeline, bookings and an AI assistant — built around how they work', 'Pipeline, marcações e assistente AI — à medida de como trabalham', 'Pipeline, booking og AI-assistent — bygget efter, hvordan de arbejder']; }
     else { const A = APPS[ty.crm]; title = A.brand + ' app'; sub = ['Bookings, loyalty and live updates — synced with the CRM', 'Reservas, fidelização e atualizações — sincronizadas com o CRM', 'Booking, loyalitet og live-opdateringer — synkroniseret med CRM']; }
-    return `<span class="dc-k"><i></i>${t3(kick)}</span><b>${Array.isArray(title) ? t3(title) : title}</b><small>${t3(sub)}</small><button type="button" class="dc-go">${t3(['Configure', 'Personalizar', 'Tilpas'])} <span aria-hidden="true">→</span></button>`;
+    return `<span class="dc-k"><i></i>${t3(kick)}</span><b>${Array.isArray(title) ? t3(title) : title}</b><small>${t3(sub)}</small><span class="dc-try"><i></i>${t3(touch ? ['Interactive — tap the screen and try it', 'Interativo — toque no ecrã e experimente', 'Interaktiv — tryk på skærmen og prøv'] : ['Interactive — click the screen and try it', 'Interativo — clique no ecrã e experimente', 'Interaktiv — klik på skærmen og prøv'])}</span><button type="button" class="dc-go">${t3(['Configure', 'Personalizar', 'Tilpas'])} <span aria-hidden="true">→</span></button>`;
   }
   function setCaption(force) { const h = captionHTML(); if (!force && cap.dataset.h === h) return; cap.dataset.h = h; cap.classList.remove('on'); setTimeout(() => { cap.innerHTML = h; cap.querySelector('.dc-go').onclick = () => focusOn(PROD[st.prod].dev); cap.classList.add('on'); }, force ? 0 : 220); }
   function renderCfg() {
     const ty = TYPES[st.type], p = PROD[st.prod];
     cfg.innerHTML = `
       <div class="cf-h"><span>${t3(['Live configurator', 'Configurador ao vivo', 'Live-konfigurator'])}</span><b>${t3(['Make it yours', 'Torne-o seu', 'Gør det til dit'])}</b><button type="button" class="cf-x" aria-label="Close"><i></i></button></div>
+      <div class="cf-try"><i></i><span><b>${t3(['This is a working demo.', 'Isto é uma demo real.', 'Dette er en rigtig demo.'])}</b> ${t3([PROD[st.prod].dev === 'phone' ? 'Tap the buttons on the phone — they work.' : 'Click the buttons on the screen — they work.', PROD[st.prod].dev === 'phone' ? 'Toque nos botões do telemóvel — funcionam.' : 'Clique nos botões do ecrã — funcionam.', PROD[st.prod].dev === 'phone' ? 'Tryk på knapperne på telefonen — de virker.' : 'Klik på knapperne på skærmen — de virker.'])}</span></div>
       <div class="cf-seg">${PROD.map((q, i) => `<button type="button" data-p="${i}" class="${i === st.prod ? 'on' : ''}">${t3(q.w)}</button>`).join('')}</div>
       <small class="cf-l">${t3(['Type of business', 'Tipo de negócio', 'Type virksomhed'])}</small>
       <div class="cf-types">${TYPES.map((q, i) => `<button type="button" data-t="${i}" class="${i === st.type ? 'on' : ''}">${svgI(ICON[q.k])}<span>${t3(q.n)}</span></button>`).join('')}</div>
-      ${p.k === 'web' && ty.old ? `<div class="cf-ba"><small class="cf-l">${t3(['This client’s site', 'O site deste cliente', 'Kundens side'])}</small><div class="cf-seg two"><button type="button" data-b="1" class="${st.before ? 'on' : ''}">${t3(['Before', 'Antes', 'Før'])}</button><button type="button" data-b="0" class="${!st.before ? 'on' : ''}">${t3(['After Vero', 'Depois da Vero', 'Efter Vero'])}</button></div></div>` : ''}
-      <div class="cf-info"><b>${p.k === 'web' ? ty.proj : p.k === 'crm' ? t3([ty.n[0] + ' CRM', 'CRM · ' + ty.n[1], ty.n[2] + '-CRM']) : APPS[ty.crm].brand + ' app'}</b>
+      <div class="cf-info"><b>${p.k === 'web' ? WEB[ty.k].brand + ' · ' + t3(['concept site', 'site conceito', 'konceptside']) : p.k === 'crm' ? t3([ty.n[0] + ' CRM', 'CRM · ' + ty.n[1], ty.n[2] + '-CRM']) : APPS[ty.crm].brand + ' app'}</b>
         <ul>${FACTS[p.k].map(f => `<li>${t3(f)}</li>`).join('')}</ul></div>
       <p class="cf-note"><b>${t3(['100% custom.', '100% à medida.', '100 % skræddersyet.'])}</b> ${t3(['Every screen is designed from a blank page for your business — colours, content, flows. Nothing comes from a template.', 'Cada ecrã é desenhado de raiz para o seu negócio — cores, conteúdos, fluxos. Nada vem de um template.', 'Hver skærm designes fra bunden til din virksomhed — farver, indhold, flows. Intet kommer fra en skabelon.'])}</p>
-      <div class="cf-f"><a class="btn p" href="contact.html">${t3(['Design mine', 'Desenhar o meu', 'Design min'])} →</a>${p.k === 'web' ? '' : `<span class="cf-tip">${t3(['Tip: use the screen — it works', 'Dica: use o ecrã — funciona', 'Tip: brug skærmen — den virker'])}</span>`}</div>`;
+      <div class="cf-f"><a class="btn p" href="contact.html">${t3(['Design mine', 'Desenhar o meu', 'Design min'])} →</a></div>`;
     cfg.querySelector('.cf-x').onclick = unfocus;
     cfg.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { setProd(+b.dataset.p, true); focusOn(PROD[st.prod].dev, true); });
     cfg.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { setType(+b.dataset.t); renderCfg(); });
-    cfg.querySelectorAll('[data-b]').forEach(b => b.onclick = () => { st.before = b.dataset.b === '1'; dirtyL = dirtyP = true; renderCfg(); });
-  }
+      }
   new MutationObserver(() => { setCaption(true); if (focus) renderCfg(); dirtyL = dirtyP = true; }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
 
   function setWord(i) {
@@ -579,7 +795,7 @@
     if (i === 2) st.pushAt = now() + 1; if (i === 1) { st.toastAt = now() + 1.2; st.toastTxt = null; }
     dirtyL = dirtyP = true; setCaption();
   }
-  function setType(i) { st.type = i; st.before = false; st.kpiT = 0; st.wipe = 0; st.from = st.prod === 0 ? 'web' : 'crm'; dirtyL = dirtyP = true; setCaption(); TYPES.forEach(q => { img(q.site); img(q.site + '-m'); }); }
+  function setType(i) { st.type = i; st.before = false; st.kpiT = 0; st.wipe = 0; st.from = st.prod === 0 ? 'web' : 'crm'; dirtyL = dirtyP = true; setCaption(); ['estate/e1', 'estate/e2', 'estate/e3', 'house/f', 'house/y', 'house/k1', 'house/k2', 'house/k3', 'house/b1', 'house/b2', 'house/s1', 'house/s2', 'house/s3', 'padel/k1', 'padel/k2', 'padel/k3'].forEach(img); }
   btns.forEach(b => b.addEventListener('click', () => setProd(+b.dataset.i, true)));
 
   // ================================================================== focus (zoom + configurator)
@@ -702,9 +918,9 @@
     camera.setViewOffset(W, H, voX * W, voY * H, W, H); camera.updateProjectionMatrix();
     // screens
     const tn = now(), C = st.prod === 1 ? crmState(TYPES[st.type].crm) : null;
-    const animL = dirtyL || st.wipe < 1 || st.kpiT < 1 || (C && C.moving && tn - C.moving.t0 < .6) || tn - st.toastAt < 3.5;
+    const animL = dirtyL || st.wipe < 1 || st.kpiT < 1 || (C && C.moving && tn - C.moving.t0 < .6) || tn - st.toastAt < 3.5 || SL.anim;
     if (animL && tn - lastL > 1 / 30) { paintLaptop(t); lastL = tn; dirtyL = false; }
-    const animP = dirtyP || tn - st.pushAt < 3.7;
+    const animP = dirtyP || tn - st.pushAt < 3.7 || SP.anim;
     if (animP && tn - lastP > 1 / 30) { paintPhone(t); lastP = tn; dirtyP = false; }
     renderer.render(scene, camera);
   }
