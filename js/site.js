@@ -64,3 +64,9 @@ const hs=$('#house');if(hs){
 const yr=$('#yr');if(yr)yr.textContent=new Date().getFullYear();
 requestAnimationFrame(()=>setTimeout(()=>$$('.hx,.ph').forEach(h=>h.classList.add('go')),80));
 })();
+/* industries matrix: on phones show one business at a time */
+(()=>{const mx=document.querySelector('.gr-mx');if(!mx)return;const ths=[...mx.querySelectorAll('thead th')].slice(1);if(!ths.length)return;
+const pick=document.createElement('div');pick.className='mx-pick';pick.setAttribute('role','tablist');
+ths.forEach((th,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.innerHTML=th.innerHTML;b.onclick=()=>set(i+1);pick.appendChild(b)});
+mx.parentNode.insertBefore(pick,mx);
+function set(c){mx.dataset.col=c;[...pick.children].forEach((b,j)=>{b.classList.toggle('on',j===c-1);b.setAttribute('aria-selected',j===c-1)})}set(1)})();
