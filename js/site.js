@@ -74,7 +74,7 @@ function set(c){mx.dataset.col=c;[...pick.children].forEach((b,j)=>{b.classList.
 document.querySelectorAll('.eu').forEach(c=>{const hi=c.querySelector('.eu-hi');c.querySelectorAll('[data-hi]').forEach(b=>b.addEventListener('click',()=>{c.querySelectorAll('[data-hi]').forEach(x=>x.classList.toggle('on',x===b));hi.classList.remove('pop');void hi.offsetWidth;hi.textContent=b.dataset.hi;hi.classList.add('pop')}))});
 /* phones: long stacks become swipeable decks with tabs, arrows and a counter */
 (()=>{const mq=matchMedia('(max-width:760px)');
-document.querySelectorAll('.core3,.projects,.ailist,.aicards,.sys,.how3,.cine,.svgrid,.ctry').forEach(box=>{
+document.querySelectorAll('.core3,.projects,.ailist,.aicards,.sys,.cine,.svgrid,.ctry').forEach(box=>{
   const items=[...box.children];if(items.length<3)return;
   const heads=items.map(c=>c.querySelector('h3,h4')||c.querySelector('b'));
   const tabs=items.length<=7&&heads.every(Boolean)?document.createElement('div'):null;
@@ -93,3 +93,19 @@ document.querySelectorAll('.core3,.projects,.ailist,.aicards,.sys,.how3,.cine,.s
   items.forEach(c=>new MutationObserver(()=>{requestAnimationFrame(()=>{box.scrollLeft=0;upd()})}).observe(c,{attributes:true,attributeFilter:['style','hidden']}));
   addEventListener('resize',upd);upd();
 })})();
+
+/* "Simple for you" steps on phones: story-style timeline — tap a node, swipe, or let it play */
+document.querySelectorAll('.how3').forEach(box=>{
+  const steps=[...box.children];if(!steps.length)return;
+  const bar=document.createElement('div');bar.className='stp';bar.setAttribute('role','tablist');
+  bar.innerHTML=steps.map((s,i)=>`<button type="button" role="tab" aria-label="${i+1}"><i><em></em></i><b>0${i+1}</b><span>${(s.querySelector('h4')||{}).innerHTML||''}</span></button>`).join('');
+  box.parentNode.insertBefore(bar,box);
+  const btns=[...bar.children],mq=matchMedia('(max-width:1000px)');let cur=0,t0=performance.now(),paused=false,raf=0;const DUR=4200;
+  function set(i,user){cur=(i+steps.length)%steps.length;t0=performance.now();if(user)paused=true;
+    steps.forEach((s,j)=>s.classList.toggle('on',j===cur));btns.forEach((b,j)=>{b.classList.toggle('on',j===cur);b.classList.toggle('done',j<cur);b.setAttribute('aria-selected',j===cur);b.querySelector('em').style.width=j<cur||(paused&&j===cur)?'100%':'0%'})}
+  function tick(now){raf=requestAnimationFrame(tick);if(!mq.matches||paused)return;const r=box.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight){t0=now;return}
+    const k=Math.min(1,(now-t0)/DUR);btns[cur].querySelector('em').style.width=(k*100)+'%';if(k>=1)set(cur+1)}
+  btns.forEach((b,i)=>b.onclick=()=>set(i,true));
+  let sx=null;box.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});box.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>40)set(cur+(dx<0?1:-1),true)},{passive:true});
+  set(0);raf=requestAnimationFrame(tick);
+});

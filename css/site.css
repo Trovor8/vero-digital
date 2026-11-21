@@ -1602,3 +1602,27 @@ html[lang=da] .gr-mx .m-y::after{content:"Kerne"}html[lang=da] .gr-mx .m-o::afte
   .dk-tabs{margin-top:18px}
 }
 @media (max-width:760px){#crm{padding-bottom:28px!important}.sec2.aisec{padding-top:52px!important}}
+
+/* steps timeline (phones/tablets) */
+.stp{display:none}
+@media (max-width:1000px){
+  .stp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:34px}
+  .stp button{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:pointer;font:inherit}
+  .stp i{display:block;width:100%;height:4px;border-radius:4px;background:rgba(226,233,248,.12);overflow:hidden}
+  .stp em{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:4px}
+  .stp button.done em{width:100%!important}
+  .stp b{font:800 22px/1 var(--d);letter-spacing:-.03em;color:#4b5468;transition:color .3s}
+  .stp span{font:600 12.5px/1.25 var(--b);color:#7d8698;transition:color .3s}
+  .stp span br{display:none}
+  .stp button.on b,.stp button.done b{color:var(--acc)}
+  .stp button.on span{color:#fff}
+  .how3{display:block;position:relative;margin-top:18px;min-height:190px;touch-action:pan-y}
+  .how3>div{display:none;padding:26px 24px 28px;border:1px solid rgba(226,233,248,.1);border-radius:22px;background:linear-gradient(160deg,rgba(77,124,255,.1),rgba(255,255,255,.02) 60%)}
+  .how3>div::before{display:none}
+  .how3>div.on{display:block;animation:stpIn .45s var(--e)}
+  .how3>div.rv{opacity:1;transform:none}
+  .how3 b{font-size:44px}
+  .how3 h4{font-size:24px;margin:14px 0 8px}
+}
+@keyframes stpIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+@media (max-width:1000px){.how3>div>b{display:none}.how3 h4{margin-top:0}}
