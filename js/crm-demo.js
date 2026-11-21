@@ -104,9 +104,11 @@
     pipe: ['Pipeline', 'Pipeline', 'Pipeline'],
     lead: ['New lead', 'Novo contacto', 'Nyt lead'],
     nav: [['Dashboard', 'Painel', 'Overblik'], ['Pipeline', 'Pipeline', 'Pipeline'], ['Inbox', 'Mensagens', 'Indbakke'], ['Automations', 'Automações', 'Automatisering'], ['Reports', 'Relatórios', 'Rapporter']],
+    pipeai: ['Pipeline & AI', 'Pipeline e AI', 'Pipeline & AI'],
     hint: ['Scroll to switch business', 'Faça scroll para mudar de negócio', 'Scroll for at skifte branche']
   };
 
+  const MODS = window.VERO_CRM_MODS || {};
   const svg = (d, w = 1.7) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
   const NAVI = ['M4 13h6V4H4zM14 20h6v-9h-6zM14 4v4h6V4zM4 20h6v-4H4z', 'M4 5h4v14H4zM10 5h4v9h-4zM16 5h4v6h-4z', 'M4 6h16v12H4zM4 7l8 6 8-6', 'M13 3L4 14h7l-1 7 9-11h-7z', 'M4 20V10M10 20V4M16 20v-7M22 20H2'];
 
@@ -148,6 +150,10 @@
     main.innerHTML = `
       <div class="crm-head"><span class="crm-av">${svg(n.ic)}</span><b>${T(n.biz)}</b><span class="crm-on"><i></i>${T(UI.on)}</span></div>
       <div class="crm-kpis">${n.kpi.map(k => `<div class="crm-kpi"><small>${T(k[0])}</small><b data-v="${k[1]}">0</b><em class="${String(k[2]).startsWith('−') && !/no-show|faltas|udebl|risk|risco/i.test(k[0][0]) ? 'dn' : ''}">${k[2]}</em></div>`).join('')}</div>
+      <div class="cm-sub">${MODS[n.k] ? `<button class="on" data-v="mod">${T(MODS[n.k].lbl)}</button>` : ''}<button data-v="pipe" class="${MODS[n.k] ? '' : 'on'}">${T(UI.pipeai)}</button><span class="cm-live"><i></i>Live</span></div>
+      <div class="cm-view"></div>`;
+    const view = main.querySelector('.cm-view');
+    const pipeHTML = `
       <div class="crm-split">
         <div class="crm-pipe"><small class="crm-lbl">${T(UI.pipe)}</small><div class="crm-cols">${n.st.map((s, c) => `
           <div class="crm-col"><div class="crm-colh">${T(s)}<i>${cols[c].length}</i></div>${cols[c].map(j => `<div class="crm-card"><b>${n.cards[j][0]}</b><span>${n.cards[j][1]}</span></div>`).join('')}</div>`).join('')}</div></div>
@@ -160,6 +166,9 @@
           <div class="crm-autos"><small class="crm-lbl">${T(UI.autos)}</small>${n.auto.map(a => `<div class="crm-auto">${svg('M13 3L4 14h7l-1 7 9-11h-7z')}<span>${T(a)}</span><i></i></div>`).join('')}</div>
         </div>
       </div>`;
+    const setView = v => { view.dataset.v = v; view.innerHTML = v === 'mod' ? MODS[n.k].html() : pipeHTML; main.querySelectorAll('.cm-sub button').forEach(b => b.classList.toggle('on', b.dataset.v === v)); };
+    main.querySelectorAll('.cm-sub button').forEach(b => b.addEventListener('click', () => setView(b.dataset.v)));
+    setView(MODS[n.k] ? 'mod' : 'pipe');
     // count-up
     main.querySelectorAll('.crm-kpi b').forEach(b => {
       const f = parseFloat(b.dataset.v), t0 = performance.now(), dur = 1100;
@@ -212,6 +221,8 @@
     const n = N[cur], c = n.cards[Math.floor(Math.random() * 2)];
     toast.innerHTML = `<i></i><b>${T(UI.lead)}</b><span>${c[0]} · ${c[1]}</span>`;
     toast.classList.remove('on'); void toast.offsetWidth; toast.classList.add('on');
+    const view = main.querySelector('.cm-view');
+    if (view && view.dataset.v === 'mod' && MODS[n.k] && MODS[n.k].live) { try { MODS[n.k].live(view); } catch (e) {} }
     const cards = main.querySelectorAll('.crm-col:first-child .crm-card');
     cards.forEach(x => x.classList.remove('pulse')); if (cards[0]) { void cards[0].offsetWidth; cards[0].classList.add('pulse'); }
   }, 4200);
